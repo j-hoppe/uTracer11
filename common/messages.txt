@@ -1,0 +1,182 @@
+
+Definition of message records between target PDP11 and host PC
+
+Overview
+---------
+Messages are exchanged between Host PC and Target PDP11.
+Target PDP11 = Physical PDP11 with M93X2probe, or software simulator.
+
+A message is a well-defined C-struct, which can be handled binary
+or as text form via render() and parse() operators.
+
+Request: Host PC -> PDP11 target
+Response: PDP11 target -> PC
+
+Responses may be send asynchronically (without requests) from target
+to indicate events (e.g. captured UNIBUS cycles).
+
+Communication to M93X2probe via RS232 @ 115200
+
+Hardware probes to physical PDP11s
+----------------------------------
+
+M93X2probe provides in fact three (3) hardware probes:
+1.  UNIBUS cycles and signals
+    Identical for all PDP-11s
+    Data transfer evaluated for UNIBUS signal names
+    and DATI/DATO cycles.
+
+2.  PDP11/34/04 KY11-LB like uCode control via
+    diagnostic header to M8266 CPU
+
+3.  Two KM11 single-width FlipChip plugs.
+    KM11 is a generic diagnostic plug, with function depending on PDP-11 model.
+    Full support by 11/05 and 11/40.
+    Typical two KM11 "A" and "B" each provide 28 input signals from PDP11 and 4 output signals.
+    Message tranfers unprocessed MCP23017 registers values.
+
+    KM11 support by PDP11-model:
+
+    11/20: KM11 used
+    KA11_ProcessorMan.pdf page 5-3 links to "KM11 Maintenance Set Manual", not to be found.
+
+    11/05: uPC and single stepping possible.
+
+    11/40: uPC and single stepping possible.
+
+    11/45: KM11, but uPC not via KM11 signals?
+    DEC-11-HMRMA-A-D_PDP-11_45_Maintenance_Reference_Manual_Nov72.pdf
+        Slot 1.E "FPP MAINT", Slot 1.F "CPU MAINT"
+    EK-11045-MM-007.pdf, page 6-20 ff: KM11 !!
+    EK-FP11-MM-003_FP11-B_Floating-Point_Processor_Maintenance_Manual_1974.pdf,
+        page 7-1: "FPP maintenance moduel is W131+W130 = KM11"
+
+    11/70: KM11, but uPC not via KM11
+    EK-11070-MM-002_May79.pdf, 5-57
+    Singlestep possible?
+
+
+    Send to host:
+      ">"responses from command
+      "!"event     (like DATI/DATO capture)
+      "?"error
+      "#"debug msg
+
+Defined Messages
+----------------
+R US read UNIBUS Signals.
+     response: US <signal list>. Signal list is (all hex):
+        <addr> <data> <c1c0> <msyn> <ssyn> <pbpa>
+        <intr> <br7-4> <bg7-4> <npr> <npg> <sack> <bbsy>
+        <init> <aclo> <dclo>
+
+W US <signal> <state> write UNIBUS signal
+        signal = ADDR, DATA, MSYN, SSYN, BBSY, SACK, ACLO, DCLO, INIT
+     response: US <signal list>
+
+Response on captured UNIBUS cycle:
+       DATI|DATIP|DATO|DATOB <addr> <data>|NXM [!]
+       <addr> 18 bit octal,
+       <data> 16bit 0ctal
+       "NXM": "Non eXisting Memory", cycle timeout, no data
+       "!" = cycle not a response to Exam|Deposit request, was captured asynchronical.
+
+E <addr>  Exam UNIBUS octal address with DATI
+          response:    DATI <addr> <val>|NXM
+
+D <addr> <val>  DEPOSIT octal val to UNIBUS octal address with DATO (only even addr)
+          response: DATO <addr> <val>|NXM
+
+UBSIZE  scan UNIBUS address space,
+        response: DATI <first octal NXM address> NXM
+
+UBTEST      write, read and compare full UNIBUS address range
+          responses: OK or ERROR <error message>
+
+BOOT <fileNr> stop PDP11 CPU, download code file <n>,
+        set power-on vector 24/26, restart CPU via ACLO/DCLO
+        response: > DATO <last download address / first NXM address> NXM
+
+R Y  read all signals from M8266 adapter ("KY11-LB")
+    response: Y <mpc> <fp11> <sbf> <lir> <pbp>  (hex)
+
+W Y <signal> <val> set micro clock and microclock enable
+    Format: signal = "MC", "MCE". val = 0, 1, "P"ulse
+    response: Y <mpc> <fp11> <sbf> <lir> <pbp>  (hex)
+
+R M A       read all 28 signals from KM11A
+    response:
+    M <mscp30.gpioa> <mscp30.gpiob> <mscp31.gpioa> <mscp31.gpiob> (hex)
+
+    Layout DEC signals - MCP23017 ports:
+
+                  Signals on DEC KM11
+           IN (LEDs)         OUT (switches)
+    .------------------------------------------------.
+    |00 10 20 30 40 50 60                     flip   +.
+    |01 11 21 31 41 51 61      00  01         chip    |
+    |02 12 22 32 42 52 62      10  11         con-    |
+    |03 13 23 33 43 53 63                   nector   +´
+    `------------------------------------------------´
+
+     <mscp30.gpioa><7:0> = OUT00 IN12 IN11 IN10 IN03 IN02 IN01 IN00
+     <mscp30.gpiob><7:0> = OUT01 IN31 IN30 IN23 IN22 IN21 IN20 IN13
+     <mscp31.gpioa><7:0> = OUT10 IN50 IN43 IN42 IN41 IN40 IN33 IN32
+     <mscp31.gpiob><7:0> = OUT11 IN63 IN62 IN61 IN60 IN53 IN52 IN51
+
+
+W M A <val>   write 4 outputs of KM11A as hex digit
+    Format: <val0-3>, val.3=<out11> val.2=<out10> val.1=<out01> val.0=<out00>
+    response: M <mscp30.gpioa> <mscp30.gpiob> <mscp31.gpioa> <mscp31.gpiob> (hex)
+
+R M B       read  KM11B
+    response: M <mscp32.gpioa> <mscp32.gpiob> <mscp33.gpioa> <mscp33.gpiob> (hex)
+
+W M B 	write for KM11B
+    response: M <mscp32.gpioa> <mscp32.gpiob> <mscp33.gpioa> <mscp33.gpiob> (hex)
+
+W LED   <unit> <off-millis> <on-millis>  decimal
+        write on/of period of a LED
+        response: OK
+
+R SW    read option switch state as hex string
+        A 6x DIP switch
+        0..2: encode PDP11 type
+        SW 5= Baudrate 0 = 9600, 1 = 115200
+        response: SW <val><4:0>
+
+R VERSION   return firmware version
+        response: VERSION <text>
+
+RESET   hard reset of Arduino (not UNIBUS)
+        response after reboot: VERSION <text>
+
+R MCP <group> <addr> <half>
+        request all 8bit register values of a single MCP23017 chip half
+        <group> = 74138 3:8 mux address group
+        <addr> = I2C register address 0-3
+        <half>= "A"|"B"
+        response: MCP<group><addr><half> "IODIR=.. IPOL= .... OLAT=.."
+        (long string!)
+
+R STATEDEF
+		request defintions of internal registers, used for emulators which deliver more data
+		than visibile over KM11/KY11-LB/UNIBUS.
+        response: STATEDEF
+
+STATEDEF list of <name:bitCount> pairs
+		a list of internal registers, names and bit widths. 'bitcount' decimal
+		max bitcount is 32.
+		Static, needs to be queried only once
+		long string
+ 	    Example: "R0:16 R1:16 R2:16 R3:16 R4:16 R5:16 R6:16 PC:16 ALEG:16 BLEG:16 BA:18 SERVICE:1"
+
+R STATEVAL
+		request data of internal registers, used for emulators which deliver more data
+		than visibile over KM11/KY11-LB/UNIBUS.
+		response: STATEVAL
+
+STATEVAL
+		list of current values for internal registers, ordered as in STATEDEF
+        Example: "0 732a 0 0 0 0 affe cafe dead 2ffff 1"
+
