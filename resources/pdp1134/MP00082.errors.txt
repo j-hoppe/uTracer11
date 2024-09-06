@@ -1,0 +1,15 @@
+uPC 346 in pages 24, 25
+uPC 375 in 26, 27
+uPC 540 in 31, 40
+
+IN Boot: UPC runs 577,646,745,000
+    745 not documented.
+exit "9-F" leads to 320,
+745 & 320 OM content identical ...
+745 undocuemtned duplicate of 320?
+https://gunkies.org/wiki/KD11-E/EA_microcode has it too.
+Todo: insert 745 as copy of 320:
+320	MP00082-23.jpg	1839	1118	2156	1266
+745	MP00082-23.jpg	1839	1118	2156	1266
+
+

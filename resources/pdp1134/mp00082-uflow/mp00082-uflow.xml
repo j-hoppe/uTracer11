@@ -1,0 +1,4909 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Micro step states in pdp11/34 FPMS MP00082
+  <key> is the micro program counter as 3-digit octal number.
+      which selects one of several FPMS pages (<imagefilename>)
+  The state is marked by a "rectangle" grafic.
+  Meaning of <datafield1>..<datafield3> see file "MP00082-datafields"
+-->
+<document>
+   <documenttype>uflow</documenttype>
+   <pdp11type>pdp1134</pdp11type>
+   <pen>
+       <align>outside</align> <!--  box interior is filled with text -->
+       <color>#ff0000</color> <!-- fully red -->
+       <width>30</width>
+       <alphapercent>25</alphapercent>
+   </pen>
+   <annotation>
+      <key>000</key>
+      <imagefile>MP00082-16.jpg</imagefile>
+      <geometry>
+         <rectangle>1930,278,2243,422</rectangle>
+      </geometry>
+      <datafield1><text>2-A</text></datafield1>
+      <datafield2><text>SERVICE INTR/TRAPS</text><text>STORE VECTOR</text></datafield2>
+      <datafield3><text>B&lt;-UDATA</text><text>BUT SERVICE</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>016</key>
+      <imagefile>MP00082-16.jpg</imagefile>
+      <geometry>
+         <rectangle>1932,682,2244,821</rectangle>
+      </geometry>
+      <datafield1><text>2-B</text></datafield1>
+      <datafield2><text>FETCH NEXT INSTR</text><text>LOAD INTO IR</text></datafield2>
+      <datafield3><text>BA&lt;-PC,DATI</text><text>IR,B&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>015</key>
+      <imagefile>MP00082-16.jpg</imagefile>
+      <geometry>
+         <rectangle>1932,946,2245,1088</rectangle>
+      </geometry>
+      <datafield1><text>2-C</text></datafield1>
+      <datafield2><text>INCREMENT PC</text><text>MICRO BRANCH ON INSTR</text></datafield2>
+      <datafield3><text>PC&lt;-PC+2</text><text>BUT IR DECODE</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>110</key>
+      <imagefile>MP00082-17.jpg</imagefile>
+      <geometry>
+         <rectangle>91,1749,405,1898</rectangle>
+      </geometry>
+      <datafield1><text>3-A</text></datafield1>
+      <datafield2><text>SOURCE OPERAND</text><text>TO R12 AND BREG</text></datafield2>
+      <datafield3><text>R12,B&lt;-RS</text><text>BUT DEST</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>111</key>
+      <imagefile>MP00082-17.jpg</imagefile>
+      <geometry>
+         <rectangle>698,1748,1013,1898</rectangle>
+      </geometry>
+      <datafield1><text>3-B</text></datafield1>
+      <datafield2><text>FETCH SOURCE</text><text>OPERAND</text></datafield2>
+      <datafield3><text>BA&lt;-RS,DATI</text><text>BUT DEST</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>114</key>
+      <imagefile>MP00082-17.jpg</imagefile>
+      <geometry>
+         <rectangle>848,1484,1163,1633</rectangle>
+      </geometry>
+      <datafield1><text>3-C</text></datafield1>
+      <datafield2><text>DECREMENT RSRC</text><text>ENAB STACK OVERFLOW</text></datafield2>
+      <datafield3><text>RS&lt;-RS-(2)</text><text>ENAB STOV</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>112</key>
+      <imagefile>MP00082-17.jpg</imagefile>
+      <geometry>
+         <rectangle>1355,1482,1669,1633</rectangle>
+      </geometry>
+      <datafield1><text>3-D</text></datafield1>
+      <datafield2><text>FETCH</text><text>SOURCE OPERAND</text></datafield2>
+      <datafield3><text>BA&lt;-RS+(2)</text><text>R12,B&lt;-(UDATA)</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>205</key>
+      <imagefile>MP00082-17.jpg</imagefile>
+      <geometry>
+         <rectangle>1355,1747,1670,1896</rectangle>
+      </geometry>
+      <datafield1><text>3-E</text></datafield1>
+      <datafield2><text>INCREMENT RSRC</text></datafield2>
+      <datafield3><text>RS&lt;-RS+(2)</text><text>BUT DEST</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>113</key>
+      <imagefile>MP00082-17.jpg</imagefile>
+      <geometry>
+         <rectangle>1858,1214,2174,1364</rectangle>
+      </geometry>
+      <datafield1><text>3-F</text></datafield1>
+      <datafield2><text>FETCH</text><text>SOURCE ADDRESS</text></datafield2>
+      <datafield3><text>BA&lt;-RS,DATI</text><text>R12&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>206</key>
+      <imagefile>MP00082-17.jpg</imagefile>
+      <geometry>
+         <rectangle>1858,1479,2174,1630</rectangle>
+      </geometry>
+      <datafield1><text>3-G</text></datafield1>
+      <datafield2><text>INCREMENT RSRC</text></datafield2>
+      <datafield3><text>RS&lt;-RS+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>115</key>
+      <imagefile>MP00082-17.jpg</imagefile>
+      <geometry>
+         <rectangle>2365,1213,2678,1363</rectangle>
+      </geometry>
+      <datafield1><text>3-H</text></datafield1>
+      <datafield2><text>DECREMENT RSRC</text><text>ENAB STACK OVERFLOW</text></datafield2>
+      <datafield3><text>RS&lt;-RS-2</text><text>ENAB STOV</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>207</key>
+      <imagefile>MP00082-17.jpg</imagefile>
+      <geometry>
+         <rectangle>2363,1477,2677,1628</rectangle>
+      </geometry>
+      <datafield1><text>3-I</text></datafield1>
+      <datafield2><text>FETCH</text><text>SOURCE OPERAND</text></datafield2>
+      <datafield3><text>BA&lt;-R12,DATI</text><text>R12&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>211</key>
+      <imagefile>MP00082-17.jpg</imagefile>
+      <geometry>
+         <rectangle>2365,1743,2679,1893</rectangle>
+      </geometry>
+      <datafield1><text>3-J</text></datafield1>
+      <datafield2><text>FETCH SOURCE</text><text>OPERAND</text></datafield2>
+      <datafield3><text>BA&lt;-R12,DATI</text><text>R12,B&lt;-(UDATA)</text><text>BUT DEST</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>116</key>
+      <imagefile>MP00082-17.jpg</imagefile>
+      <geometry>
+         <rectangle>2867,950,3179,1098</rectangle>
+      </geometry>
+      <datafield1><text>3-K</text></datafield1>
+      <datafield2><text>FETCH INDEX</text><text>DATA</text></datafield2>
+      <datafield3><text>BA&lt;-PC,DATI</text><text>B&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>212</key>
+      <imagefile>MP00082-17.jpg</imagefile>
+      <geometry>
+         <rectangle>2868,1212,3181,1362</rectangle>
+      </geometry>
+      <datafield1><text>3-L</text></datafield1>
+      <datafield2><text>INCREMENT PC</text></datafield2>
+      <datafield3><text>PC&lt;-PC+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>213</key>
+      <imagefile>MP00082-17.jpg</imagefile>
+      <geometry>
+         <rectangle>2869,1479,3181,1626</rectangle>
+      </geometry>
+      <datafield1><text>3-M</text></datafield1>
+      <datafield2><text>DETERMINE</text><text>SOURCE ADDR</text></datafield2>
+      <datafield3><text>R12&lt;-RS+B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>117</key>
+      <imagefile>MP00082-17.jpg</imagefile>
+      <geometry>
+         <rectangle>3367,683,3679,834</rectangle>
+      </geometry>
+      <datafield1><text>3-N</text></datafield1>
+      <datafield2><text>FETCH INDEX</text><text>DATA</text></datafield2>
+      <datafield3><text>BA&lt;-PC,DATI</text><text>B&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>214</key>
+      <imagefile>MP00082-17.jpg</imagefile>
+      <geometry>
+         <rectangle>3369,949,3678,1097</rectangle>
+      </geometry>
+      <datafield1><text>3-O</text></datafield1>
+      <datafield2><text>INCREMENT</text><text>PC</text></datafield2>
+      <datafield3><text>PC&lt;-PC+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>215</key>
+      <imagefile>MP00082-17.jpg</imagefile>
+      <geometry>
+         <rectangle>3370,1212,3679,1362</rectangle>
+      </geometry>
+      <datafield1><text>3-P</text></datafield1>
+      <datafield2><text>DETERMINE ADDR</text><text>OF SOURCE ADDR</text></datafield2>
+      <datafield3><text>R12&lt;-RS+B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>216</key>
+      <imagefile>MP00082-17.jpg</imagefile>
+      <geometry>
+         <rectangle>3368,1475,3680,1625</rectangle>
+      </geometry>
+      <datafield1><text>3-Q</text></datafield1>
+      <datafield2><text>FETCH</text><text>SOURCE ADDR</text></datafield2>
+      <datafield3><text>BA&lt;-R12,DATI</text><text>R12&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>050</key>
+      <imagefile>MP00082-18.jpg</imagefile>
+      <geometry>
+         <rectangle>228,1752,544,1889</rectangle>
+      </geometry>
+      <datafield1><text>4-A</text></datafield1>
+      <datafield2><text>OPERATE AND</text><text>LOAD COND CODES</text></datafield2>
+      <datafield3><text>RD&lt;-(R12 OP B)</text><text>LOAD CC</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>054</key>
+      <imagefile>MP00082-18.jpg</imagefile>
+      <geometry>
+         <rectangle>1111,1485,1428,1622</rectangle>
+      </geometry>
+      <datafield1><text>4-C</text></datafield1>
+      <datafield2><text>DECREMENT RDST</text><text>ENAB STACK OVERFLOW</text></datafield2>
+      <datafield3><text>RD&lt;-RD-(2)</text><text>ENAB STOV</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>051</key>
+      <imagefile>MP00082-18.jpg</imagefile>
+      <geometry>
+         <rectangle>1113,1751,1429,1888</rectangle>
+      </geometry>
+      <datafield1><text>4-B</text></datafield1>
+      <datafield2><text>SET UP DEST ADDR</text></datafield2>
+      <datafield3><text>BA&lt;-RD</text><text>MAINT</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>052</key>
+      <imagefile>MP00082-18.jpg</imagefile>
+      <geometry>
+         <rectangle>1555,1749,1871,1886</rectangle>
+      </geometry>
+      <datafield1><text>4-P</text></datafield1>
+      <datafield2><text>SET UP DEST ADDR</text><text>INCREMENT RDST</text></datafield2>
+      <datafield3><text>BA&lt;-RD MAINT</text><text>RD&lt;-RD+(2)</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>053</key>
+      <imagefile>MP00082-18.jpg</imagefile>
+      <geometry>
+         <rectangle>2122,1215,2437,1354</rectangle>
+      </geometry>
+      <datafield1><text>4-F</text></datafield1>
+      <datafield2><text>FETCH DEST ADDR</text></datafield2>
+      <datafield3><text>BA&lt;-RD,DATI</text><text>R13&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>141</key>
+      <imagefile>MP00082-18.jpg</imagefile>
+      <geometry>
+         <rectangle>2123,1482,2438,1620</rectangle>
+      </geometry>
+      <datafield1><text>4-G</text></datafield1>
+      <datafield2><text>INCREMENT RDST</text></datafield2>
+      <datafield3><text>RD&lt;-RD+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>217</key>
+      <imagefile>MP00082-18.jpg</imagefile>
+      <geometry>
+         <rectangle>1841,2012,2156,2159</rectangle>
+      </geometry>
+      <datafield1><text>4-E</text></datafield1>
+      <datafield2><text>GET DEST DATA</text><text>AND STORE,ENAB KT MAINT</text></datafield2>
+      <datafield3><text>DATO(B)</text><text>UDATA&lt;-(R12 OP B)</text><text>LOAD CC MAINT</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>055</key>
+      <imagefile>MP00082-18.jpg</imagefile>
+      <geometry>
+         <rectangle>2566,1215,2877,1353</rectangle>
+      </geometry>
+      <datafield1><text>4-H</text></datafield1>
+      <datafield2><text>DECREMENT RDST</text><text>ENAB STACK OVERFLOW</text></datafield2>
+      <datafield3><text>RD&lt;-RD-2</text><text>ENAB STOV</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>142</key>
+      <imagefile>MP00082-18.jpg</imagefile>
+      <geometry>
+         <rectangle>2566,1480,2877,1618</rectangle>
+      </geometry>
+      <datafield1><text>4-I</text></datafield1>
+      <datafield2><text>FETCH DEST</text><text>ADDR</text></datafield2>
+      <datafield3><text>BA&lt;-RD,DATI</text><text>R13&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>143</key>
+      <imagefile>MP00082-18.jpg</imagefile>
+      <geometry>
+         <rectangle>2567,1744,2879,1880</rectangle>
+      </geometry>
+      <datafield1><text>4-Q</text></datafield1>
+      <datafield2><text>SET UP DEST ADDR</text><text>ENAB KT MAINT</text></datafield2>
+      <datafield3><text>BA&lt;-R13</text><text>MAINT</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>056</key>
+      <imagefile>MP00082-18.jpg</imagefile>
+      <geometry>
+         <rectangle>3002,950,3314,1088</rectangle>
+      </geometry>
+      <datafield1><text>4-J</text></datafield1>
+      <datafield2><text>FETCH INDEX</text><text>DATA</text></datafield2>
+      <datafield3><text>BA&lt;-PC,DATI</text><text>B&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>144</key>
+      <imagefile>MP00082-18.jpg</imagefile>
+      <geometry>
+         <rectangle>3004,1214,3314,1352</rectangle>
+      </geometry>
+      <datafield1><text>4-K</text></datafield1>
+      <datafield2><text>INCREMENT PC</text></datafield2>
+      <datafield3><text>PC&lt;-PC+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>145</key>
+      <imagefile>MP00082-18.jpg</imagefile>
+      <geometry>
+         <rectangle>3005,1479,3317,1617</rectangle>
+      </geometry>
+      <datafield1><text>4-L</text></datafield1>
+      <datafield2><text>DETERMINE</text><text>DEST ADDR</text></datafield2>
+      <datafield3><text>R13&lt;-RD+B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>057</key>
+      <imagefile>MP00082-18.jpg</imagefile>
+      <geometry>
+         <rectangle>3436,685,3747,823</rectangle>
+      </geometry>
+      <datafield1><text>4-M</text></datafield1>
+      <datafield2><text>FETCH INDEX</text><text>DATA</text></datafield2>
+      <datafield3><text>BA&lt;-PC,DATI</text><text>B&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>146</key>
+      <imagefile>MP00082-18.jpg</imagefile>
+      <geometry>
+         <rectangle>3437,950,3749,1088</rectangle>
+      </geometry>
+      <datafield1><text>4-N</text></datafield1>
+      <datafield2><text>INCREMENET</text><text>PC</text></datafield2>
+      <datafield3><text>PC&lt;-PC+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>147</key>
+      <imagefile>MP00082-18.jpg</imagefile>
+      <geometry>
+         <rectangle>3439,1213,3750,1351</rectangle>
+      </geometry>
+      <datafield1><text>4-O</text></datafield1>
+      <datafield2><text>DETERMINE ADDR OF</text><text>DEST. ADDR</text></datafield2>
+      <datafield3><text>R13&lt;-RD+B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>241</key>
+      <imagefile>MP00082-18.jpg</imagefile>
+      <geometry>
+         <rectangle>3440,1478,3752,1615</rectangle>
+      </geometry>
+      <datafield1><text>4-P</text></datafield1>
+      <datafield2><text>FETCH DEST</text><text>ADDR</text></datafield2>
+      <datafield3><text>BA&lt;-R13,DATI</text><text>R13&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>070</key>
+      <imagefile>MP00082-19.jpg</imagefile>
+      <geometry>
+         <rectangle>73,1442,387,1593</rectangle>
+      </geometry>
+      <datafield1><text>5-A</text></datafield1>
+      <datafield2><text>DEST. OPERAND</text><text>TO BREG</text></datafield2>
+      <datafield3><text>R13,B&lt;-RD</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>074</key>
+      <imagefile>MP00082-19.jpg</imagefile>
+      <geometry>
+         <rectangle>1082,1112,1399,1262</rectangle>
+      </geometry>
+      <datafield1><text>5-C</text></datafield1>
+      <datafield2><text>DECREMENT RDST</text><text>ENAB STACK OVERFLOW</text></datafield2>
+      <datafield3><text>RD&lt;-RD-(2)</text><text>ENAB STOV</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>071</key>
+      <imagefile>MP00082-19.jpg</imagefile>
+      <geometry>
+         <rectangle>1082,1440,1399,1593</rectangle>
+      </geometry>
+      <datafield1><text>5-B</text></datafield1>
+      <datafield2><text>FETCH DEST</text><text>OPERAND</text></datafield2>
+      <datafield3><text>BA&lt;-RD,DATIP</text><text>R13,B&lt;-(UDATA)</text><text>MAINT</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>072</key>
+      <imagefile>MP00082-19.jpg</imagefile>
+      <geometry>
+         <rectangle>1587,1110,1905,1261</rectangle>
+      </geometry>
+      <datafield1><text>5-D</text></datafield1>
+      <datafield2><text>FETCH DEST.</text><text>OPERAND</text></datafield2>
+      <datafield3><text>BA&lt;-RD,DATIP</text><text>R13,B&lt;-(UDATA)</text><text>MAINT</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>242</key>
+      <imagefile>MP00082-19.jpg</imagefile>
+      <geometry>
+         <rectangle>1588,1438,1905,1591</rectangle>
+      </geometry>
+      <datafield1><text>5-E</text></datafield1>
+      <datafield2><text>INCREMENT RDST</text></datafield2>
+      <datafield3><text>RD&lt;-RD+(2)</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>073</key>
+      <imagefile>MP00082-19.jpg</imagefile>
+      <geometry>
+         <rectangle>2094,872,2413,1021</rectangle>
+      </geometry>
+      <datafield1><text>5-F</text></datafield1>
+      <datafield2><text>FETCH</text><text>DEST ADDR</text></datafield2>
+      <datafield3><text>BA&lt;-RD,DATI</text><text>R13&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>243</key>
+      <imagefile>MP00082-19.jpg</imagefile>
+      <geometry>
+         <rectangle>2095,1112,2412,1261</rectangle>
+      </geometry>
+      <datafield1><text>5-G</text></datafield1>
+      <datafield2><text>INCREMENT RDST</text></datafield2>
+      <datafield3><text>RD&lt;-RD+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>075</key>
+      <imagefile>MP00082-19.jpg</imagefile>
+      <geometry>
+         <rectangle>2600,873,2915,1021</rectangle>
+      </geometry>
+      <datafield1><text>5-H</text></datafield1>
+      <datafield2><text>DECREMENT RDST</text><text>ENAB STACK OVERFLOW</text></datafield2>
+      <datafield3><text>RD&lt;-RD-2</text><text>ENAB STOV</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>244</key>
+      <imagefile>MP00082-19.jpg</imagefile>
+      <geometry>
+         <rectangle>2600,1112,2914,1262</rectangle>
+      </geometry>
+      <datafield1><text>5-I</text></datafield1>
+      <datafield2><text>FETCH</text><text>DEST. ADDR</text></datafield2>
+      <datafield3><text>BA&lt;-RD,DATI</text><text>R13&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>245</key>
+      <imagefile>MP00082-19.jpg</imagefile>
+      <geometry>
+         <rectangle>2599,1438,2913,1589</rectangle>
+      </geometry>
+      <datafield1><text>5-J</text></datafield1>
+      <datafield2><text>FETCH DEST OPERAND</text></datafield2>
+      <datafield3><text>BA&lt;-R13,DATIP</text><text>R13,B&lt;-(UDATA)</text><text>MAINT</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>076</key>
+      <imagefile>MP00082-19.jpg</imagefile>
+      <geometry>
+         <rectangle>3103,633,3417,785</rectangle>
+      </geometry>
+      <datafield1><text>5-K</text></datafield1>
+      <datafield2><text>FETCH INDEX</text><text>DATA</text></datafield2>
+      <datafield3><text>BA&lt;-PC,DATI</text><text>B&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>246</key>
+      <imagefile>MP00082-19.jpg</imagefile>
+      <geometry>
+         <rectangle>3104,874,3417,1024</rectangle>
+      </geometry>
+      <datafield1><text>5-L</text></datafield1>
+      <datafield2><text>INCREMENT PC</text></datafield2>
+      <datafield3><text>PC&lt;-PC+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>247</key>
+      <imagefile>MP00082-19.jpg</imagefile>
+      <geometry>
+         <rectangle>3105,1113,3418,1261</rectangle>
+      </geometry>
+      <datafield1><text>5-M</text></datafield1>
+      <datafield2><text>DETERMINE</text><text>DEST ADDR</text></datafield2>
+      <datafield3><text>R13&lt;-RD+B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>077</key>
+      <imagefile>MP00082-19.jpg</imagefile>
+      <geometry>
+         <rectangle>3601,396,3913,548</rectangle>
+      </geometry>
+      <datafield1><text>5-N</text></datafield1>
+      <datafield2><text>FETCH INDEX</text><text>DATA</text></datafield2>
+      <datafield3><text>BA&lt;-PC,DATI</text><text>B&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>661</key>
+      <imagefile>MP00082-19.jpg</imagefile>
+      <geometry>
+         <rectangle>3603,635,3913,786</rectangle>
+      </geometry>
+      <datafield1><text>5-O</text></datafield1>
+      <datafield2><text>INCREMENT PC</text></datafield2>
+      <datafield3><text>PC&lt;-PC+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>261</key>
+      <imagefile>MP00082-19.jpg</imagefile>
+      <geometry>
+         <rectangle>3605,874,3914,1024</rectangle>
+      </geometry>
+      <datafield1><text>5-P</text></datafield1>
+      <datafield2><text>DETERMINE ADDR</text><text>OF DEST ADDR</text></datafield2>
+      <datafield3><text>R13&lt;-RD+B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>262</key>
+      <imagefile>MP00082-19.jpg</imagefile>
+      <geometry>
+         <rectangle>3603,1112,3914,1263</rectangle>
+      </geometry>
+      <datafield1><text>5-Q</text></datafield1>
+      <datafield2><text>FETCH DEST</text><text>ADDR</text></datafield2>
+      <datafield3><text>BA&lt;-R13,DATI</text><text>R13&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>060</key>
+      <imagefile>MP00082-20.jpg</imagefile>
+      <geometry>
+         <rectangle>232,1751,546,1889</rectangle>
+      </geometry>
+      <datafield1><text>6-A</text></datafield1>
+      <datafield2><text>DEST. OPERAND</text><text>TO BREG</text></datafield2>
+      <datafield3><text>R13,B&lt;-RD</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>064</key>
+      <imagefile>MP00082-20.jpg</imagefile>
+      <geometry>
+         <rectangle>1114,1484,1429,1623</rectangle>
+      </geometry>
+      <datafield1><text>6-C</text></datafield1>
+      <datafield2><text>DECREMENT RDST</text><text>ENAB STACK OVERFLOW</text></datafield2>
+      <datafield3><text>RD&lt;-RD-(2)</text><text>ENAB STOV</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>061</key>
+      <imagefile>MP00082-20.jpg</imagefile>
+      <geometry>
+         <rectangle>1116,1749,1429,1886</rectangle>
+      </geometry>
+      <datafield1><text>6-B</text></datafield1>
+      <datafield2><text>FETCH DEST</text><text>OPERAND</text></datafield2>
+      <datafield3><text>BA&lt;-RD,DATI</text><text>R13,B&lt;-(UDATA),MAINT</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>062</key>
+      <imagefile>MP00082-20.jpg</imagefile>
+      <geometry>
+         <rectangle>1555,1482,1870,1621</rectangle>
+      </geometry>
+      <datafield1><text>6-D</text></datafield1>
+      <datafield2><text>FETCH</text><text>DEST OPERAND</text></datafield2>
+      <datafield3><text>BA&lt;-RD,DATI</text><text>R13,B&lt;-(UDATA),MAINT</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>263</key>
+      <imagefile>MP00082-20.jpg</imagefile>
+      <geometry>
+         <rectangle>1556,1747,1871,1885</rectangle>
+      </geometry>
+      <datafield1><text>6-E</text></datafield1>
+      <datafield2><text>INCREMENT RDST</text></datafield2>
+      <datafield3><text>RD&lt;-RD+(2)</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>063</key>
+      <imagefile>MP00082-20.jpg</imagefile>
+      <geometry>
+         <rectangle>2124,1215,2439,1354</rectangle>
+      </geometry>
+      <datafield1><text>6-F</text></datafield1>
+      <datafield2><text>FETCH</text><text>DEST ADDR</text></datafield2>
+      <datafield3><text>BA&lt;-RD,DATI</text><text>R13&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>264</key>
+      <imagefile>MP00082-20.jpg</imagefile>
+      <geometry>
+         <rectangle>2125,1482,2439,1619</rectangle>
+      </geometry>
+      <datafield1><text>6-G</text></datafield1>
+      <datafield2><text>INCREMENT RDST</text></datafield2>
+      <datafield3><text>RD&lt;-RD+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>265</key>
+      <imagefile>MP00082-20.jpg</imagefile>
+      <geometry>
+         <rectangle>1841,2010,2156,2149</rectangle>
+      </geometry>
+      <datafield1><text>6-H</text></datafield1>
+      <datafield2><text>OPERAT AND</text><text>LOAD COND CODES</text></datafield2>
+      <datafield3><text>R12 OP B</text><text>LOAD CC</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>065</key>
+      <imagefile>MP00082-20.jpg</imagefile>
+      <geometry>
+         <rectangle>2566,1216,2879,1354</rectangle>
+      </geometry>
+      <datafield1><text>6-I</text></datafield1>
+      <datafield2><text>DECREMENT RDST</text><text>ENAB STACK OVERFLOW</text></datafield2>
+      <datafield3><text>RD&lt;-RD-2</text><text>ENAB STOV</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>266</key>
+      <imagefile>MP00082-20.jpg</imagefile>
+      <geometry>
+         <rectangle>2567,1481,2879,1618</rectangle>
+      </geometry>
+      <datafield1><text>6-J</text></datafield1>
+      <datafield2><text>FETCH DEST</text><text>ADDR</text></datafield2>
+      <datafield3><text>BA&lt;-RD,DATI</text><text>R13&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>267</key>
+      <imagefile>MP00082-20.jpg</imagefile>
+      <geometry>
+         <rectangle>2568,1745,2879,1882</rectangle>
+      </geometry>
+      <datafield1><text>6-K</text></datafield1>
+      <datafield2><text>FETCH</text><text>DEST. OPERAND</text></datafield2>
+      <datafield3><text>BA&lt;-R13,DATI</text><text>R13,B&lt;-(UDATA),MAINT</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>066</key>
+      <imagefile>MP00082-20.jpg</imagefile>
+      <geometry>
+         <rectangle>3006,950,3315,1089</rectangle>
+      </geometry>
+      <datafield1><text>6-L</text></datafield1>
+      <datafield2><text>FETCH INDEX</text><text>DATA</text></datafield2>
+      <datafield3><text>BA&lt;-PC,DATI</text><text>B&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>662</key>
+      <imagefile>MP00082-20.jpg</imagefile>
+      <geometry>
+         <rectangle>3005,1215,3317,1353</rectangle>
+      </geometry>
+      <datafield1><text>6-M</text></datafield1>
+      <datafield2><text>INCREMENT</text><text>PC</text></datafield2>
+      <datafield3><text>PC&lt;-PC+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>271</key>
+      <imagefile>MP00082-20.jpg</imagefile>
+      <geometry>
+         <rectangle>3007,1480,3318,1618</rectangle>
+      </geometry>
+      <datafield1><text>6-N</text></datafield1>
+      <datafield2><text>DETERMINE</text><text>DEST. ADDR</text></datafield2>
+      <datafield3><text>R13&lt;-RD+B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>067</key>
+      <imagefile>MP00082-20.jpg</imagefile>
+      <geometry>
+         <rectangle>3439,688,3750,826</rectangle>
+      </geometry>
+      <datafield1><text>6-O</text></datafield1>
+      <datafield2><text>FETCH INDEX</text><text>DATA</text></datafield2>
+      <datafield3><text>BA&lt;-PC,DATI</text><text>B&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>272</key>
+      <imagefile>MP00082-20.jpg</imagefile>
+      <geometry>
+         <rectangle>3440,952,3752,1091</rectangle>
+      </geometry>
+      <datafield1><text>6-P</text></datafield1>
+      <datafield2><text>INCREMENT PC</text></datafield2>
+      <datafield3><text>PC&lt;-PC+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>273</key>
+      <imagefile>MP00082-20.jpg</imagefile>
+      <geometry>
+         <rectangle>3441,1216,3753,1353</rectangle>
+      </geometry>
+      <datafield1><text>6-Q</text></datafield1>
+      <datafield2><text>DETERMINE ADDR</text><text>OF DEST ADDR</text></datafield2>
+      <datafield3><text>R13&lt;-RD+B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>274</key>
+      <imagefile>MP00082-20.jpg</imagefile>
+      <geometry>
+         <rectangle>3443,1480,3755,1617</rectangle>
+      </geometry>
+      <datafield1><text>6-R</text></datafield1>
+      <datafield2><text>FETCH DEST</text><text>ADDR.</text></datafield2>
+      <datafield3><text>BA&lt;-R13,DATI</text><text>R13&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>040</key>
+      <imagefile>MP00082-21.jpg</imagefile>
+      <geometry>
+         <rectangle>230,1751,546,1889</rectangle>
+      </geometry>
+      <datafield1><text>7-A</text></datafield1>
+      <datafield2><text>OPERATE AND</text><text>LOAD COND CODES</text></datafield2>
+      <datafield3><text>RD&lt;-(RD OP B)</text><text>LOAD CC</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>044</key>
+      <imagefile>MP00082-21.jpg</imagefile>
+      <geometry>
+         <rectangle>1116,1484,1432,1623</rectangle>
+      </geometry>
+      <datafield1><text>7-C</text></datafield1>
+      <datafield2><text>DECREMENT RDST</text><text>ENAB STACK OVERFLOW</text></datafield2>
+      <datafield3><text>RD&lt;-RD-(2)</text><text>ENAB STOV</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>041</key>
+      <imagefile>MP00082-21.jpg</imagefile>
+      <geometry>
+         <rectangle>1117,1750,1432,1888</rectangle>
+      </geometry>
+      <datafield1><text>7-B</text></datafield1>
+      <datafield2><text>FETCH DEST</text><text>OPERAND</text></datafield2>
+      <datafield3><text>BA&lt;-RD,DATIP</text><text>R12&lt;-(UDATA),MAINT</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>042</key>
+      <imagefile>MP00082-21.jpg</imagefile>
+      <geometry>
+         <rectangle>1558,1483,1875,1621</rectangle>
+      </geometry>
+      <datafield1><text>7-D</text></datafield1>
+      <datafield2><text>FETCH DEST</text><text>OPERAND</text></datafield2>
+      <datafield3><text>BA&lt;-RD,DATIP</text><text>R12&lt;-(UDATA),MAINT</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>275</key>
+      <imagefile>MP00082-21.jpg</imagefile>
+      <geometry>
+         <rectangle>1559,1749,1876,1886</rectangle>
+      </geometry>
+      <datafield1><text>7-E</text></datafield1>
+      <datafield2><text>INCREMENT RDST</text></datafield2>
+      <datafield3><text>RD&lt;-RD+(2)</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>043</key>
+      <imagefile>MP00082-21.jpg</imagefile>
+      <geometry>
+         <rectangle>2129,1214,2443,1354</rectangle>
+      </geometry>
+      <datafield1><text>7-F</text></datafield1>
+      <datafield2><text>FETCH DEST ADDR</text></datafield2>
+      <datafield3><text>BA&lt;-RD,DATI</text><text>R12&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>276</key>
+      <imagefile>MP00082-21.jpg</imagefile>
+      <geometry>
+         <rectangle>2128,1481,2444,1619</rectangle>
+      </geometry>
+      <datafield1><text>7-G</text></datafield1>
+      <datafield2><text>INCREMENT RDST</text></datafield2>
+      <datafield3><text>RD&lt;-RD+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>045</key>
+      <imagefile>MP00082-21.jpg</imagefile>
+      <geometry>
+         <rectangle>2572,1213,2884,1353</rectangle>
+      </geometry>
+      <datafield1><text>7-H</text></datafield1>
+      <datafield2><text>DECREMENT RST</text><text>ENAB STACK OVERFLOW</text></datafield2>
+      <datafield3><text>RD&lt;-RD-2</text><text>ENAB STOV</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>277</key>
+      <imagefile>MP00082-21.jpg</imagefile>
+      <geometry>
+         <rectangle>2573,1480,2886,1619</rectangle>
+      </geometry>
+      <datafield1><text>7-I</text></datafield1>
+      <datafield2><text>FETCH DEST</text><text>ADDR</text></datafield2>
+      <datafield3><text>BA&lt;-RD,DATI</text><text>R12&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>300</key>
+      <imagefile>MP00082-21.jpg</imagefile>
+      <geometry>
+         <rectangle>2572,1746,2887,1882</rectangle>
+      </geometry>
+      <datafield1><text>7-J</text></datafield1>
+      <datafield2><text>FETCH DEST</text><text>OPERAND</text></datafield2>
+      <datafield3><text>BA&lt;-R12,DATIP</text><text>R12&lt;-(UDATA),MAINT</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>046</key>
+      <imagefile>MP00082-21.jpg</imagefile>
+      <geometry>
+         <rectangle>3010,948,3322,1086</rectangle>
+      </geometry>
+      <datafield1><text>7-K</text></datafield1>
+      <datafield2><text>FETCH INDEX</text><text>DATA</text></datafield2>
+      <datafield3><text>BA&lt;-PC,DATI</text><text>BX&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>301</key>
+      <imagefile>MP00082-21.jpg</imagefile>
+      <geometry>
+         <rectangle>3011,1214,3323,1352</rectangle>
+      </geometry>
+      <datafield1><text>7-L</text></datafield1>
+      <datafield2><text>INCREMENT</text><text>PC</text></datafield2>
+      <datafield3><text>PC&lt;-PC+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>302</key>
+      <imagefile>MP00082-21.jpg</imagefile>
+      <geometry>
+         <rectangle>3012,1480,3324,1618</rectangle>
+      </geometry>
+      <datafield1><text>7-M</text></datafield1>
+      <datafield2><text>DETERMINE</text><text>DEST ADDR</text></datafield2>
+      <datafield3><text>R12&lt;-RD+BX</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>047</key>
+      <imagefile>MP00082-21.jpg</imagefile>
+      <geometry>
+         <rectangle>3447,683,3759,821</rectangle>
+      </geometry>
+      <datafield1><text>7-M</text></datafield1>
+      <datafield2><text>FETCH INDEX DATA</text></datafield2>
+      <datafield3><text>BA&lt;-PC,DATI</text><text>BX&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>303</key>
+      <imagefile>MP00082-21.jpg</imagefile>
+      <geometry>
+         <rectangle>3449,948,3760,1086</rectangle>
+      </geometry>
+      <datafield1><text>7-O</text></datafield1>
+      <datafield2><text>INCREMENT PC</text></datafield2>
+      <datafield3><text>PC&lt;-PC+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>304</key>
+      <imagefile>MP00082-21.jpg</imagefile>
+      <geometry>
+         <rectangle>3450,1212,3763,1350</rectangle>
+      </geometry>
+      <datafield1><text>7-P</text></datafield1>
+      <datafield2><text>DETERMINE ADDR</text><text>OF DEST ADDR</text></datafield2>
+      <datafield3><text>R12&lt;-RD+BX</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>305</key>
+      <imagefile>MP00082-21.jpg</imagefile>
+      <geometry>
+         <rectangle>3450,1479,3762,1617</rectangle>
+      </geometry>
+      <datafield1><text>7-Q</text></datafield1>
+      <datafield2><text>FETCH DEST ADDR</text></datafield2>
+      <datafield3><text>BA&lt;-R12,DATI</text><text>R12&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>160</key>
+      <imagefile>MP00082-22.jpg</imagefile>
+      <geometry>
+         <rectangle>227,1751,544,1888</rectangle>
+      </geometry>
+      <datafield1><text>8-A</text></datafield1>
+      <datafield2><text>OPERATE ON OPERAND</text><text>LOAD COND CODES</text></datafield2>
+      <datafield3><text>RD OP B</text><text>LOAD CC</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>164</key>
+      <imagefile>MP00082-22.jpg</imagefile>
+      <geometry>
+         <rectangle>1112,1485,1428,1623</rectangle>
+      </geometry>
+      <datafield1><text>8-C</text></datafield1>
+      <datafield2><text>DECREMENT RDST</text><text>ENAB STACK OVERFLOW</text></datafield2>
+      <datafield3><text>RD&lt;-RD-(2)</text><text>ENAB STOV</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>161</key>
+      <imagefile>MP00082-22.jpg</imagefile>
+      <geometry>
+         <rectangle>1112,1751,1426,1888</rectangle>
+      </geometry>
+      <datafield1><text>8-B</text></datafield1>
+      <datafield2><text>FETCH DEST</text><text>OPERAND</text></datafield2>
+      <datafield3><text>BA&lt;-RD,DATI</text><text>R12&lt;-(UDATA),MAINT</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>162</key>
+      <imagefile>MP00082-22.jpg</imagefile>
+      <geometry>
+         <rectangle>1555,1484,1871,1622</rectangle>
+      </geometry>
+      <datafield1><text>8-D</text></datafield1>
+      <datafield2><text>FETCH DEST</text><text>OPERAND</text></datafield2>
+      <datafield3><text>BA&lt;-RD,DATI</text><text>R12&lt;-(UDATA),MAINT</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>306</key>
+      <imagefile>MP00082-22.jpg</imagefile>
+      <geometry>
+         <rectangle>1556,1750,1872,1888</rectangle>
+      </geometry>
+      <datafield1><text>8-E</text></datafield1>
+      <datafield2><text>INCREMENT RDST</text></datafield2>
+      <datafield3><text>RD&lt;-RD+(2)</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>163</key>
+      <imagefile>MP00082-22.jpg</imagefile>
+      <geometry>
+         <rectangle>2125,1217,2439,1356</rectangle>
+      </geometry>
+      <datafield1><text>8-F</text></datafield1>
+      <datafield2><text>FETCH DEST</text><text>ADDR</text></datafield2>
+      <datafield3><text>BA&lt;-RD,DATI</text><text>R12&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>307</key>
+      <imagefile>MP00082-22.jpg</imagefile>
+      <geometry>
+         <rectangle>2125,1482,2439,1621</rectangle>
+      </geometry>
+      <datafield1><text>8-G</text></datafield1>
+      <datafield2><text>INCREMENT RDST</text></datafield2>
+      <datafield3><text>RD&lt;-RD+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>165</key>
+      <imagefile>MP00082-22.jpg</imagefile>
+      <geometry>
+         <rectangle>2569,1216,2879,1355</rectangle>
+      </geometry>
+      <datafield1><text>8-H</text></datafield1>
+      <datafield2><text>DECREMENT RDST</text><text>ENAB STACK OVERFLOW</text></datafield2>
+      <datafield3><text>RD&lt;-RD-2</text><text>ENAB STOV</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>310</key>
+      <imagefile>MP00082-22.jpg</imagefile>
+      <geometry>
+         <rectangle>2569,1482,2880,1620</rectangle>
+      </geometry>
+      <datafield1><text>8-I</text></datafield1>
+      <datafield2><text>FETCH DEST</text><text>ADDR.</text></datafield2>
+      <datafield3><text>BA&lt;-RD,DATI</text><text>R12&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>311</key>
+      <imagefile>MP00082-22.jpg</imagefile>
+      <geometry>
+         <rectangle>2570,1747,2882,1884</rectangle>
+      </geometry>
+      <datafield1><text>8-J</text></datafield1>
+      <datafield2><text>FETCH DEST</text><text>OPERAND</text></datafield2>
+      <datafield3><text>BA&lt;-R12,DATI</text><text>R12&lt;-(UDATA),MAINT</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>166</key>
+      <imagefile>MP00082-22.jpg</imagefile>
+      <geometry>
+         <rectangle>3004,951,3316,1090</rectangle>
+      </geometry>
+      <datafield1><text>8-K</text></datafield1>
+      <datafield2><text>FETCH INDEX</text><text>DATA</text></datafield2>
+      <datafield3><text>BA&lt;-PC,DATI</text><text>B&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>312</key>
+      <imagefile>MP00082-22.jpg</imagefile>
+      <geometry>
+         <rectangle>3005,1216,3317,1355</rectangle>
+      </geometry>
+      <datafield1><text>8-L</text></datafield1>
+      <datafield2><text>INCREMENT PC</text></datafield2>
+      <datafield3><text>PC&lt;-PC+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>313</key>
+      <imagefile>MP00082-22.jpg</imagefile>
+      <geometry>
+         <rectangle>3006,1481,3319,1620</rectangle>
+      </geometry>
+      <datafield1><text>8-M</text></datafield1>
+      <datafield2><text>DETERMINE DEST</text><text>ADDR</text></datafield2>
+      <datafield3><text>R12&lt;-RD+B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>167</key>
+      <imagefile>MP00082-22.jpg</imagefile>
+      <geometry>
+         <rectangle>3441,687,3752,825</rectangle>
+      </geometry>
+      <datafield1><text>8-N</text></datafield1>
+      <datafield2><text>FETCH INDEX DATA</text></datafield2>
+      <datafield3><text>BA&lt;-PC,DATI</text><text>B&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>314</key>
+      <imagefile>MP00082-22.jpg</imagefile>
+      <geometry>
+         <rectangle>3442,951,3754,1089</rectangle>
+      </geometry>
+      <datafield1><text>8-O</text></datafield1>
+      <datafield2><text>INCREMENT PC</text></datafield2>
+      <datafield3><text>PC&lt;-PC+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>315</key>
+      <imagefile>MP00082-22.jpg</imagefile>
+      <geometry>
+         <rectangle>3443,1215,3755,1353</rectangle>
+      </geometry>
+      <datafield1><text>8-P</text></datafield1>
+      <datafield2><text>DETERIMINE ADDR</text><text>OF DEST ADDR</text></datafield2>
+      <datafield3><text>R12&lt;-RD+B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>316</key>
+      <imagefile>MP00082-22.jpg</imagefile>
+      <geometry>
+         <rectangle>3444,1480,3757,1619</rectangle>
+      </geometry>
+      <datafield1><text>8-Q</text></datafield1>
+      <datafield2><text>FETCH DEST</text><text>ADDR</text></datafield2>
+      <datafield3><text>BA&lt;-R12,DATI</text><text>R12&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>024</key>
+      <imagefile>MP00082-23.jpg</imagefile>
+      <geometry>
+         <rectangle>1065,637,1383,790</rectangle>
+      </geometry>
+      <datafield1><text>9-B</text></datafield1>
+      <datafield2><text>DECREMENT RDST</text><text>ENAB STACK OVERFLOW</text></datafield2>
+      <datafield3><text>RD&lt;-RD-2</text><text>ENAB STOV</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>021</key>
+      <imagefile>MP00082-23.jpg</imagefile>
+      <geometry>
+         <rectangle>1065,1119,1384,1268</rectangle>
+      </geometry>
+      <datafield1><text>9-A</text></datafield1>
+      <datafield2><text>JUMP ADDRESS</text><text>TO PC</text></datafield2>
+      <datafield3><text>PC&lt;-RD</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>022</key>
+      <imagefile>MP00082-23.jpg</imagefile>
+      <geometry>
+         <rectangle>1571,395,1889,541</rectangle>
+      </geometry>
+      <datafield1><text>9-C</text></datafield1>
+      <datafield2><text>JUMP ADDR TO BREG</text></datafield2>
+      <datafield3><text>B&lt;-RD</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>317</key>
+      <imagefile>MP00082-23.jpg</imagefile>
+      <geometry>
+         <rectangle>1839,875,2157,1024</rectangle>
+      </geometry>
+      <datafield1><text>9-E</text></datafield1>
+      <datafield2><text>INCREMENT RDST</text></datafield2>
+      <datafield3><text>RD&lt;-RD+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>320</key>
+      <imagefile>MP00082-23.jpg</imagefile>
+      <geometry>
+         <rectangle>1839,1118,2156,1266</rectangle>
+      </geometry>
+      <datafield1><text>9-F</text></datafield1>
+      <datafield2><text>JUMP ADDR TO PC</text></datafield2>
+      <datafield3><text>PC&lt;-B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>745</key>
+      <imagefile>MP00082-23.jpg</imagefile>
+      <geometry>
+         <rectangle>1839,1118,2156,1266,"fix: duplicate of 745"</rectangle>
+      </geometry>
+      <datafield1><text>9-F</text></datafield1>
+      <datafield2><text>JUMP ADDR TO PC</text></datafield2>
+      <datafield3><text>PC&lt;-B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>023</key>
+      <imagefile>MP00082-23.jpg</imagefile>
+      <geometry>
+         <rectangle>2077,395,2395,543</rectangle>
+      </geometry>
+      <datafield1><text>9-D</text></datafield1>
+      <datafield2><text>FETCH JUMP ADDR</text></datafield2>
+      <datafield3><text>BA&lt;-RD,DATI</text><text>B&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>025</key>
+      <imagefile>MP00082-23.jpg</imagefile>
+      <geometry>
+         <rectangle>2587,874,2900,1022</rectangle>
+      </geometry>
+      <datafield1><text>9-G</text></datafield1>
+      <datafield2><text>DECREMENT RDST</text><text>ENAB STACK OVERFLOW</text></datafield2>
+      <datafield3><text>RD&lt;-RD-2</text><text>ENAB STOV</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>321</key>
+      <imagefile>MP00082-23.jpg</imagefile>
+      <geometry>
+         <rectangle>2586,1115,2900,1264</rectangle>
+      </geometry>
+      <datafield1><text>9-H</text></datafield1>
+      <datafield2><text>FETCH</text><text>JUMP ADDR</text></datafield2>
+      <datafield3><text>BA&lt;-RD,DATI</text><text>B&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>026</key>
+      <imagefile>MP00082-23.jpg</imagefile>
+      <geometry>
+         <rectangle>3090,632,3401,785</rectangle>
+      </geometry>
+      <datafield1><text>9-I</text></datafield1>
+      <datafield2><text>FETCH INDEX</text><text>DATA</text></datafield2>
+      <datafield3><text>BA&lt;-PC,DATI</text><text>B&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>322</key>
+      <imagefile>MP00082-23.jpg</imagefile>
+      <geometry>
+         <rectangle>3089,874,3403,1025</rectangle>
+      </geometry>
+      <datafield1><text>9-J</text></datafield1>
+      <datafield2><text>INCREMENT PC</text></datafield2>
+      <datafield3><text>PC&lt;-PC+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>323</key>
+      <imagefile>MP00082-23.jpg</imagefile>
+      <geometry>
+         <rectangle>3090,1114,3403,1265</rectangle>
+      </geometry>
+      <datafield1><text>9-K</text></datafield1>
+      <datafield2><text>DETERMINE</text><text>JUMP ADDR</text></datafield2>
+      <datafield3><text>PC&lt;-RD+B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>027</key>
+      <imagefile>MP00082-23.jpg</imagefile>
+      <geometry>
+         <rectangle>3587,395,3899,546</rectangle>
+      </geometry>
+      <datafield1><text>9-L</text></datafield1>
+      <datafield2><text>FETCH INDEX</text><text>DATA</text></datafield2>
+      <datafield3><text>BA&lt;-PC,DATI</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>324</key>
+      <imagefile>MP00082-23.jpg</imagefile>
+      <geometry>
+         <rectangle>3587,634,3900,786</rectangle>
+      </geometry>
+      <datafield1><text>9-M</text></datafield1>
+      <datafield2><text>INCREMENT PC</text></datafield2>
+      <datafield3><text>PC&lt;-PC+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>325</key>
+      <imagefile>MP00082-23.jpg</imagefile>
+      <geometry>
+         <rectangle>3589,873,3900,1024</rectangle>
+      </geometry>
+      <datafield1><text>9-N</text></datafield1>
+      <datafield2><text>DETERMINE ADDR</text><text>OF JUMP ADDR</text></datafield2>
+      <datafield3><text>R12&lt;-RD+B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>326</key>
+      <imagefile>MP00082-23.jpg</imagefile>
+      <geometry>
+         <rectangle>3589,1113,3902,1263</rectangle>
+      </geometry>
+      <datafield1><text>9-O</text></datafield1>
+      <datafield2><text>FETCH JUMP</text><text>ADDR</text></datafield2>
+      <datafield3><text>BA&lt;-R12,DATI</text><text>B&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>151</key>
+      <imagefile>MP00082-24.jpg</imagefile>
+      <geometry>
+         <rectangle>564,1065,879,1216</rectangle>
+      </geometry>
+      <datafield1><text>10-A</text></datafield1>
+      <datafield2><text>JUMP ADDR TO BREG</text></datafield2>
+      <datafield3><text>B&lt;-RD</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>154</key>
+      <imagefile>MP00082-24.jpg</imagefile>
+      <geometry>
+         <rectangle>1072,1066,1390,1216</rectangle>
+      </geometry>
+      <datafield1><text>10-B</text></datafield1>
+      <datafield2><text>DECREMENT RDST</text><text>JUMP ADDR TO BREG</text></datafield2>
+      <datafield3><text>B,RD&lt;-RD-2</text><text>ENAB STOV</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>152</key>
+      <imagefile>MP00082-24.jpg</imagefile>
+      <geometry>
+         <rectangle>1576,583,1893,734</rectangle>
+      </geometry>
+      <datafield1><text>10-C</text></datafield1>
+      <datafield2><text>JUMP ADDR TO BREG</text></datafield2>
+      <datafield3><text>B&lt;-RD</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>153</key>
+      <imagefile>MP00082-24.jpg</imagefile>
+      <geometry>
+         <rectangle>2082,584,2400,737</rectangle>
+      </geometry>
+      <datafield1><text>10-D</text></datafield1>
+      <datafield2><text>FETCH JUMP ADDR</text></datafield2>
+      <datafield3><text>BA&lt;-RD,DATI</text><text>B&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>327</key>
+      <imagefile>MP00082-24.jpg</imagefile>
+      <geometry>
+         <rectangle>1907,1062,2223,1217</rectangle>
+      </geometry>
+      <datafield1><text>10-E</text></datafield1>
+      <datafield2><text>INCREMENT RDST</text></datafield2>
+      <datafield3><text>RD&lt;-RD+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>155</key>
+      <imagefile>MP00082-24.jpg</imagefile>
+      <geometry>
+         <rectangle>2592,828,2906,977</rectangle>
+      </geometry>
+      <datafield1><text>10-F</text></datafield1>
+      <datafield2><text>DECREMENT RDST</text><text>ENAB STACK OVERFLOW</text></datafield2>
+      <datafield3><text>RD&lt;-RD-2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>330</key>
+      <imagefile>MP00082-24.jpg</imagefile>
+      <geometry>
+         <rectangle>2591,1067,2906,1217</rectangle>
+      </geometry>
+      <datafield1><text>10-G</text></datafield1>
+      <datafield2><text>FETCH JUMP ADDR</text></datafield2>
+      <datafield3><text>BA&lt;-RD,DATI</text><text>B&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>156</key>
+      <imagefile>MP00082-24.jpg</imagefile>
+      <geometry>
+         <rectangle>3094,588,3406,738</rectangle>
+      </geometry>
+      <datafield1><text>10-H</text></datafield1>
+      <datafield2><text>FETCH INDEX</text><text>DATA</text></datafield2>
+      <datafield3><text>BA&lt;-PC,DATI</text><text>B&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>331</key>
+      <imagefile>MP00082-24.jpg</imagefile>
+      <geometry>
+         <rectangle>3096,829,3407,980</rectangle>
+      </geometry>
+      <datafield1><text>10-I</text></datafield1>
+      <datafield2><text>INCREMENT PC</text></datafield2>
+      <datafield3><text>PC&lt;-PC+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>332</key>
+      <imagefile>MP00082-24.jpg</imagefile>
+      <geometry>
+         <rectangle>3096,1068,3408,1218</rectangle>
+      </geometry>
+      <datafield1><text>10-J</text></datafield1>
+      <datafield2><text>DETERMINE JUMP</text><text>ADDR</text></datafield2>
+      <datafield3><text>B&lt;-RD+B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>157</key>
+      <imagefile>MP00082-24.jpg</imagefile>
+      <geometry>
+         <rectangle>3590,351,3901,502</rectangle>
+      </geometry>
+      <datafield1><text>10-K</text></datafield1>
+      <datafield2><text>FETCH INDEX</text><text>DATA</text></datafield2>
+      <datafield3><text>BA&lt;-PC,DATI</text><text>B&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>333</key>
+      <imagefile>MP00082-24.jpg</imagefile>
+      <geometry>
+         <rectangle>3590,591,3902,742</rectangle>
+      </geometry>
+      <datafield1><text>10-L</text></datafield1>
+      <datafield2><text>INCREMENT PC</text></datafield2>
+      <datafield3><text>PC&lt;-PC+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>334</key>
+      <imagefile>MP00082-24.jpg</imagefile>
+      <geometry>
+         <rectangle>3594,829,3903,980</rectangle>
+      </geometry>
+      <datafield1><text>10-M</text></datafield1>
+      <datafield2><text>DETERMINE ADDR</text><text>OF JUMP ADDR</text></datafield2>
+      <datafield3><text>R12&lt;-RD+B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>335</key>
+      <imagefile>MP00082-24.jpg</imagefile>
+      <geometry>
+         <rectangle>3596,1068,3905,1218</rectangle>
+      </geometry>
+      <datafield1><text>10-N</text></datafield1>
+      <datafield2><text>FETCH JUMP</text><text>ADDR</text></datafield2>
+      <datafield3><text>BA&lt;-R12,DATI</text><text>B&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>336</key>
+      <imagefile>MP00082-24.jpg</imagefile>
+      <geometry>
+         <rectangle>2086,1354,2404,1505</rectangle>
+      </geometry>
+      <datafield1><text>10-O</text></datafield1>
+      <datafield2><text>DECREMENT STACK</text><text>POINTER</text></datafield2>
+      <datafield3><text>R6&lt;-R6-2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>337</key>
+      <imagefile>MP00082-24.jpg</imagefile>
+      <geometry>
+         <rectangle>2087,1568,2403,1719</rectangle>
+      </geometry>
+      <datafield1><text>10-P</text></datafield1>
+      <datafield2><text>SET UP BUS</text><text>ADDR</text></datafield2>
+      <datafield3><text>BA&lt;-R6</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>346</key>
+      <imagefile>MP00082-24.jpg</imagefile>
+      <geometry>
+         <rectangle>2087,1783,2402,1933</rectangle>
+      </geometry>
+      <datafield1><text>10-Q</text></datafield1>
+      <datafield2><text>OUTPUT RSRC</text><text>TO STACK</text></datafield2>
+      <datafield3><text>DATO</text><text>UDATA&lt;-RS</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>341</key>
+      <imagefile>MP00082-24.jpg</imagefile>
+      <geometry>
+         <rectangle>2088,1997,2402,2146</rectangle>
+      </geometry>
+      <datafield1><text>10-R</text></datafield1>
+      <datafield2><text>MOVE PC TO</text><text>RSRC</text></datafield2>
+      <datafield3><text>RS&lt;-PC</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>342</key>
+      <imagefile>MP00082-24.jpg</imagefile>
+      <geometry>
+         <rectangle>2086,2211,2403,2362</rectangle>
+      </geometry>
+      <datafield1><text>10-S</text></datafield1>
+      <datafield2><text>BREG TO PC</text></datafield2>
+      <datafield3><text>PC&lt;-B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>030</key>
+      <imagefile>MP00082-25.jpg</imagefile>
+      <geometry>
+         <rectangle>224,1479,541,1618</rectangle>
+      </geometry>
+      <datafield1>11-A<text></text></datafield1>
+      <datafield2><text>SWAPPED DEST OPERAND</text><text>TO REG 12</text></datafield2>
+      <datafield3><text>R12&lt;-RD SWAB</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>343</key>
+      <imagefile>MP00082-25.jpg</imagefile>
+      <geometry>
+         <rectangle>225,1744,541,1881</rectangle>
+      </geometry>
+      <datafield1><text>11-B</text></datafield1>
+      <datafield2><text>LOAD COND CODES</text></datafield2>
+      <datafield3><text>RD&lt;-R12 OP B</text><text>LOAD CC</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>034</key>
+      <imagefile>MP00082-25.jpg</imagefile>
+      <geometry>
+         <rectangle>1111,1478,1426,1617</rectangle>
+      </geometry>
+      <datafield1><text>11-D</text></datafield1>
+      <datafield2><text>DECREMENT RDST</text><text>ENAB STACK OVERFLOW</text></datafield2>
+      <datafield3><text>RD&lt;-RD-2</text><text>ENAB STOV</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>031</key>
+      <imagefile>MP00082-25.jpg</imagefile>
+      <geometry>
+         <rectangle>1112,1745,1426,1881</rectangle>
+      </geometry>
+      <datafield1><text>11-C</text></datafield1>
+      <datafield2><text>FETCH SWAPPED</text><text>DEST OPERAND</text></datafield2>
+      <datafield3><text>BA&lt;-RD,DATIP</text><text>R12&lt;-UDATA SWAB,MAINT</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>032</key>
+      <imagefile>MP00082-25.jpg</imagefile>
+      <geometry>
+         <rectangle>1553,1478,1871,1617</rectangle>
+      </geometry>
+      <datafield1><text>11-E</text></datafield1>
+      <datafield2><text>FETCH SWAPPED</text><text>DEST OPERAND</text></datafield2>
+      <datafield3><text>BA&lt;-RD,DATIP</text><text>R12&lt;-UDATA SWAB,MAINT</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>344</key>
+      <imagefile>MP00082-25.jpg</imagefile>
+      <geometry>
+         <rectangle>1555,1745,1869,1881</rectangle>
+      </geometry>
+      <datafield1><text>11-F</text></datafield1>
+      <datafield2><text>INCREMENT RDST</text></datafield2>
+      <datafield3><text>RD&lt;-RD+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>355</key>
+      <imagefile>MP00082-25.jpg</imagefile>
+      <geometry>
+         <rectangle>1833,2010,2149,2147</rectangle>
+      </geometry>
+      <datafield1><text>11-S</text></datafield1>
+      <datafield2><text>STORE DATA</text><text>LOAD COND CODES</text></datafield2>
+      <datafield3><text>DATO,MAINT</text><text>UDATA&lt;-R12 OP B</text><text>LOAD CC</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>033</key>
+      <imagefile>MP00082-25.jpg</imagefile>
+      <geometry>
+         <rectangle>2124,1212,2437,1350</rectangle>
+      </geometry>
+      <datafield1><text>11-G</text></datafield1>
+      <datafield2><text>FETCH DEST ADDR</text></datafield2>
+      <datafield3><text>BA&lt;-RD,DATI</text><text>R12&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>345</key>
+      <imagefile>MP00082-25.jpg</imagefile>
+      <geometry>
+         <rectangle>2123,1478,2437,1616</rectangle>
+      </geometry>
+      <datafield1><text>11-H</text></datafield1>
+      <datafield2><text>INCREMENT RDST</text></datafield2>
+      <datafield3><text>RD&lt;-RD+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>035</key>
+      <imagefile>MP00082-25.jpg</imagefile>
+      <geometry>
+         <rectangle>2565,1213,2878,1350</rectangle>
+      </geometry>
+      <datafield1><text>11-I</text></datafield1>
+      <datafield2><text>DECREMENT RDST</text><text>ENAB STACK OVERFLOW</text></datafield2>
+      <datafield3><text>RD&lt;-RD-2</text><text>ENAB STOV</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>346</key>
+      <imagefile>MP00082-25.jpg</imagefile>
+      <geometry>
+         <rectangle>2564,1478,2872,1616</rectangle>
+      </geometry>
+      <datafield1><text>11-J</text></datafield1>
+      <datafield2><text>FETCH DEST ADDR</text></datafield2>
+      <datafield3><text>BA&lt;-RD,DATI</text><text>R12&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>354</key>
+      <imagefile>MP00082-25.jpg</imagefile>
+      <geometry>
+         <rectangle>2564,1742,2874,1880</rectangle>
+      </geometry>
+      <datafield1><text>11-R</text></datafield1>
+      <datafield2><text>FETCH SWAPPED</text><text>DEST OPERAND</text></datafield2>
+      <datafield3><text>BA&lt;-R12,DATIP</text><text>R12&lt;-UDATA SWAB,MAINT</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>036</key>
+      <imagefile>MP00082-25.jpg</imagefile>
+      <geometry>
+         <rectangle>3004,946,3317,1084</rectangle>
+      </geometry>
+      <datafield1><text>11-K</text></datafield1>
+      <datafield2><text>FETCH INDEX</text><text>DATA</text></datafield2>
+      <datafield3><text>BA&lt;-PC,DATI</text><text>B&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>347</key>
+      <imagefile>MP00082-25.jpg</imagefile>
+      <geometry>
+         <rectangle>3005,1213,3317,1351</rectangle>
+      </geometry>
+      <datafield1><text>11-L</text></datafield1>
+      <datafield2><text>INCREMENT PC</text></datafield2>
+      <datafield3><text>PC&lt;-PC+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>350</key>
+      <imagefile>MP00082-25.jpg</imagefile>
+      <geometry>
+         <rectangle>3005,1478,3317,1616</rectangle>
+      </geometry>
+      <datafield1><text>11-M</text></datafield1>
+      <datafield2><text>DETERMINE DEST ADDR</text></datafield2>
+      <datafield3><text>R12&lt;-RD+B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>037</key>
+      <imagefile>MP00082-25.jpg</imagefile>
+      <geometry>
+         <rectangle>3440,683,3752,821</rectangle>
+      </geometry>
+      <datafield1><text>11-N</text></datafield1>
+      <datafield2><text>FETCH INDEX DATA</text></datafield2>
+      <datafield3><text>BA&lt;-PC,DATI</text><text>B&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>351</key>
+      <imagefile>MP00082-25.jpg</imagefile>
+      <geometry>
+         <rectangle>3442,947,3753,1085</rectangle>
+      </geometry>
+      <datafield1><text>11-O</text></datafield1>
+      <datafield2><text>INCREMENT PC</text></datafield2>
+      <datafield3><text>PC&lt;-PC+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>352</key>
+      <imagefile>MP00082-25.jpg</imagefile>
+      <geometry>
+         <rectangle>3441,1214,3753,1350</rectangle>
+      </geometry>
+      <datafield1><text>11-P</text></datafield1>
+      <datafield2><text>DETERIME ADDR</text><text>OF DEST ADDR</text></datafield2>
+      <datafield3><text>R12&lt;-RD+B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>353</key>
+      <imagefile>MP00082-25.jpg</imagefile>
+      <geometry>
+         <rectangle>3441,1478,3754,1615</rectangle>
+      </geometry>
+      <datafield1><text>11-Q</text></datafield1>
+      <datafield2><text>FETCH DEST ADDR</text></datafield2>
+      <datafield3><text>BA&lt;-R12,DATI</text><text>R12&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>170</key>
+      <imagefile>MP00082-26.jpg</imagefile>
+      <geometry>
+         <rectangle>227,1485,543,1624</rectangle>
+      </geometry>
+      <datafield1><text>12-A</text></datafield1>
+      <datafield2><text>DEST OPERAND TO</text><text>BREG</text></datafield2>
+      <datafield3><text>B&lt;-RD</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>356</key>
+      <imagefile>MP00082-26.jpg</imagefile>
+      <geometry>
+         <rectangle>229,1748,545,1887</rectangle>
+      </geometry>
+      <datafield1><text>12-B</text></datafield1>
+      <datafield2><text>SHIFT OPERAND</text></datafield2>
+      <datafield3><text>B&lt;-B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>174</key>
+      <imagefile>MP00082-26.jpg</imagefile>
+      <geometry>
+         <rectangle>1113,1483,1427,1621</rectangle>
+      </geometry>
+      <datafield1><text>12-D</text></datafield1>
+      <datafield2><text>DECREMENT RDST</text><text>ENAB STACK OVERFLOW</text></datafield2>
+      <datafield3><text>RD&lt;-RD-(2)</text><text>ENAB STOV</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>171</key>
+      <imagefile>MP00082-26.jpg</imagefile>
+      <geometry>
+         <rectangle>1114,1750,1428,1886</rectangle>
+      </geometry>
+      <datafield1><text>12-C</text></datafield1>
+      <datafield2><text>FETCH DEST</text><text>OPERAND</text></datafield2>
+      <datafield3><text>BA&lt;-RD,DATIP</text><text>R12,B&lt;-(UDATA),MAINT</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>172</key>
+      <imagefile>MP00082-26.jpg</imagefile>
+      <geometry>
+         <rectangle>1554,1482,1869,1620</rectangle>
+      </geometry>
+      <datafield1><text>12-E</text></datafield1>
+      <datafield2><text>FETCH DEST</text><text>OPERAND</text></datafield2>
+      <datafield3><text>BA&lt;-RD,DATIP</text><text>R12,B&lt;-(UDATA),MAINT</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>375</key>
+      <imagefile>MP00082-26.jpg</imagefile>
+      <geometry>
+         <rectangle>1556,1747,1870,1884</rectangle>
+      </geometry>
+      <datafield1><text>12-F</text></datafield1>
+      <datafield2><text>INCREMENT RDST</text></datafield2>
+      <datafield3><text>RD&lt;-RD+(2)</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>370</key>
+      <imagefile>MP00082-26.jpg</imagefile>
+      <geometry>
+         <rectangle>1840,2010,2157,2148</rectangle>
+      </geometry>
+      <datafield1><text>12-S</text></datafield1>
+      <datafield2><text>SHIFHT OPERAND</text></datafield2>
+      <datafield3><text>B&lt;-B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>173</key>
+      <imagefile>MP00082-26.jpg</imagefile>
+      <geometry>
+         <rectangle>2124,1215,2437,1353</rectangle>
+      </geometry>
+      <datafield1><text>12-G</text></datafield1>
+      <datafield2><text>FETCH DEST ADDR</text></datafield2>
+      <datafield3><text>BA&lt;-RD,DATI</text><text>R11&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>360</key>
+      <imagefile>MP00082-26.jpg</imagefile>
+      <geometry>
+         <rectangle>2124,1479,2438,1618</rectangle>
+      </geometry>
+      <datafield1><text>12-H</text></datafield1>
+      <datafield2><text>INCREMENT RDST</text></datafield2>
+      <datafield3><text>RD&lt;-RD+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>175</key>
+      <imagefile>MP00082-26.jpg</imagefile>
+      <geometry>
+         <rectangle>2567,1215,2876,1351</rectangle>
+      </geometry>
+      <datafield1><text>12-I</text></datafield1>
+      <datafield2><text>DECREMENT RDST</text><text>ENAB STACK OVERFLOW</text></datafield2>
+      <datafield3><text>RD&lt;-RD-2</text><text>ENAB STOV</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>361</key>
+      <imagefile>MP00082-26.jpg</imagefile>
+      <geometry>
+         <rectangle>2568,1478,2878,1617</rectangle>
+      </geometry>
+      <datafield1><text>12-J</text></datafield1>
+      <datafield2><text>FETCH DEST</text><text>ADDR</text></datafield2>
+      <datafield3><text>BA&lt;-RD,DATI</text><text>R12&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>362</key>
+      <imagefile>MP00082-26.jpg</imagefile>
+      <geometry>
+         <rectangle>2568,1743,2879,1881</rectangle>
+      </geometry>
+      <datafield1><text>12-K</text></datafield1>
+      <datafield2><text>FETCH DEST</text><text>OPERAND</text></datafield2>
+      <datafield3><text>BA&lt;-R12,DATIP</text><text>R12,B&lt;-(UDATA),MAINT</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>176</key>
+      <imagefile>MP00082-26.jpg</imagefile>
+      <geometry>
+         <rectangle>3002,949,3313,1086</rectangle>
+      </geometry>
+      <datafield1><text>12-L</text></datafield1>
+      <datafield2><text>FETCH INDEX</text><text>DATA</text></datafield2>
+      <datafield3><text>BA&lt;-PC,DATI</text><text>B&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>363</key>
+      <imagefile>MP00082-26.jpg</imagefile>
+      <geometry>
+         <rectangle>3004,1214,3314,1351</rectangle>
+      </geometry>
+      <datafield1><text>12-M</text></datafield1>
+      <datafield2><text>INCREMENT PC</text></datafield2>
+      <datafield3><text>PC&lt;-PC+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>364</key>
+      <imagefile>MP00082-26.jpg</imagefile>
+      <geometry>
+         <rectangle>3004,1478,3315,1617</rectangle>
+      </geometry>
+      <datafield1><text>12-N</text></datafield1>
+      <datafield2><text>DETERMINE DEST</text><text>ADDR</text></datafield2>
+      <datafield3><text>R12&lt;-RD+B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>177</key>
+      <imagefile>MP00082-26.jpg</imagefile>
+      <geometry>
+         <rectangle>3436,684,3746,823</rectangle>
+      </geometry>
+      <datafield1><text>12-O</text></datafield1>
+      <datafield2><text>FETCH INDEX</text><text>DATA</text></datafield2>
+      <datafield3><text>BA&lt;-PC,DATI</text><text>B&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>365</key>
+      <imagefile>MP00082-26.jpg</imagefile>
+      <geometry>
+         <rectangle>3438,949,3748,1087</rectangle>
+      </geometry>
+      <datafield1>12-P<text></text></datafield1>
+      <datafield2><text>INCREMENT PC</text></datafield2>
+      <datafield3><text>PC&lt;-PC+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>366</key>
+      <imagefile>MP00082-26.jpg</imagefile>
+      <geometry>
+         <rectangle>3439,1214,3750,1352</rectangle>
+      </geometry>
+      <datafield1><text>12-Q</text></datafield1>
+      <datafield2><text>DETERMINE ADDR</text><text>OF DEST ADDR</text></datafield2>
+      <datafield3><text>R12&lt;-RD+B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>367</key>
+      <imagefile>MP00082-26.jpg</imagefile>
+      <geometry>
+         <rectangle>3441,1478,3750,1616</rectangle>
+      </geometry>
+      <datafield1><text>12-R</text></datafield1>
+      <datafield2><text>FETCH DEST ADDR</text></datafield2>
+      <datafield3><text>BA&lt;-R12,DATI</text><text>R12&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>100</key>
+      <imagefile>MP00082-27.jpg</imagefile>
+      <geometry>
+         <rectangle>231,1659,547,1798</rectangle>
+      </geometry>
+      <datafield1><text>13-A</text></datafield1>
+      <datafield2><text>DEST DATA TO R12</text><text>ENAB PREVIOUS MODE</text></datafield2>
+      <datafield3><text>R12&lt;-RD</text><text>PREVIOUS</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>104</key>
+      <imagefile>MP00082-27.jpg</imagefile>
+      <geometry>
+         <rectangle>1114,1125,1428,1265</rectangle>
+      </geometry>
+      <datafield1>13-C<text></text></datafield1>
+      <datafield2><text>DECREMENT RDST</text><text>ENAB STACK OVERFLOW</text></datafield2>
+      <datafield3><text>RD&lt;-RD-2</text><text>ENAB STOV</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>101</key>
+      <imagefile>MP00082-27.jpg</imagefile>
+      <geometry>
+         <rectangle>1115,1392,1428,1531</rectangle>
+      </geometry>
+      <datafield1><text>13-B</text></datafield1>
+      <datafield2><text>MOVE DEST ADDR</text><text>TO R12</text></datafield2>
+      <datafield3><text>R12&lt;-RD</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>102</key>
+      <imagefile>MP00082-27.jpg</imagefile>
+      <geometry>
+         <rectangle>1558,859,1871,999</rectangle>
+      </geometry>
+      <datafield1><text>13-D</text></datafield1>
+      <datafield2><text>MOVE DEST ADDR</text><text>TO R12</text></datafield2>
+      <datafield3><text>R12&lt;-RD</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>005</key>
+      <imagefile>MP00082-27.jpg</imagefile>
+      <geometry>
+         <rectangle>1558,1124,1871,1263</rectangle>
+      </geometry>
+      <datafield1><text>13-E</text></datafield1>
+      <datafield2><text>FETCH DEST DATA</text><text>ENAB PREVIOUS MODE</text></datafield2>
+      <datafield3><text>BA&lt;-R12,DATI</text><text>R12,B&lt;-UDATA,PREVIOUS</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>371</key>
+      <imagefile>MP00082-27.jpg</imagefile>
+      <geometry>
+         <rectangle>1558,1391,1872,1530</rectangle>
+      </geometry>
+      <datafield1><text>13-F</text></datafield1>
+      <datafield2><text>INCREMENT RDST</text></datafield2>
+      <datafield3><text>RD&lt;-RD+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>463</key>
+      <imagefile>MP00082-27.jpg</imagefile>
+      <geometry>
+         <rectangle>1843,1921,2160,2057</rectangle>
+      </geometry>
+      <datafield1><text>13-S</text></datafield1>
+      <datafield2><text>DECREMENT STACK</text><text>POINTER</text></datafield2>
+      <datafield3><text>R6&lt;-R6-2</text><text>ENAB STOV</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>472</key>
+      <imagefile>MP00082-27.jpg</imagefile>
+      <geometry>
+         <rectangle>1844,2134,2161,2272</rectangle>
+      </geometry>
+      <datafield1><text>13-T</text></datafield1>
+      <datafield2><text>SET UP BUS ADDR</text></datafield2>
+      <datafield3><text>BA&lt;-R6</text><text>MAINT</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>103</key>
+      <imagefile>MP00082-27.jpg</imagefile>
+      <geometry>
+         <rectangle>2125,1123,2441,1263</rectangle>
+      </geometry>
+      <datafield1><text>13-G</text></datafield1>
+      <datafield2><text>FETCH DEST</text><text>ADDR</text></datafield2>
+      <datafield3><text>BA&lt;-RD,DATI</text><text>R12&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>372</key>
+      <imagefile>MP00082-27.jpg</imagefile>
+      <geometry>
+         <rectangle>2126,1390,2442,1529</rectangle>
+      </geometry>
+      <datafield1><text>13-H</text></datafield1>
+      <datafield2><text>INCREMENT RDST</text></datafield2>
+      <datafield3><text>RD&lt;-RD+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>105</key>
+      <imagefile>MP00082-27.jpg</imagefile>
+      <geometry>
+         <rectangle>2569,1123,2881,1263</rectangle>
+      </geometry>
+      <datafield1><text>13-I</text></datafield1>
+      <datafield2><text>DECREMENT RDST</text><text>ENAB STACK OVERFLOW</text></datafield2>
+      <datafield3><text>RD&lt;-RD-2</text><text>ENAB STOV</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>373</key>
+      <imagefile>MP00082-27.jpg</imagefile>
+      <geometry>
+         <rectangle>2569,1390,2882,1529</rectangle>
+      </geometry>
+      <datafield1><text>13-J</text></datafield1>
+      <datafield2><text>FETCH DEST</text><text>ADDR</text></datafield2>
+      <datafield3><text>BA&lt;-RD,DATI</text><text>R12&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>455</key>
+      <imagefile>MP00082-27.jpg</imagefile>
+      <geometry>
+         <rectangle>2570,1653,2882,1792</rectangle>
+      </geometry>
+      <datafield1><text>13-R</text></datafield1>
+      <datafield2><text>FETCH DEST DATA</text><text>ENAB PREVIOUS MODE</text></datafield2>
+      <datafield3><text>BA&lt;-R12,DATI</text><text>R12,B&lt;-UDATA,PREVIOUS</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>106</key>
+      <imagefile>MP00082-27.jpg</imagefile>
+      <geometry>
+         <rectangle>3007,860,3319,999</rectangle>
+      </geometry>
+      <datafield1><text>13-K</text></datafield1>
+      <datafield2><text>FETCH INDEX</text><text>DATA</text></datafield2>
+      <datafield3><text>BA&lt;-PC,DATI</text><text>B&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>374</key>
+      <imagefile>MP00082-27.jpg</imagefile>
+      <geometry>
+         <rectangle>3008,1123,3319,1263</rectangle>
+      </geometry>
+      <datafield1><text>13-L</text></datafield1>
+      <datafield2><text>INCREMENT</text><text>PC</text></datafield2>
+      <datafield3><text>PC&lt;-PC+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>375</key>
+      <imagefile>MP00082-27.jpg</imagefile>
+      <geometry>
+         <rectangle>3008,1390,3320,1529</rectangle>
+      </geometry>
+      <datafield1><text>13-M</text></datafield1>
+      <datafield2><text>DETERMINE</text><text>DEST ADDR</text></datafield2>
+      <datafield3><text>R12&lt;-RD+B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>107</key>
+      <imagefile>MP00082-27.jpg</imagefile>
+      <geometry>
+         <rectangle>3445,596,3754,734</rectangle>
+      </geometry>
+      <datafield1><text>13-N</text></datafield1>
+      <datafield2><text>FETCH INDEX</text><text>DATA</text></datafield2>
+      <datafield3><text>BA&lt;-PC,DATI</text><text>B&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>376</key>
+      <imagefile>MP00082-27.jpg</imagefile>
+      <geometry>
+         <rectangle>3446,860,3754,999</rectangle>
+      </geometry>
+      <datafield1><text>13-O</text></datafield1>
+      <datafield2><text>INCREMENT PC</text></datafield2>
+      <datafield3><text>PC&lt;-PC+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>377</key>
+      <imagefile>MP00082-27.jpg</imagefile>
+      <geometry>
+         <rectangle>3446,1124,3756,1264</rectangle>
+      </geometry>
+      <datafield1><text>13-P</text></datafield1>
+      <datafield2><text>DETERMINE ADDR</text><text>OF DEST ADDR</text></datafield2>
+      <datafield3><text>R12&lt;-RD+B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>643</key>
+      <imagefile>MP00082-27.jpg</imagefile>
+      <geometry>
+         <rectangle>3446,1390,3755,1530</rectangle>
+      </geometry>
+      <datafield1><text>13-Q</text></datafield1>
+      <datafield2><text>FETCH DEST</text><text>ADDR</text></datafield2>
+      <datafield3><text>BA&lt;-R12,DATI</text><text>R12&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>250</key>
+      <imagefile>MP00082-28.jpg</imagefile>
+      <geometry>
+         <rectangle>243,1747,560,1885</rectangle>
+      </geometry>
+      <datafield1>14-A<text>14-A</text></datafield1>
+      <datafield2><text>MOVE DATA TO</text><text>DEST REG</text></datafield2>
+      <datafield3><text>RD&lt;-R12 OP B</text><text>LOAD CC,PREVIOUS</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>254</key>
+      <imagefile>MP00082-28.jpg</imagefile>
+      <geometry>
+         <rectangle>1113,1202,1428,1342</rectangle>
+      </geometry>
+      <datafield1><text>14-C</text></datafield1>
+      <datafield2><text>DECREMENT RDST</text><text>ENAB STACK OVERFLOW</text></datafield2>
+      <datafield3><text>RD&lt;-RD-2</text><text>ENAB STOV</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>251</key>
+      <imagefile>MP00082-28.jpg</imagefile>
+      <geometry>
+         <rectangle>1115,1468,1429,1607</rectangle>
+      </geometry>
+      <datafield1><text>14-B</text></datafield1>
+      <datafield2><text>MOVE DEST ADDR</text><text>TO R13</text></datafield2>
+      <datafield3><text>R13&lt;-RD</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>252</key>
+      <imagefile>MP00082-28.jpg</imagefile>
+      <geometry>
+         <rectangle>1558,1203,1872,1341</rectangle>
+      </geometry>
+      <datafield1><text>14-F</text></datafield1>
+      <datafield2><text>MOVE DEST ADDR</text><text>TO R13</text></datafield2>
+      <datafield3><text>R13&lt;-RD</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>010</key>
+      <imagefile>MP00082-28.jpg</imagefile>
+      <geometry>
+         <rectangle>1844,103,2150,243</rectangle>
+      </geometry>
+      <datafield1><text>14-D</text></datafield1>
+      <datafield2><text>FETCH WORD FROM</text><text>TOP OF STACK</text></datafield2>
+      <datafield3><text>BA&lt;-R6,DATI</text><text>B&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>644</key>
+      <imagefile>MP00082-28.jpg</imagefile>
+      <geometry>
+         <rectangle>1844,281,2150,420</rectangle>
+      </geometry>
+      <datafield1><text>14-T</text></datafield1>
+      <datafield2><text>MOVE STACK DATA</text><text>TO R12</text></datafield2>
+      <datafield3><text>R12&lt;-B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>642</key>
+      <imagefile>MP00082-28.jpg</imagefile>
+      <geometry>
+         <rectangle>1845,457,2149,596</rectangle>
+      </geometry>
+      <datafield1><text>14-E</text></datafield1>
+      <datafield2><text>INCREMENT</text><text>STACK POINTER</text></datafield2>
+      <datafield3><text>R6&lt;-R6+2</text><text>BUT DEST</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>513</key>
+      <imagefile>MP00082-28.jpg</imagefile>
+      <geometry>
+         <rectangle>1841,1821,2159,1957</rectangle>
+      </geometry>
+      <datafield1><text>14-R</text></datafield1>
+      <datafield2><text>SET UP BUS ADDR</text><text>ENAB PREVIOUS MODE</text></datafield2>
+      <datafield3><text>BA&lt;-R13</text><text>MAINT,PREVIOUS</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>520</key>
+      <imagefile>MP00082-28.jpg</imagefile>
+      <geometry>
+         <rectangle>1843,2071,2160,2210</rectangle>
+      </geometry>
+      <datafield1><text>14-S</text></datafield1>
+      <datafield2><text>OUTPUT DATA TO</text><text>DEST ADDR</text></datafield2>
+      <datafield3><text>DATO,UDATA&lt;-R12 OP B</text><text>LOAD CC</text><text>MAINT,PREVIOUS</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>253</key>
+      <imagefile>MP00082-28.jpg</imagefile>
+      <geometry>
+         <rectangle>2127,1202,2442,1340</rectangle>
+      </geometry>
+      <datafield1><text>14-H</text></datafield1>
+      <datafield2><text>FETCH DEST</text><text>ADDR</text></datafield2>
+      <datafield3><text>BA&lt;-RD,DATI</text><text>R13&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>474</key>
+      <imagefile>MP00082-28.jpg</imagefile>
+      <geometry>
+         <rectangle>2128,1466,2443,1605</rectangle>
+      </geometry>
+      <datafield1><text>14-G</text></datafield1>
+      <datafield2><text>INCREMENT RDST</text></datafield2>
+      <datafield3><text>RD&lt;-RD+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>255</key>
+      <imagefile>MP00082-28.jpg</imagefile>
+      <geometry>
+         <rectangle>2569,1202,2883,1339</rectangle>
+      </geometry>
+      <datafield1><text>14-I</text></datafield1>
+      <datafield2><text>DECREMENT RDST</text><text>ENAB STACK OVERFLOW</text></datafield2>
+      <datafield3><text>RD&lt;-RD-2</text><text>ENAB STOV</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>475</key>
+      <imagefile>MP00082-28.jpg</imagefile>
+      <geometry>
+         <rectangle>2570,1466,2883,1603</rectangle>
+      </geometry>
+      <datafield1><text>14-J</text></datafield1>
+      <datafield2><text>FETCH DEST</text><text>ADDR</text></datafield2>
+      <datafield3><text>BA&lt;-RD,DATI</text><text>R13&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>256</key>
+      <imagefile>MP00082-28.jpg</imagefile>
+      <geometry>
+         <rectangle>3009,937,3320,1078</rectangle>
+      </geometry>
+      <datafield1><text>14-K</text></datafield1>
+      <datafield2><text>FETCH</text><text>INDEX DATA</text></datafield2>
+      <datafield3><text>BA&lt;-PC,DATI</text><text>B&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>476</key>
+      <imagefile>MP00082-28.jpg</imagefile>
+      <geometry>
+         <rectangle>3010,1201,3322,1339</rectangle>
+      </geometry>
+      <datafield1><text>14-L</text></datafield1>
+      <datafield2><text>INCREMENT PC</text></datafield2>
+      <datafield3><text></text><text>PC&lt;-PC+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>552</key>
+      <imagefile>MP00082-28.jpg</imagefile>
+      <geometry>
+         <rectangle>3010,1465,3322,1601</rectangle>
+      </geometry>
+      <datafield1><text>14-M</text></datafield1>
+      <datafield2><text>DETERMINE</text><text>DEST ADDR</text></datafield2>
+      <datafield3><text>R13&lt;-RD+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>257</key>
+      <imagefile>MP00082-28.jpg</imagefile>
+      <geometry>
+         <rectangle>3444,674,3754,811</rectangle>
+      </geometry>
+      <datafield1><text>14-N</text></datafield1>
+      <datafield2><text>FETCH</text><text>INDEX DATA</text></datafield2>
+      <datafield3><text>BA&lt;-PC,DATI</text><text>B&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>506</key>
+      <imagefile>MP00082-28.jpg</imagefile>
+      <geometry>
+         <rectangle>3446,939,3756,1079</rectangle>
+      </geometry>
+      <datafield1><text>14-D</text></datafield1>
+      <datafield2><text>INCREMENT PC</text></datafield2>
+      <datafield3><text>PC&lt;-PC+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>510</key>
+      <imagefile>MP00082-28.jpg</imagefile>
+      <geometry>
+         <rectangle>3446,1201,3756,1338</rectangle>
+      </geometry>
+      <datafield1><text>14-P</text></datafield1>
+      <datafield2><text>DETERMINE ADDR</text><text>OF DEST ADDR</text></datafield2>
+      <datafield3><text>R13&lt;-RD+B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>514</key>
+      <imagefile>MP00082-28.jpg</imagefile>
+      <geometry>
+         <rectangle>3447,1465,3757,1599</rectangle>
+      </geometry>
+      <datafield1><text>14-Q</text></datafield1>
+      <datafield2><text>FETCH DEST</text><text>ADDR</text></datafield2>
+      <datafield3><text>BA&lt;-R13,DATI</text><text>R13&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>120</key>
+      <imagefile>MP00082-29.jpg</imagefile>
+      <geometry>
+         <rectangle>93,1172,413,1322</rectangle>
+      </geometry>
+      <datafield1><text>15-A</text></datafield1>
+      <datafield2><text>DEST OPERAND TO</text><text>R12 AND BREG</text></datafield2>
+      <datafield3><text>R12,B&lt;-RD</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>121</key>
+      <imagefile>MP00082-29.jpg</imagefile>
+      <geometry>
+         <rectangle>854,1168,1171,1320</rectangle>
+      </geometry>
+      <datafield1><text>15-F</text></datafield1>
+      <datafield2><text>FETCH DEST</text><text>OPERAND</text></datafield2>
+      <datafield3><text>BA&lt;-RD,DATI</text><text>R12,B&lt;-(UDATA)</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>124</key>
+      <imagefile>MP00082-29.jpg</imagefile>
+      <geometry>
+         <rectangle>1106,940,1427,1090</rectangle>
+      </geometry>
+      <datafield1><text>15-G</text></datafield1>
+      <datafield2><text>DECREMENT RDST</text><text>ENAB STACK OVERFLOW</text></datafield2>
+      <datafield3><text>RD&lt;-RD-(2)</text><text>ENAB STOV</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>675</key>
+      <imagefile>MP00082-29.jpg</imagefile>
+      <geometry>
+         <rectangle>1235,1396,1550,1546</rectangle>
+      </geometry>
+      <datafield1><text>15-B</text></datafield1>
+      <datafield2><text>SET R17 TO ALL</text><text>ONES</text></datafield2>
+      <datafield3><text>R17&lt;-1</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>676</key>
+      <imagefile>MP00082-29.jpg</imagefile>
+      <geometry>
+         <rectangle>1235,1585,1553,1736</rectangle>
+      </geometry>
+      <datafield1><text>15-C</text></datafield1>
+      <datafield2><text>SET R17 EQUAL</text><text>TO PSW ADDR</text></datafield2>
+      <datafield3><text>R17&lt;-R17-1</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>677</key>
+      <imagefile>MP00082-29.jpg</imagefile>
+      <geometry>
+         <rectangle>1237,1776,1555,1926</rectangle>
+      </geometry>
+      <datafield1><text>15-D</text></datafield1>
+      <datafield2><text>PLACE PSW ADDR</text><text>ON BUS ADDR LINES</text></datafield2>
+      <datafield3><text>BA&lt;-R17</text><text>MAINT</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>704</key>
+      <imagefile>MP00082-29.jpg</imagefile>
+      <geometry>
+         <rectangle>1239,1963,1556,2116</rectangle>
+      </geometry>
+      <datafield1><text>15-E</text></datafield1>
+      <datafield2><text>OUTPUT DEST OPERAND</text><text>TO PSW</text></datafield2>
+      <datafield3><text>DATOB</text><text>UDATA&lt;-R12</text><text>MAINT</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>122</key>
+      <imagefile>MP00082-29.jpg</imagefile>
+      <geometry>
+         <rectangle>1605,938,1932,1089</rectangle>
+      </geometry>
+      <datafield1><text>15-H</text></datafield1>
+      <datafield2><text>FETCH DEST</text><text>OPERAND</text></datafield2>
+      <datafield3><text>BA&lt;-RD,DATI</text><text>R12,B&lt;-(UDATA)</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>663</key>
+      <imagefile>MP00082-29.jpg</imagefile>
+      <geometry>
+         <rectangle>1612,1166,1933,1316</rectangle>
+      </geometry>
+      <datafield1><text>15-I</text></datafield1>
+      <datafield2><text>INCREMENT RDST</text></datafield2>
+      <datafield3><text>RD&lt;-RD+(2)</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>123</key>
+      <imagefile>MP00082-29.jpg</imagefile>
+      <geometry>
+         <rectangle>2114,749,2432,899</rectangle>
+      </geometry>
+      <datafield1><text>15-J</text></datafield1>
+      <datafield2><text>FETCH DEST ADDR</text></datafield2>
+      <datafield3><text>BA&lt;-RD,DATI</text><text>R12&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>664</key>
+      <imagefile>MP00082-29.jpg</imagefile>
+      <geometry>
+         <rectangle>2116,937,2433,1087</rectangle>
+      </geometry>
+      <datafield1><text>15-K</text></datafield1>
+      <datafield2><text>INCREMENT RDST</text></datafield2>
+      <datafield3><text>RD&lt;-RD+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>666</key>
+      <imagefile>MP00082-29.jpg</imagefile>
+      <geometry>
+         <rectangle>2113,1164,2434,1316</rectangle>
+      </geometry>
+      <datafield1><text>15-L</text></datafield1>
+      <datafield2><text>FETCH DEST</text><text>OPERAND</text></datafield2>
+      <datafield3><text>BA&lt;-R12,DATI</text><text>R12,B&lt;-(UDATA)</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>125</key>
+      <imagefile>MP00082-29.jpg</imagefile>
+      <geometry>
+         <rectangle>2624,749,2940,899</rectangle>
+      </geometry>
+      <datafield1><text>15-M</text></datafield1>
+      <datafield2><text>DECREMENT RDST</text><text>ENAB STACK OVERFLOW</text></datafield2>
+      <datafield3><text>RD&lt;-RD-2</text><text>ENAB STOV</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>665</key>
+      <imagefile>MP00082-29.jpg</imagefile>
+      <geometry>
+         <rectangle>2625,937,2940,1086</rectangle>
+      </geometry>
+      <datafield1><text>15-N</text></datafield1>
+      <datafield2><text>FETCH DEST ADDR</text></datafield2>
+      <datafield3><text>BA&lt;-RD,DATI</text><text>R12&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>126</key>
+      <imagefile>MP00082-29.jpg</imagefile>
+      <geometry>
+         <rectangle>3124,558,3439,710</rectangle>
+      </geometry>
+      <datafield1><text>15-O</text></datafield1>
+      <datafield2><text>FETCH</text><text>INDEX DATA</text></datafield2>
+      <datafield3><text>BA&lt;-PC,DATI</text><text>B&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>667</key>
+      <imagefile>MP00082-29.jpg</imagefile>
+      <geometry>
+         <rectangle>3126,748,3442,898</rectangle>
+      </geometry>
+      <datafield1><text>15-P</text></datafield1>
+      <datafield2><text>INCREMENET PC</text></datafield2>
+      <datafield3><text>PC&lt;-PC+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>671</key>
+      <imagefile>MP00082-29.jpg</imagefile>
+      <geometry>
+         <rectangle>3126,936,3440,1087</rectangle>
+      </geometry>
+      <datafield1><text>15-Q</text></datafield1>
+      <datafield2><text>DETERMINE DEST ADDR</text></datafield2>
+      <datafield3><text>R12&lt;-RD+B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>127</key>
+      <imagefile>MP00082-29.jpg</imagefile>
+      <geometry>
+         <rectangle>3620,372,3932,523</rectangle>
+      </geometry>
+      <datafield1><text>15-R</text></datafield1>
+      <datafield2><text>FETCH</text><text>INDEX DATA</text></datafield2>
+      <datafield3><text>BA&lt;-PC,DATI</text><text>B&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>672</key>
+      <imagefile>MP00082-29.jpg</imagefile>
+      <geometry>
+         <rectangle>3622,561,3934,711</rectangle>
+      </geometry>
+      <datafield1><text>15-S</text></datafield1>
+      <datafield2><text>INCREMENT PC</text></datafield2>
+      <datafield3><text>PC&lt;-PC+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>673</key>
+      <imagefile>MP00082-29.jpg</imagefile>
+      <geometry>
+         <rectangle>3622,749,3932,898</rectangle>
+      </geometry>
+      <datafield1><text>15-T</text></datafield1>
+      <datafield2><text>DETERIME ADDR</text><text>OF DEST ADDR</text></datafield2>
+      <datafield3><text>R12&lt;-RD+B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>674</key>
+      <imagefile>MP00082-29.jpg</imagefile>
+      <geometry>
+         <rectangle>3625,936,3933,1087</rectangle>
+      </geometry>
+      <datafield1><text>15-U</text></datafield1>
+      <datafield2><text>FETCH DEST</text><text>ADDR</text></datafield2>
+      <datafield3><text>BA&lt;-R12,DATI</text><text>R12&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>130</key>
+      <imagefile>MP00082-30.jpg</imagefile>
+      <geometry>
+         <rectangle>225,1486,540,1621</rectangle>
+      </geometry>
+      <datafield1><text>16-A</text></datafield1>
+      <datafield2><text>PSW DATA TO R12</text></datafield2>
+      <datafield3><text>R12&lt;-PSW</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>705</key>
+      <imagefile>MP00082-30.jpg</imagefile>
+      <geometry>
+         <rectangle>228,1749,543,1887</rectangle>
+      </geometry>
+      <datafield1><text>16-B</text></datafield1>
+      <datafield2><text>MOVE R12 TO RDST</text></datafield2>
+      <datafield3><text>RD&lt;-R12 OP B</text><text>LOAD CC</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>134</key>
+      <imagefile>MP00082-30.jpg</imagefile>
+      <geometry>
+         <rectangle>1110,1481,1428,1617</rectangle>
+      </geometry>
+      <datafield1><text>16-E</text></datafield1>
+      <datafield2><text>DECREMENT RDST</text><text>ENAB STACK OVERFLOW</text></datafield2>
+      <datafield3><text>RD&lt;-RD-2</text><text>ENAB STOV</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>131</key>
+      <imagefile>MP00082-30.jpg</imagefile>
+      <geometry>
+         <rectangle>1112,1746,1427,1885</rectangle>
+      </geometry>
+      <datafield1><text>16-C</text></datafield1>
+      <datafield2><text>PLACE DEST ADDR</text><text>ON BUS ADDR LINES</text></datafield2>
+      <datafield3><text>BA&lt;-RD</text><text>(MAINT)</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>706</key>
+      <imagefile>MP00082-30.jpg</imagefile>
+      <geometry>
+         <rectangle>1114,2011,1429,2151</rectangle>
+      </geometry>
+      <datafield1><text>16-D</text></datafield1>
+      <datafield2><text>MOVE PSW DATA</text><text>TO R12</text></datafield2>
+      <datafield3><text>R12&lt;-PSW</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>132</key>
+      <imagefile>MP00082-30.jpg</imagefile>
+      <geometry>
+         <rectangle>1555,1744,1873,1882</rectangle>
+      </geometry>
+      <datafield1><text>16-F</text></datafield1>
+      <datafield2><text>DEST ADDR TO BUS</text><text>INCREMENT RDST</text></datafield2>
+      <datafield3><text>BA&lt;-RD,(MAINT)</text><text>RD&lt;-RD+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>133</key>
+      <imagefile>MP00082-30.jpg</imagefile>
+      <geometry>
+         <rectangle>2123,1209,2438,1348</rectangle>
+      </geometry>
+      <datafield1><text>16-G</text></datafield1>
+      <datafield2><text>FETCH DEST</text><text>ADDR</text></datafield2>
+      <datafield3><text>BA&lt;-RD,DATI</text><text>R13&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>710</key>
+      <imagefile>MP00082-30.jpg</imagefile>
+      <geometry>
+         <rectangle>2124,1477,2438,1614</rectangle>
+      </geometry>
+      <datafield1><text>16-H</text></datafield1>
+      <datafield2><text>INCREMENT RDST</text></datafield2>
+      <datafield3><text>RD&lt;-RD+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>717</key>
+      <imagefile>MP00082-30.jpg</imagefile>
+      <geometry>
+         <rectangle>2126,1742,2440,1881</rectangle>
+      </geometry>
+      <datafield1><text>16-I</text></datafield1>
+      <datafield2><text>PLACE DEST ADDR</text><text>ON BUS ADDR LINES</text></datafield2>
+      <datafield3><text>BA&lt;-R13</text><text>(MAINT)</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>135</key>
+      <imagefile>MP00082-30.jpg</imagefile>
+      <geometry>
+         <rectangle>2565,1209,2879,1349</rectangle>
+      </geometry>
+      <datafield1><text>16-J</text></datafield1>
+      <datafield2><text>DECREMENT RDST</text><text>ENAB STACK OVERFLOW</text></datafield2>
+      <datafield3><text>RD&lt;-RD-2</text><text>ENAB STOV</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>711</key>
+      <imagefile>MP00082-30.jpg</imagefile>
+      <geometry>
+         <rectangle>2567,1477,2880,1614</rectangle>
+      </geometry>
+      <datafield1><text>16-K</text></datafield1>
+      <datafield2><text>FETCH DEST</text><text>ADDR</text></datafield2>
+      <datafield3><text>BA&lt;-RD,DATI</text><text>R13&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>136</key>
+      <imagefile>MP00082-30.jpg</imagefile>
+      <geometry>
+         <rectangle>3003,943,3315,1082</rectangle>
+      </geometry>
+      <datafield1>16-L<text></text></datafield1>
+      <datafield2><text>FETCH INDEX</text><text>DATA</text></datafield2>
+      <datafield3><text>BA&lt;-PC,DATI</text><text>B&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>712</key>
+      <imagefile>MP00082-30.jpg</imagefile>
+      <geometry>
+         <rectangle>3005,1210,3317,1349</rectangle>
+      </geometry>
+      <datafield1><text>16-M</text></datafield1>
+      <datafield2><text>INCREMENT PC</text></datafield2>
+      <datafield3><text>PC&lt;-PC+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>713</key>
+      <imagefile>MP00082-30.jpg</imagefile>
+      <geometry>
+         <rectangle>3006,1477,3317,1613</rectangle>
+      </geometry>
+      <datafield1><text>16-N</text></datafield1>
+      <datafield2><text>DETERMINE</text><text>DEST ADDR</text></datafield2>
+      <datafield3><text>R13&lt;-RD+B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>137</key>
+      <imagefile>MP00082-30.jpg</imagefile>
+      <geometry>
+         <rectangle>3438,680,3750,818</rectangle>
+      </geometry>
+      <datafield1><text>16-O</text></datafield1>
+      <datafield2><text>FETCH</text><text>INDEX DATA</text></datafield2>
+      <datafield3><text>BA&lt;-PC,DATI</text><text>B&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>714</key>
+      <imagefile>MP00082-30.jpg</imagefile>
+      <geometry>
+         <rectangle>3440,945,3751,1083</rectangle>
+      </geometry>
+      <datafield1><text>16-P</text></datafield1>
+      <datafield2><text>INCREMENT PC</text></datafield2>
+      <datafield3><text>PC&lt;-PC+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>715</key>
+      <imagefile>MP00082-30.jpg</imagefile>
+      <geometry>
+         <rectangle>3443,1210,3753,1350</rectangle>
+      </geometry>
+      <datafield1><text>16-Q</text></datafield1>
+      <datafield2><text>DETERMINE ADDR</text><text>OF DEST ADDR</text></datafield2>
+      <datafield3><text>R13&lt;-RD+B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>716</key>
+      <imagefile>MP00082-30.jpg</imagefile>
+      <geometry>
+         <rectangle>3444,1478,3756,1613</rectangle>
+      </geometry>
+      <datafield1><text>16-R</text></datafield1>
+      <datafield2><text>FETCH DEST</text><text>ADDR</text></datafield2>
+      <datafield3><text>BA&lt;-R13,DATI</text><text>R13&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>020</key>
+      <imagefile>MP00082-31.jpg</imagefile>
+      <geometry>
+         <rectangle>222,373,538,511</rectangle>
+      </geometry>
+      <datafield1><text>17-A</text></datafield1>
+      <datafield2><text>SIGN EXTEND BREG</text></datafield2>
+      <datafield3><text>B&lt;-B SEX</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>553</key>
+      <imagefile>MP00082-31.jpg</imagefile>
+      <geometry>
+         <rectangle>221,574,538,712</rectangle>
+      </geometry>
+      <datafield1><text>17-B</text></datafield1>
+      <datafield2><text>SHIFT BREG LEFT</text><text>REG5 TO BXREG</text></datafield2>
+      <datafield3><text>ASLB</text><text>BX&lt;-R5</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>555</key>
+      <imagefile>MP00082-31.jpg</imagefile>
+      <geometry>
+         <rectangle>221,776,538,914</rectangle>
+      </geometry>
+      <datafield1><text>17-C</text></datafield1>
+      <datafield2><text>ADD PC TO BREG</text></datafield2>
+      <datafield3><text>B&lt;-PC+B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>436</key>
+      <imagefile>MP00082-31.jpg</imagefile>
+      <geometry>
+         <rectangle>220,978,537,1118</rectangle>
+      </geometry>
+      <datafield1><text>17-D</text></datafield1>
+      <datafield2><text>BREG TO STACK</text><text>POINTER</text></datafield2>
+      <datafield3><text>R6&lt;-B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>556</key>
+      <imagefile>MP00082-31.jpg</imagefile>
+      <geometry>
+         <rectangle>221,1182,538,1319</rectangle>
+      </geometry>
+      <datafield1><text>17-E</text></datafield1>
+      <datafield2><text>BXREG TO PC</text></datafield2>
+      <datafield3><text>PC&lt;-BX</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>557</key>
+      <imagefile>MP00082-31.jpg</imagefile>
+      <geometry>
+         <rectangle>221,1382,538,1521</rectangle>
+      </geometry>
+      <datafield1><text>17-F</text></datafield1>
+      <datafield2><text>FETCH TOP OF STACK</text></datafield2>
+      <datafield3><text>BA&lt;-R6,DATI</text><text>B&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>551</key>
+      <imagefile>MP00082-31.jpg</imagefile>
+      <geometry>
+         <rectangle>222,1586,539,1723</rectangle>
+      </geometry>
+      <datafield1><text>17-G</text></datafield1>
+      <datafield2><text>DATA TO REG 5</text></datafield2>
+      <datafield3><text>R5&lt;-B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>561</key>
+      <imagefile>MP00082-31.jpg</imagefile>
+      <geometry>
+         <rectangle>222,1788,540,1926</rectangle>
+      </geometry>
+      <datafield1><text>17-H</text></datafield1>
+      <datafield2><text>STEP STACK POINTER</text></datafield2>
+      <datafield3><text>R6&lt;-R6+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>200</key>
+      <imagefile>MP00082-31.jpg</imagefile>
+      <geometry>
+         <rectangle>665,371,980,510</rectangle>
+      </geometry>
+      <datafield1><text>17-I</text></datafield1>
+      <datafield2><text>SIGN EXTEND BREG</text></datafield2>
+      <datafield3><text>B&lt;-B SEX</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>522</key>
+      <imagefile>MP00082-31.jpg</imagefile>
+      <geometry>
+         <rectangle>665,574,980,711</rectangle>
+      </geometry>
+      <datafield1><text>17-J</text></datafield1>
+      <datafield2><text>SHIFT BREG LEFT</text><text>ONE BIT</text></datafield2>
+      <datafield3><text>ASLB</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>523</key>
+      <imagefile>MP00082-31.jpg</imagefile>
+      <geometry>
+         <rectangle>666,776,980,914</rectangle>
+      </geometry>
+      <datafield1><text>17-K</text></datafield1>
+      <datafield2><text>ADD OFFSET TO PC</text></datafield2>
+      <datafield3><text>PC&lt;-PC+B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>004</key>
+      <imagefile>MP00082-31.jpg</imagefile>
+      <geometry>
+         <rectangle>665,1181,981,1318</rectangle>
+      </geometry>
+      <datafield1><text>17-L</text></datafield1>
+      <datafield2><text>DEST REG TO PC</text></datafield2>
+      <datafield3><text>PC&lt;-RD</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>525</key>
+      <imagefile>MP00082-31.jpg</imagefile>
+      <geometry>
+         <rectangle>665,1382,982,1522</rectangle>
+      </geometry>
+      <datafield1><text>17-M</text></datafield1>
+      <datafield2><text>FETCH TOP OF STACK</text></datafield2>
+      <datafield3><text>BA&lt;-R6,DATI</text><text>B&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>527</key>
+      <imagefile>MP00082-31.jpg</imagefile>
+      <geometry>
+         <rectangle>666,1585,983,1723</rectangle>
+      </geometry>
+      <datafield1><text>17-N</text></datafield1>
+      <datafield2><text>STEP STACK POINTER</text></datafield2>
+      <datafield3><text>R6&lt;-R6+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>533</key>
+      <imagefile>MP00082-31.jpg</imagefile>
+      <geometry>
+         <rectangle>668,1787,984,1925</rectangle>
+      </geometry>
+      <datafield1><text>17-O</text></datafield1>
+      <datafield2><text>LOAD STACK DATA</text><text>IN TO DEST REG</text></datafield2>
+      <datafield3><text>RD&lt;-B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>270</key>
+      <imagefile>MP00082-31.jpg</imagefile>
+      <geometry>
+         <rectangle>1233,369,1548,507</rectangle>
+      </geometry>
+      <datafield1><text>17-P</text></datafield1>
+      <datafield2><text>RDEST TO BREG</text></datafield2>
+      <datafield3><text>B&lt;-RD</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>203</key>
+      <imagefile>MP00082-31.jpg</imagefile>
+      <geometry>
+         <rectangle>1234,572,1548,709</rectangle>
+      </geometry>
+      <datafield1><text>17-Q</text></datafield1>
+      <datafield2><text>OPERATE</text><text>SET COND CODES</text></datafield2>
+      <datafield3><text>RS OP B</text><text>LOAD CC</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>006</key>
+      <imagefile>MP00082-31.jpg</imagefile>
+      <geometry>
+         <rectangle>1235,1179,1549,1316</rectangle>
+      </geometry>
+      <datafield1><text>17-R</text></datafield1>
+      <datafield2><text>PSW TO REG 12</text></datafield2>
+      <datafield3><text>R12&lt;-PSW</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>541</key>
+      <imagefile>MP00082-31.jpg</imagefile>
+      <geometry>
+         <rectangle>1235,1381,1549,1519</rectangle>
+      </geometry>
+      <datafield1><text>17-S</text></datafield1>
+      <datafield2><text>MASK AND SET</text><text>COND CODES</text></datafield2>
+      <datafield3><text>CC&lt;-R12 &amp; ~B</text><text>LOAD CC</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>210</key>
+      <imagefile>MP00082-31.jpg</imagefile>
+      <geometry>
+         <rectangle>1238,2188,1553,2327</rectangle>
+      </geometry>
+      <datafield1><text>17-T</text></datafield1>
+      <datafield2><text>OPERATE</text><text>SET COND CODES</text></datafield2>
+      <datafield3><text>RD&lt;-(RS OP B)</text><text>LOAD CC</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>240</key>
+      <imagefile>MP00082-31.jpg</imagefile>
+      <geometry>
+         <rectangle>1802,369,2118,506</rectangle>
+      </geometry>
+      <datafield1><text>17-V</text></datafield1>
+      <datafield2><text>RSRC TO BREG</text></datafield2>
+      <datafield3><text>B&lt;-RS</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>204</key>
+      <imagefile>MP00082-31.jpg</imagefile>
+      <geometry>
+         <rectangle>1802,570,2117,709</rectangle>
+      </geometry>
+      <datafield1><text>17-W</text></datafield1>
+      <datafield2><text>OPERATE</text><text>SET COND CODES</text></datafield2>
+      <datafield3><text>RD&lt;-RD OP B</text><text>LOAD CC</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>007</key>
+      <imagefile>MP00082-31.jpg</imagefile>
+      <geometry>
+         <rectangle>1804,1176,2120,1314</rectangle>
+      </geometry>
+      <datafield1><text>17-X</text></datafield1>
+      <datafield2><text>PSW TO REG 12</text></datafield2>
+      <datafield3><text>R12&lt;-PSW</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>542</key>
+      <imagefile>MP00082-31.jpg</imagefile>
+      <geometry>
+         <rectangle>1805,1379,2120,1517</rectangle>
+      </geometry>
+      <datafield1><text>17-Y</text></datafield1>
+      <datafield2><text>MASK AND</text><text>SET COND CODES</text></datafield2>
+      <datafield3><text>CC&lt;-R12 OP B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>140</key>
+      <imagefile>MP00082-31.jpg</imagefile>
+      <geometry>
+         <rectangle>1807,1985,2123,2121</rectangle>
+      </geometry>
+      <datafield1><text>17-U</text></datafield1>
+      <datafield2><text>RDEST TO BREG</text></datafield2>
+      <datafield3><text>B&lt;-RD</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>702</key>
+      <imagefile>MP00082-31.jpg</imagefile>
+      <geometry>
+         <rectangle>2372,569,2687,708</rectangle>
+      </geometry>
+      <datafield1><text>17-AA</text></datafield1>
+      <datafield2><text>NO OPERATION</text></datafield2>
+      <datafield3><text>NOP</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>011</key>
+      <imagefile>MP00082-31.jpg</imagefile>
+      <geometry>
+         <rectangle>2375,1174,2690,1312</rectangle>
+      </geometry>
+      <datafield1><text>17-EE</text></datafield1>
+      <datafield2><text>FETCH TOP OF</text><text>STACK</text></datafield2>
+      <datafield3><text>BA&lt;-R6,DATI</text><text>B&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>645</key>
+      <imagefile>MP00082-31.jpg</imagefile>
+      <geometry>
+         <rectangle>2374,1377,2689,1516</rectangle>
+      </geometry>
+      <datafield1><text>17-FF</text></datafield1>
+      <datafield2><text>DATA TO PC</text></datafield2>
+      <datafield3><text>PC&lt;-B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>535</key>
+      <imagefile>MP00082-31.jpg</imagefile>
+      <geometry>
+         <rectangle>2374,1579,2690,1718</rectangle>
+      </geometry>
+      <datafield1><text>17-GG</text></datafield1>
+      <datafield2><text>STEP STACK POINTER</text></datafield2>
+      <datafield3><text>R6&lt;-R6+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>537</key>
+      <imagefile>MP00082-31.jpg</imagefile>
+      <geometry>
+         <rectangle>2375,1781,2689,1919</rectangle>
+      </geometry>
+      <datafield1><text>17-HH</text></datafield1>
+      <datafield2><text>FETCH TOP OF</text><text>STACK</text></datafield2>
+      <datafield3><text>BA&lt;-R6,DATI</text><text>B&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>540</key>
+      <imagefile>MP00082-31.jpg</imagefile>
+      <geometry>
+         <rectangle>2376,1982,2690,2121</rectangle>
+      </geometry>
+      <datafield1><text>17-II</text></datafield1>
+      <datafield2><text>STEP STACK POINTER</text></datafield2>
+      <datafield3><text>R6&lt;-R6+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>002</key>
+      <imagefile>MP00082-31.jpg</imagefile>
+      <geometry>
+         <rectangle>2375,2185,2690,2324</rectangle>
+      </geometry>
+      <datafield1><text>17-JJ</text></datafield1>
+      <datafield2><text>DATA TO PSW</text></datafield2>
+      <datafield3><text>PSW&lt;-B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>260</key>
+      <imagefile>MP00082-31.jpg</imagefile>
+      <geometry>
+         <rectangle>2654,305,2969,443</rectangle>
+      </geometry>
+      <datafield1><text>17-Z</text></datafield1>
+      <datafield2><text>DECREMENT RSRC</text><text>BRANCH ON ZERO</text></datafield2>
+      <datafield3><text>RS&lt;-RS-1</text><text>BUT ZBIT</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>700</key>
+      <imagefile>MP00082-31.jpg</imagefile>
+      <geometry>
+         <rectangle>2938,569,3250,707</rectangle>
+      </geometry>
+      <datafield1><text>17-BB</text></datafield1>
+      <datafield2><text>SWAP BYTES</text><text>SHIFT BREG LEFT</text></datafield2>
+      <datafield3><text>R10&lt;-B SWAB</text><text>ASLB</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>546</key>
+      <imagefile>MP00082-31.jpg</imagefile>
+      <geometry>
+         <rectangle>2938,770,3251,908</rectangle>
+      </geometry>
+      <datafield1><text>17-CC</text></datafield1>
+      <datafield2><text>CALCULATE</text><text>OFFSET</text></datafield2>
+      <datafield3><text>B&lt;-(R10 &amp; B) SEX</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>547</key>
+      <imagefile>MP00082-31.jpg</imagefile>
+      <geometry>
+         <rectangle>2939,971,3252,1109</rectangle>
+      </geometry>
+      <datafield1><text>17-DD</text></datafield1>
+      <datafield2><text>SUB OFFSET</text><text>FROM PC</text></datafield2>
+      <datafield3><text>PC&lt;-PC-B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>014</key>
+      <imagefile>MP00082-31.jpg</imagefile>
+      <geometry>
+         <rectangle>2944,1916,3257,2055</rectangle>
+      </geometry>
+      <datafield1><text>17-MM</text></datafield1>
+      <datafield2><text>SERVICE INTR/TRAPS</text><text>FETCH VECTOR</text></datafield2>
+      <datafield3><text>B&lt;-UDATA</text><text>BUT SERVICE</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>012</key>
+      <imagefile>MP00082-31.jpg</imagefile>
+      <geometry>
+         <rectangle>2944,2181,3256,2318</rectangle>
+      </geometry>
+      <datafield1><text>17-NN</text></datafield1>
+      <datafield2><text>NO OPERATION</text></datafield2>
+      <datafield3><text>NOP</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>150</key>
+      <imagefile>MP00082-31.jpg</imagefile>
+      <geometry>
+         <rectangle>3504,770,3814,907</rectangle>
+      </geometry>
+      <datafield1><text>17-KK</text></datafield1>
+      <datafield2><text>ZERO REG 12</text></datafield2>
+      <datafield3><text>R12&lt;-0</text><text>BUT DEST</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>003</key>
+      <imagefile>MP00082-31.jpg</imagefile>
+      <geometry>
+         <rectangle>3505,1374,3815,1512</rectangle>
+      </geometry>
+      <datafield1><text>17-LL</text></datafield1>
+      <datafield2><text>INITIALIZE SYSTEM</text><text>FOR 150MS</text></datafield2>
+      <datafield3><text>NOP</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>013</key>
+      <imagefile>MP00082-31.jpg</imagefile>
+      <geometry>
+         <rectangle>3507,2178,3818,2315</rectangle>
+      </geometry>
+      <datafield1><text>17-OO</text></datafield1>
+      <datafield2><text>VECTOR TO REG 15</text></datafield2>
+      <datafield3><text>R15&lt;-B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>220</key>
+      <imagefile>MP00082-32.jpg</imagefile>
+      <geometry>
+         <rectangle>224,1556,541,1694</rectangle>
+      </geometry>
+      <datafield1><text>18-A</text></datafield1>
+      <datafield2><text>FETCH</text><text>MULTIPLICAND/DIVISOR</text></datafield2>
+      <datafield3><text>R12,BX&lt;-RD</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>221</key>
+      <imagefile>MP00082-32.jpg</imagefile>
+      <geometry>
+         <rectangle>950,1556,1268,1694</rectangle>
+      </geometry>
+      <datafield1><text>18-B</text></datafield1>
+      <datafield2><text>FETCH</text><text>MULTIPLICAND/DIVISOR</text></datafield2>
+      <datafield3><text>BA&lt;-RD,DATI</text><text>R12;BX&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>224</key>
+      <imagefile>MP00082-32.jpg</imagefile>
+      <geometry>
+         <rectangle>1109,1290,1426,1430</rectangle>
+      </geometry>
+      <datafield1><text>18-C</text></datafield1>
+      <datafield2><text>DECREMENT RDST</text><text>ENAB STACK OVERFLOW</text></datafield2>
+      <datafield3><text>RD&lt;-RD-2</text><text>ENAB STOV</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>400</key>
+      <imagefile>MP00082-32.jpg</imagefile>
+      <geometry>
+         <rectangle>1111,2060,1426,2199</rectangle>
+      </geometry>
+      <datafield1><text>18-S</text></datafield1>
+      <datafield2><text>COMPLEMENT &amp; TEST</text><text>SIGN OF MULTIPLICAND</text></datafield2>
+      <datafield3><text>R13&lt;-~BX</text><text>BUT CCN</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>222</key>
+      <imagefile>MP00082-32.jpg</imagefile>
+      <geometry>
+         <rectangle>1551,1290,1868,1429</rectangle>
+      </geometry>
+      <datafield1><text>18-D</text></datafield1>
+      <datafield2><text>FETCH</text><text>MULTIPLICAND/DIVISOR</text></datafield2>
+      <datafield3><text>BA&lt;-RD,DATI</text><text>R12,BX&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>563</key>
+      <imagefile>MP00082-32.jpg</imagefile>
+      <geometry>
+         <rectangle>1552,1555,1868,1693</rectangle>
+      </geometry>
+      <datafield1><text>18-E</text></datafield1>
+      <datafield2><text>INCREMENT RDST</text></datafield2>
+      <datafield3><text>RD&lt;-RD+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>602</key>
+      <imagefile>MP00082-32.jpg</imagefile>
+      <geometry>
+         <rectangle>1844,1820,2159,1960</rectangle>
+      </geometry>
+      <datafield1><text>18-R</text></datafield1>
+      <datafield2><text>LOAD STEP COUNTER</text><text>TEST IRQ FOR MUL/DIV</text></datafield2>
+      <datafield3><text>C&lt;-16</text><text>BUT IR9</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>223</key>
+      <imagefile>MP00082-32.jpg</imagefile>
+      <geometry>
+         <rectangle>2123,1025,2439,1163</rectangle>
+      </geometry>
+      <datafield1><text>18-F</text></datafield1>
+      <datafield2><text>FETCH</text><text>DEST ADDR</text></datafield2>
+      <datafield3><text>BA&lt;-RD,DATI</text><text>R12&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>565</key>
+      <imagefile>MP00082-32.jpg</imagefile>
+      <geometry>
+         <rectangle>2124,1291,2441,1428</rectangle>
+      </geometry>
+      <datafield1><text>18-G</text></datafield1>
+      <datafield2><text>INCREMENT RDST</text></datafield2>
+      <datafield3><text>RD&lt;-RD+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>225</key>
+      <imagefile>MP00082-32.jpg</imagefile>
+      <geometry>
+         <rectangle>2566,1025,2878,1163</rectangle>
+      </geometry>
+      <datafield1><text>18-H</text></datafield1>
+      <datafield2><text>DECREMENT RDST</text><text>ENAB STACK OVERFLOW</text></datafield2>
+      <datafield3><text>RD&lt;-RD-2</text><text>ENAB STOV</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>567</key>
+      <imagefile>MP00082-32.jpg</imagefile>
+      <geometry>
+         <rectangle>2569,1291,2879,1428</rectangle>
+      </geometry>
+      <datafield1><text>18-I</text></datafield1>
+      <datafield2><text>FETCH DEST</text><text>ADDR</text></datafield2>
+      <datafield3><text>BA&lt;-RD,DATI</text><text>R12&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>601</key>
+      <imagefile>MP00082-32.jpg</imagefile>
+      <geometry>
+         <rectangle>2569,1556,2881,1694</rectangle>
+      </geometry>
+      <datafield1><text>18-Q</text></datafield1>
+      <datafield2><text>FETCH</text><text>MULTIPLICAND/DIVISOR</text></datafield2>
+      <datafield3><text>BA&lt;-R12,DATI</text><text>R12,BX&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>401</key>
+      <imagefile>MP00082-32.jpg</imagefile>
+      <geometry>
+         <rectangle>2567,2058,2881,2196</rectangle>
+      </geometry>
+      <datafield1><text>18-T</text></datafield1>
+      <datafield2><text>TEST DIVISOR</text><text>FOR ZERO</text></datafield2>
+      <datafield3><text>R17&lt;-0,T&lt;-BX</text><text>BUT CCZ</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>226</key>
+      <imagefile>MP00082-32.jpg</imagefile>
+      <geometry>
+         <rectangle>3002,758,3315,898</rectangle>
+      </geometry>
+      <datafield1><text>18-J</text></datafield1>
+      <datafield2><text>FETCH INDEX</text><text>DATA</text></datafield2>
+      <datafield3><text>BA&lt;-PC,DATI</text><text>B&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>571</key>
+      <imagefile>MP00082-32.jpg</imagefile>
+      <geometry>
+         <rectangle>3003,1024,3318,1162</rectangle>
+      </geometry>
+      <datafield1><text>18-K</text></datafield1>
+      <datafield2><text>INCREMENT PC</text></datafield2>
+      <datafield3><text>PC&lt;-PC+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>574</key>
+      <imagefile>MP00082-32.jpg</imagefile>
+      <geometry>
+         <rectangle>3005,1290,3319,1428</rectangle>
+      </geometry>
+      <datafield1><text>18-L</text></datafield1>
+      <datafield2><text>DETERMINE</text><text>DEST ADDR</text></datafield2>
+      <datafield3><text>R12&lt;-RD+B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>227</key>
+      <imagefile>MP00082-32.jpg</imagefile>
+      <geometry>
+         <rectangle>3439,494,3751,632</rectangle>
+      </geometry>
+      <datafield1><text>18-M</text></datafield1>
+      <datafield2><text>FETCH INDEX</text><text>DATA</text></datafield2>
+      <datafield3><text>BA&lt;-PC,DATI</text><text>B&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>575</key>
+      <imagefile>MP00082-32.jpg</imagefile>
+      <geometry>
+         <rectangle>3440,758,3753,897</rectangle>
+      </geometry>
+      <datafield1><text>18-N</text></datafield1>
+      <datafield2><text>INCREMENT PC</text></datafield2>
+      <datafield3><text>PC&lt;-PC+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>576</key>
+      <imagefile>MP00082-32.jpg</imagefile>
+      <geometry>
+         <rectangle>3441,1023,3756,1162</rectangle>
+      </geometry>
+      <datafield1><text>18-O</text></datafield1>
+      <datafield2><text>DETERMINE ADDR</text><text>OF DEST ADDR</text></datafield2>
+      <datafield3><text>R12&lt;-RD+B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>600</key>
+      <imagefile>MP00082-32.jpg</imagefile>
+      <geometry>
+         <rectangle>3443,1289,3758,1426</rectangle>
+      </geometry>
+      <datafield1><text>18-P</text></datafield1>
+      <datafield2><text>FETCH DEST</text><text>ADDR</text></datafield2>
+      <datafield3><text>BA&lt;-R12,DATI</text><text>R12&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>505</key>
+      <imagefile>MP00082-33.jpg</imagefile>
+      <geometry>
+         <rectangle>540,856,854,1006</rectangle>
+      </geometry>
+      <datafield1><text>19-C</text></datafield1>
+      <datafield2><text>PUT INES COMPLEMENT</text><text>OF MULTIPLIER IN R13</text></datafield2>
+      <datafield3><text>R12&lt;-~RS</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>603</key>
+      <imagefile>MP00082-33.jpg</imagefile>
+      <geometry>
+         <rectangle>540,1082,854,1234</rectangle>
+      </geometry>
+      <datafield1><text>19-E</text></datafield1>
+      <datafield2><text>TEST TWO#S COMPLEMENT</text><text>OF MULTIPLIER</text></datafield2>
+      <datafield3><text>T&lt;-R13+1</text><text>BUT CCN</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>507</key>
+      <imagefile>MP00082-33.jpg</imagefile>
+      <geometry>
+         <rectangle>540,1601,855,1751</rectangle>
+      </geometry>
+      <datafield1><text>19-F</text></datafield1>
+      <datafield2><text>SWIFT RIGHT</text><text>(100000,100000)</text></datafield2>
+      <datafield3><text>SR(B-BX)</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>604</key>
+      <imagefile>MP00082-33.jpg</imagefile>
+      <geometry>
+         <rectangle>540,1802,855,1952</rectangle>
+      </geometry>
+      <datafield1><text>19-G</text></datafield1>
+      <datafield2><text>LOAD B AND R5</text><text>WITH (040000)</text></datafield2>
+      <datafield3><text>B,RS&lt;-BX</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>605</key>
+      <imagefile>MP00082-33.jpg</imagefile>
+      <geometry>
+         <rectangle>540,2002,855,2152</rectangle>
+      </geometry>
+      <datafield1><text>19-H</text></datafield1>
+      <datafield2><text>ZERO LOWER</text><text>PRODUCT</text></datafield2>
+      <datafield3><text>RS v 1&lt;-0</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>402</key>
+      <imagefile>MP00082-33.jpg</imagefile>
+      <geometry>
+         <rectangle>983,147,1296,297</rectangle>
+      </geometry>
+      <datafield1><text>19-A</text></datafield1>
+      <datafield2><text>ZERO R17 AND b</text><text>TEST MULTIPLICAND</text></datafield2>
+      <datafield3><text>R17,B&lt;-0,T&lt;-R13+1</text><text>BUT CCN</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>503</key>
+      <imagefile>MP00082-33.jpg</imagefile>
+      <geometry>
+         <rectangle>982,601,1296,752</rectangle>
+      </geometry>
+      <datafield1><text>19-B</text></datafield1>
+      <datafield2><text>PUT MULTIPLIER IN</text><text>R12 AND TEST SIGN</text></datafield2>
+      <datafield3><text>R12&lt;-RS</text><text>BUT CCN</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>405</key>
+      <imagefile>MP00082-33.jpg</imagefile>
+      <geometry>
+         <rectangle>982,852,1297,1004</rectangle>
+      </geometry>
+      <datafield1><text>19-D</text></datafield1>
+      <datafield2><text>PUT ONES COMPLEMENT</text><text>OF MULTIPLIER IN R13</text></datafield2>
+      <datafield3><text>R13&lt;-~RS</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>453</key>
+      <imagefile>MP00082-33.jpg</imagefile>
+      <geometry>
+         <rectangle>1361,1926,1677,2077</rectangle>
+      </geometry>
+      <datafield1><text>19-O</text></datafield1>
+      <datafield2><text>SUB MULTIPLICAND</text><text>FROM PARTIAL PRODUCT</text></datafield2>
+      <datafield3><text>B&lt;-R13+1</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>417</key>
+      <imagefile>MP00082-33.jpg</imagefile>
+      <geometry>
+         <rectangle>1804,1925,2120,2075</rectangle>
+      </geometry>
+      <datafield1><text>19-P</text></datafield1>
+      <datafield2><text>STORE UPPER</text><text>PRODUCT</text></datafield2>
+      <datafield3><text>RS&lt;-B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>502</key>
+      <imagefile>MP00082-33.jpg</imagefile>
+      <geometry>
+         <rectangle>2181,147,2496,297</rectangle>
+      </geometry>
+      <datafield1><text>19-I</text></datafield1>
+      <datafield2><text>ZERO R17 AND B</text></datafield2>
+      <datafield3><text>R17,B&lt;-0</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>403</key>
+      <imagefile>MP00082-33.jpg</imagefile>
+      <geometry>
+         <rectangle>2182,398,2495,551</rectangle>
+      </geometry>
+      <datafield1><text>19-J</text></datafield1>
+      <datafield2><text>PUT MULTIPLIER</text><text>IN BX REG</text></datafield2>
+      <datafield3><text>BX&lt;-RS</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>606</key>
+      <imagefile>MP00082-33.jpg</imagefile>
+      <geometry>
+         <rectangle>2182,600,2496,752</rectangle>
+      </geometry>
+      <datafield1><text>19-K</text></datafield1>
+      <datafield2><text>TEST LSB OF</text><text>BX REG FOR FIRST</text><text>MUL STEP</text></datafield2>
+      <datafield3><text>NOP</text><text>BUT BX00</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>413</key>
+      <imagefile>MP00082-33.jpg</imagefile>
+      <geometry>
+         <rectangle>2182,1598,2499,1747</rectangle>
+      </geometry>
+      <datafield1><text>19-M</text></datafield1>
+      <datafield2><text>SEE NOTE*1</text></datafield2>
+      <datafield3><text>SR(B-BX),COUNT</text><text>BUT C5,BX01,BX00</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>437</key>
+      <imagefile>MP00082-33.jpg</imagefile>
+      <geometry>
+         <rectangle>2246,1924,2561,2074</rectangle>
+      </geometry>
+      <datafield1><text>19-Q</text></datafield1>
+      <datafield2><text>STORE UPPER</text><text>PRODUCT</text></datafield2>
+      <datafield3><text>RS&lt;-B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>427</key>
+      <imagefile>MP00082-33.jpg</imagefile>
+      <geometry>
+         <rectangle>2466,853,2781,1004</rectangle>
+      </geometry>
+      <datafield1><text>19-L</text></datafield1>
+      <datafield2><text>SUB MULTIPLICAND</text><text>FROM PARTIAL PRODUCT</text></datafield2>
+      <datafield3><text>B&lt;-R13+B+1</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>407</key>
+      <imagefile>MP00082-33.jpg</imagefile>
+      <geometry>
+         <rectangle>2468,1319,2782,1472</rectangle>
+      </geometry>
+      <datafield1><text>19-U</text></datafield1>
+      <datafield2><text>SEE NOTE*1</text></datafield2>
+      <datafield3><text>SR(B-BX),COUNT</text><text>BUT C5,BX01,BX00</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>457</key>
+      <imagefile>MP00082-33.jpg</imagefile>
+      <geometry>
+         <rectangle>2687,1923,3001,2072</rectangle>
+      </geometry>
+      <datafield1><text>19-R</text></datafield1>
+      <datafield2><text>STORE UPPER</text><text>PRODUCT</text></datafield2>
+      <datafield3><text>RS&lt;-B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>473</key>
+      <imagefile>MP00082-33.jpg</imagefile>
+      <geometry>
+         <rectangle>2750,1597,3063,1745</rectangle>
+      </geometry>
+      <datafield1><text>19-N</text></datafield1>
+      <datafield2><text>SEE NOTE*1</text></datafield2>
+      <datafield3><text>SR(B-BX),COUNT</text><text>BUT C5,BX01,BX00</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>477</key>
+      <imagefile>MP00082-33.jpg</imagefile>
+      <geometry>
+         <rectangle>3127,1921,3439,2071</rectangle>
+      </geometry>
+      <datafield1><text>19-S</text></datafield1>
+      <datafield2><text>STORE UPPER</text><text>PRODUCT</text></datafield2>
+      <datafield3><text>RS&lt;-B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>433</key>
+      <imagefile>MP00082-33.jpg</imagefile>
+      <geometry>
+         <rectangle>3563,1918,3874,2069</rectangle>
+      </geometry>
+      <datafield1><text>19-T</text></datafield1>
+      <datafield2><text>ADD MULTIPLICAND</text><text>TO PARTIAL PRODUCT</text></datafield2>
+      <datafield3><text>B&lt;-R12+B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>515</key>
+      <imagefile>MP00082-34.jpg</imagefile>
+      <geometry>
+         <rectangle>931,1692,1250,1844</rectangle>
+      </geometry>
+      <datafield1><text>20-F</text></datafield1>
+      <datafield2><text>CLEAR CBIT</text></datafield2>
+      <datafield3><text>SL(BX-0)</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>410</key>
+      <imagefile>MP00082-34.jpg</imagefile>
+      <geometry>
+         <rectangle>1160,934,1475,1085</rectangle>
+      </geometry>
+      <datafield1><text>20-C</text></datafield1>
+      <datafield2><text>TEST UPPER PRODUCT</text><text>FOR ALL ONES</text></datafield2>
+      <datafield3><text>T&lt;-~B</text><text>SL(BX-0)BUT CCZ</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>422</key>
+      <imagefile>MP00082-34.jpg</imagefile>
+      <geometry>
+         <rectangle>1160,1187,1475,1340</rectangle>
+      </geometry>
+      <datafield1><text>20-D</text></datafield1>
+      <datafield2><text>TEST MSB OF</text><text>LOWER PRODUCT</text></datafield2>
+      <datafield3><text>T&lt;-RS v 1</text><text>SL(BX-0)</text><text>BUT CCN</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>415</key>
+      <imagefile>MP00082-34.jpg</imagefile>
+      <geometry>
+         <rectangle>1375,1693,1692,1844</rectangle>
+      </geometry>
+      <datafield1><text>20-G</text></datafield1>
+      <datafield2><text>SET CBIT</text></datafield2>
+      <datafield3><text>SL(BX-1)</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>420</key>
+      <imagefile>MP00082-34.jpg</imagefile>
+      <geometry>
+         <rectangle>1603,1187,1919,1340</rectangle>
+      </geometry>
+      <datafield1><text>20-E</text></datafield1>
+      <datafield2><text>SET VBIT</text></datafield2>
+      <datafield3><text>SL(BX-0)</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>607</key>
+      <imagefile>MP00082-34.jpg</imagefile>
+      <geometry>
+         <rectangle>1918,227,2233,379</rectangle>
+      </geometry>
+      <datafield1><text>20-A</text></datafield1>
+      <datafield2><text>STORE LOWER</text><text>PRODUCT</text></datafield2>
+      <datafield3><text>RS v 1&lt;-BX</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>610</key>
+      <imagefile>MP00082-34.jpg</imagefile>
+      <geometry>
+         <rectangle>1918,479,2233,630</rectangle>
+      </geometry>
+      <datafield1><text>20-B</text></datafield1>
+      <datafield2><text>COUT IS THE SIGN</text><text>OF THE PRODUCT</text></datafield2>
+      <datafield3><text>R17&lt;-0</text><text>T&lt;-RS+RS</text><text>SL(BX-COUT)</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>701</key>
+      <imagefile>MP00082-34.jpg</imagefile>
+      <geometry>
+         <rectangle>1918,683,2234,834</rectangle>
+      </geometry>
+      <datafield1><text>20-N</text></datafield1>
+      <datafield2><text>TEST UPPER PRODUCT</text><text>FOR ZERONESS</text></datafield2>
+      <datafield3><text>T&lt;-B</text><text>BUT CCZ</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>611</key>
+      <imagefile>MP00082-34.jpg</imagefile>
+      <geometry>
+         <rectangle>1918,1944,2236,2097</rectangle>
+      </geometry>
+      <datafield1><text>20-M</text></datafield1>
+      <datafield2><text>TRANSFER CONDITION</text><text>CODES TO PSW</text></datafield2>
+      <datafield3><text>CC&lt;-BX</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>511</key>
+      <imagefile>MP00082-34.jpg</imagefile>
+      <geometry>
+         <rectangle>2453,1694,2768,1844</rectangle>
+      </geometry>
+      <datafield1><text>20-K</text></datafield1>
+      <datafield2><text>SET CBIT</text></datafield2>
+      <datafield3><text>SL(BX-1)</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>412</key>
+      <imagefile>MP00082-34.jpg</imagefile>
+      <geometry>
+         <rectangle>2679,935,2993,1087</rectangle>
+      </geometry>
+      <datafield1><text>20-H</text></datafield1>
+      <datafield2><text>TEST LOWER PRODUCT</text><text>FOR ZERONESS</text></datafield2>
+      <datafield3><text>T&lt;-RS v 1</text><text>SL(BX-0)</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>414</key>
+      <imagefile>MP00082-34.jpg</imagefile>
+      <geometry>
+         <rectangle>2680,1441,2994,1593</rectangle>
+      </geometry>
+      <datafield1><text>20-J</text></datafield1>
+      <datafield2><text>TEST MSB OF</text><text>LOWER PRODUCT</text></datafield2>
+      <datafield3><text>T&lt;-RS v 1</text><text>SL(BX-0)</text><text>BUT CCN</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>411</key>
+      <imagefile>MP00082-34.jpg</imagefile>
+      <geometry>
+         <rectangle>2905,1694,3219,1844</rectangle>
+      </geometry>
+      <datafield1><text>20-L</text></datafield1>
+      <datafield2><text>CLEAR CBIT</text></datafield2>
+      <datafield3><text>SL(BX-1)</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>416</key>
+      <imagefile>MP00082-34.jpg</imagefile>
+      <geometry>
+         <rectangle>2967,1189,3281,1341</rectangle>
+      </geometry>
+      <datafield1><text>20-I</text></datafield1>
+      <datafield2><text>SET ZBIT</text><text>NOTE THAT R17=0</text></datafield2>
+      <datafield3><text>BX&lt;-R17+BX+1</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>521</key>
+      <imagefile>MP00082-35.jpg</imagefile>
+      <geometry>
+         <rectangle>631,692,934,843</rectangle>
+      </geometry>
+      <datafield1><text>21-C</text></datafield1>
+      <datafield2><text>FETCH LOWER</text><text>DIVIDEND</text></datafield2>
+      <datafield3><text>BX&lt;-RS v 1</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>613</key>
+      <imagefile>MP00082-35.jpg</imagefile>
+      <geometry>
+         <rectangle>631,956,935,1108</rectangle>
+      </geometry>
+      <datafield1><text>21-D</text></datafield1>
+      <datafield2><text>TAKE TWO&apos;S COMPLEMENT</text><text>OF LOWER DIVIDEND</text></datafield2>
+      <datafield3><text>BX&lt;-R17-BX</text><text>BUT COUT</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>623</key>
+      <imagefile>MP00082-35.jpg</imagefile>
+      <geometry>
+         <rectangle>138,1262,442,1413</rectangle>
+      </geometry>
+      <datafield1><text>21-E</text></datafield1>
+      <datafield2><text>TAKE TWO&apos;S COMPLEMENT</text><text>OF UPPER DIVIDEND</text></datafield2>
+      <datafield3><text>B&lt;-R17-B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>423</key>
+      <imagefile>MP00082-35.jpg</imagefile>
+      <geometry>
+         <rectangle>1125,1260,1429,1412</rectangle>
+      </geometry>
+      <datafield1><text>21-F</text></datafield1>
+      <datafield2><text>TAKE ONES COMPLEMENT</text><text>OF UPPER DIVIDEND</text></datafield2>
+      <datafield3><text>B&lt;-~B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>442</key>
+      <imagefile>MP00082-35.jpg</imagefile>
+      <geometry>
+         <rectangle>632,1793,936,1944</rectangle>
+      </geometry>
+      <datafield1><text>21-G</text></datafield1>
+      <datafield2><text>SHIFT REMAINDER LEFT</text><text>TEST SIGN OF DIVISOR</text><text>TEST LSB OF QUOTIENT</text></datafield2>
+      <datafield3><text>T&lt;-R12</text><text>SL(B-BX15),COUNT</text><text>BUT BX00,CCN</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>660</key>
+      <imagefile>MP00082-35.jpg</imagefile>
+      <geometry>
+         <rectangle>51,2133,368,2287</rectangle>
+      </geometry>
+      <datafield1><text>21-H</text></datafield1>
+      <datafield2><text>SUB DIVISOR FROM REMAINDER</text><text>TEST COUNTER SIGN</text></datafield2>
+      <datafield3><text>B&lt;-B+R13+1</text><text>SL(BX-COUT)</text><text>BUT C05</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>670</key>
+      <imagefile>MP00082-35.jpg</imagefile>
+      <geometry>
+         <rectangle>418,2134,733,2286</rectangle>
+      </geometry>
+      <datafield1><text>21-I</text></datafield1>
+      <datafield2><text>SUB DIVISOR FROM REMAINDER</text><text>TEST COUNTER SIGN</text></datafield2>
+      <datafield3><text>B&lt;-B+R12</text><text>SL(BX-COUT)</text><text>BUT C05</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>640</key>
+      <imagefile>MP00082-35.jpg</imagefile>
+      <geometry>
+         <rectangle>834,2135,1151,2287</rectangle>
+      </geometry>
+      <datafield1><text>21-J</text></datafield1>
+      <datafield2><text>ADD DIVISOR TO REMAINDER</text><text>TEST COUNTER SIGN</text></datafield2>
+      <datafield3><text>B&lt;-B+R12</text><text>SL(BX-COUT)</text><text>BUT C05</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>650</key>
+      <imagefile>MP00082-35.jpg</imagefile>
+      <geometry>
+         <rectangle>1201,2134,1518,2286</rectangle>
+      </geometry>
+      <datafield1><text>21-K</text></datafield1>
+      <datafield2><text>ADD DIVISOR TO REMAINDER</text><text>TEST COUNTER SIGN</text></datafield2>
+      <datafield3><text>B&lt;-B+R13</text><text>SL(BX-COUT)</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>404</key>
+      <imagefile>MP00082-35.jpg</imagefile>
+      <geometry>
+         <rectangle>1935,199,2238,349</rectangle>
+      </geometry>
+      <datafield1>21-A<text></text></datafield1>
+      <datafield2><text>PUT ONE&apos;S COMPLEMENT</text><text>OF DIVISOR IN R13</text></datafield2>
+      <datafield3><text>R13&lt;-~BX</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>612</key>
+      <imagefile>MP00082-35.jpg</imagefile>
+      <geometry>
+         <rectangle>1935,413,2238,565</rectangle>
+      </geometry>
+      <datafield1><text>21-B</text></datafield1>
+      <datafield2><text>FETCH UPPER DIVIDEND</text><text>AND TEST SIGN</text></datafield2>
+      <datafield3><text>B&lt;-R5</text><text>BUT CCN</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>421</key>
+      <imagefile>MP00082-35.jpg</imagefile>
+      <geometry>
+         <rectangle>2856,692,3158,842</rectangle>
+      </geometry>
+      <datafield1><text>21-L</text></datafield1>
+      <datafield2><text>FETCH LOWER</text><text>DIVIDEND</text></datafield2>
+      <datafield3><text>BX&lt;-R5 v 1</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>424</key>
+      <imagefile>MP00082-35.jpg</imagefile>
+      <geometry>
+         <rectangle>2858,957,3159,1108</rectangle>
+      </geometry>
+      <datafield1><text>21-M</text></datafield1>
+      <datafield2><text>SHIFT UPPER DIVIDEND</text><text>LEFT - TEST SIGN OF</text><text>DIVISOR</text></datafield2>
+      <datafield3><text>SL(B-BX15)</text><text>T&lt;-R12</text><text>BUT CCN</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>435</key>
+      <imagefile>MP00082-35.jpg</imagefile>
+      <geometry>
+         <rectangle>2354,1259,2657,1411</rectangle>
+      </geometry>
+      <datafield1><text>21-N</text></datafield1>
+      <datafield2><text>SUB DIVISOR FROM</text><text>DIVIDEND,TEST REMAINDER</text></datafield2>
+      <datafield3><text>B&lt;-B-R12</text><text>SL(BX,COUT)</text><text>BUT CCZ</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>425</key>
+      <imagefile>MP00082-35.jpg</imagefile>
+      <geometry>
+         <rectangle>3360,1259,3660,1410</rectangle>
+      </geometry>
+      <datafield1><text>21-O</text></datafield1>
+      <datafield2><text>SUB DIVISOR FROM</text><text>DIVIDEND - TEST REMAINDER</text></datafield2>
+      <datafield3><text>B&lt;-B+R13+1</text><text>SL(BX-COUT)</text><text>BUT CCZ</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>440</key>
+      <imagefile>MP00082-35.jpg</imagefile>
+      <geometry>
+         <rectangle>3360,1788,3661,1937</rectangle>
+      </geometry>
+      <datafield1><text>21-P</text></datafield1>
+      <datafield2><text>TEST FIRST QUOTIENT</text><text>BIT</text></datafield2>
+      <datafield3><text>NOP</text><text>BUT BX00</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>462</key>
+      <imagefile>MP00082-36.jpg</imagefile>
+      <geometry>
+         <rectangle>453,492,767,630</rectangle>
+      </geometry>
+      <datafield1><text>22-Y</text></datafield1>
+      <datafield2><text>SET VBIT</text></datafield2>
+      <datafield3><text>CC&lt;-R17+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>524</key>
+      <imagefile>MP00082-36.jpg</imagefile>
+      <geometry>
+         <rectangle>166,1022,481,1160</rectangle>
+      </geometry>
+      <datafield1><text>22-V</text></datafield1>
+      <datafield2><text>SET VBIT</text></datafield2>
+      <datafield3><text>CC&lt;-R17+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>406</key>
+      <imagefile>MP00082-36.jpg</imagefile>
+      <geometry>
+         <rectangle>735,757,1049,895</rectangle>
+      </geometry>
+      <datafield1><text>22-W</text></datafield1>
+      <datafield2><text>SET VBIT</text></datafield2>
+      <datafield3><text>R17&lt;-R17+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>620</key>
+      <imagefile>MP00082-36.jpg</imagefile>
+      <geometry>
+         <rectangle>735,1023,1052,1161</rectangle>
+      </geometry>
+      <datafield1><text>22-X</text></datafield1>
+      <datafield2><text>SET CBIT</text></datafield2>
+      <datafield3><text>CC&lt;-R17+1</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>446</key>
+      <imagefile>MP00082-36.jpg</imagefile>
+      <geometry>
+         <rectangle>2097,230,2413,367</rectangle>
+      </geometry>
+      <datafield1><text>22-A</text></datafield1>
+      <datafield2><text>TEST QUOTIENT LSB</text><text>AND SIGN OF DIVISOR</text></datafield2>
+      <datafield3><text>T&lt;-R12</text><text>BUT BX00,CCN</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>441</key>
+      <imagefile>MP00082-36.jpg</imagefile>
+      <geometry>
+         <rectangle>1813,493,2127,631</rectangle>
+      </geometry>
+      <datafield1><text>22-B</text></datafield1>
+      <datafield2><text>ADD DIVISOR</text><text>TO REMAINDER</text></datafield2>
+      <datafield3><text>B&lt;-B+R12</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>451</key>
+      <imagefile>MP00082-36.jpg</imagefile>
+      <geometry>
+         <rectangle>2382,495,2695,634</rectangle>
+      </geometry>
+      <datafield1><text>22-K</text></datafield1>
+      <datafield2><text>ADD DIVISOR</text><text>TO REMAINDER</text></datafield2>
+      <datafield3><text>B&lt;-B+R13+1</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>461</key>
+      <imagefile>MP00082-36.jpg</imagefile>
+      <geometry>
+         <rectangle>1812,759,2126,897</rectangle>
+      </geometry>
+      <datafield1><text>22-C</text></datafield1>
+      <datafield2><text>TEST SIGN OF</text><text>DIVIDEND</text></datafield2>
+      <datafield3><text>T&lt;-RS</text><text>BUT CCN</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>471</key>
+      <imagefile>MP00082-36.jpg</imagefile>
+      <geometry>
+         <rectangle>2382,760,2696,898</rectangle>
+      </geometry>
+      <datafield1><text>22-L</text></datafield1>
+      <datafield2><text>TEST SIGN OF</text><text>DIVIDEND</text></datafield2>
+      <datafield3><text>T&lt;-RS</text><text>BUT CCN</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>444</key>
+      <imagefile>MP00082-36.jpg</imagefile>
+      <geometry>
+         <rectangle>1431,1022,1746,1161</rectangle>
+      </geometry>
+      <datafield1><text>22-D</text></datafield1>
+      <datafield2><text>STORE REMAINDER</text></datafield2>
+      <datafield3><text>RS v 1&lt;-B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>544</key>
+      <imagefile>MP00082-36.jpg</imagefile>
+      <geometry>
+         <rectangle>1811,1023,2127,1161</rectangle>
+      </geometry>
+      <datafield1><text>22-E</text></datafield1>
+      <datafield2><text>STORE REMAINDER</text></datafield2>
+      <datafield3><text>RS v 1&lt;-R17-B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>543</key>
+      <imagefile>MP00082-36.jpg</imagefile>
+      <geometry>
+         <rectangle>2382,1024,2696,1164</rectangle>
+      </geometry>
+      <datafield1><text>22-M</text></datafield1>
+      <datafield2><text>STORE REMAINDER</text></datafield2>
+      <datafield3><text>RS v 1&lt;-R17-B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>443</key>
+      <imagefile>MP00082-36.jpg</imagefile>
+      <geometry>
+         <rectangle>2760,1026,3072,1165</rectangle>
+      </geometry>
+      <datafield1><text>22-N</text></datafield1>
+      <datafield2><text>STORE REMAINDER</text></datafield2>
+      <datafield3><text>RS v 1&lt;-B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>614</key>
+      <imagefile>MP00082-36.jpg</imagefile>
+      <geometry>
+         <rectangle>1620,1289,1938,1427</rectangle>
+      </geometry>
+      <datafield1><text>22-F</text></datafield1>
+      <datafield2><text>STORE QUOTIENT</text><text>CLEAR NBIT</text></datafield2>
+      <datafield3><text>RS&lt;-BX</text><text>SL(BX-0)</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>530</key>
+      <imagefile>MP00082-36.jpg</imagefile>
+      <geometry>
+         <rectangle>1242,1553,1556,1693</rectangle>
+      </geometry>
+      <datafield1><text>22-G</text></datafield1>
+      <datafield2><text>CLEAR UBIT</text></datafield2>
+      <datafield3><text>T&lt;-RS</text><text>SL(BX-0)</text><text>BUT CCN</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>532</key>
+      <imagefile>MP00082-36.jpg</imagefile>
+      <geometry>
+         <rectangle>1620,1554,1937,1693</rectangle>
+      </geometry>
+      <datafield1><text>22-H</text></datafield1>
+      <datafield2><text>CLEAR NBIT</text><text>SET ZBIT</text></datafield2>
+      <datafield3><text>BX&lt;-R17+1</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>531</key>
+      <imagefile>MP00082-36.jpg</imagefile>
+      <geometry>
+         <rectangle>1242,1819,1556,1957</rectangle>
+      </geometry>
+      <datafield1><text>22-I</text></datafield1>
+      <datafield2><text>SET VBIT</text></datafield2>
+      <datafield3><text>SL(BX-1)</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>431</key>
+      <imagefile>MP00082-36.jpg</imagefile>
+      <geometry>
+         <rectangle>1620,1819,1937,1957</rectangle>
+      </geometry>
+      <datafield1><text>22-J</text></datafield1>
+      <datafield2><text>CLEAR VBIT</text></datafield2>
+      <datafield3><text>SL(BX-0)</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>615</key>
+      <imagefile>MP00082-36.jpg</imagefile>
+      <geometry>
+         <rectangle>2569,1291,2883,1428</rectangle>
+      </geometry>
+      <datafield1><text>22-O</text></datafield1>
+      <datafield2><text>STORE QUOTIENT</text><text>SET NBIT</text></datafield2>
+      <datafield3><text>RS&lt;-R17-BX</text><text>SL(BX-1)</text><text>BUT CCZ</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>536</key>
+      <imagefile>MP00082-36.jpg</imagefile>
+      <geometry>
+         <rectangle>2569,1555,2883,1693</rectangle>
+      </geometry>
+      <datafield1><text>22-P</text></datafield1>
+      <datafield2><text>CLEAR NBIT</text><text>SET ZBIT</text></datafield2>
+      <datafield3><text>BX&lt;-R17+1</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>534</key>
+      <imagefile>MP00082-36.jpg</imagefile>
+      <geometry>
+         <rectangle>2948,1555,3260,1693</rectangle>
+      </geometry>
+      <datafield1><text>22-Q</text></datafield1>
+      <datafield2><text>CLEAR VBIT</text></datafield2>
+      <datafield3><text>T&lt;-RS</text><text>SL(BX-0)</text><text>BUT CCN</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>526</key>
+      <imagefile>MP00082-36.jpg</imagefile>
+      <geometry>
+         <rectangle>2568,1820,2883,1956</rectangle>
+      </geometry>
+      <datafield1><text>22-R</text></datafield1>
+      <datafield2><text>CLEAR VBIT</text></datafield2>
+      <datafield3><text>SL(BX-0)</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>426</key>
+      <imagefile>MP00082-36.jpg</imagefile>
+      <geometry>
+         <rectangle>2947,1820,3260,1956</rectangle>
+      </geometry>
+      <datafield1><text>22-S</text></datafield1>
+      <datafield2><text>SET VBIT</text></datafield2>
+      <datafield3><text>SL(BX-1)</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>616</key>
+      <imagefile>MP00082-36.jpg</imagefile>
+      <geometry>
+         <rectangle>2095,2085,2411,2223</rectangle>
+      </geometry>
+      <datafield1><text>22-T</text></datafield1>
+      <datafield2><text>CLEAR CBIT</text></datafield2>
+      <datafield3><text>SL(BX-0)</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>617</key>
+      <imagefile>MP00082-36.jpg</imagefile>
+      <geometry>
+         <rectangle>2094,2287,2408,2425</rectangle>
+      </geometry>
+      <datafield1><text>22-U</text></datafield1>
+      <datafield2><text>TRANSFER CONDITION</text><text>CODES TO PSW</text></datafield2>
+      <datafield3><text>CC&lt;-BX</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>230</key>
+      <imagefile>MP00082-37.jpg</imagefile>
+      <geometry>
+         <rectangle>230,1752,545,1887</rectangle>
+      </geometry>
+      <datafield1><text>23-A</text></datafield1>
+      <datafield2><text>FETCH</text><text>SHIFT COUNT</text></datafield2>
+      <datafield3><text>C&lt;-RD</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>234</key>
+      <imagefile>MP00082-37.jpg</imagefile>
+      <geometry>
+         <rectangle>1114,1484,1430,1620</rectangle>
+      </geometry>
+      <datafield1><text>23-C</text></datafield1>
+      <datafield2><text>DECREMENT RDST</text><text>ENAB STACK OVERFLOW</text></datafield2>
+      <datafield3><text>RD&lt;-RD-2</text><text>ENAB STOV</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>231</key>
+      <imagefile>MP00082-37.jpg</imagefile>
+      <geometry>
+         <rectangle>1114,1751,1431,1888</rectangle>
+      </geometry>
+      <datafield1><text>23-B</text></datafield1>
+      <datafield2><text>FETCH</text><text>SHIFT COUNT</text></datafield2>
+      <datafield3><text>BA&lt;-RD,DATI</text><text>C&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>232</key>
+      <imagefile>MP00082-37.jpg</imagefile>
+      <geometry>
+         <rectangle>1556,1483,1873,1620</rectangle>
+      </geometry>
+      <datafield1><text>23-D</text></datafield1>
+      <datafield2><text>FETCH</text><text>SHIFT COUNT</text></datafield2>
+      <datafield3><text>BA&lt;-RD,DATI</text><text>C&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>621</key>
+      <imagefile>MP00082-37.jpg</imagefile>
+      <geometry>
+         <rectangle>1557,1749,1875,1885</rectangle>
+      </geometry>
+      <datafield1><text>23-E</text></datafield1>
+      <datafield2><text>INCREMENT RDST</text></datafield2>
+      <datafield3><text>RD&lt;-RD+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>633</key>
+      <imagefile>MP00082-37.jpg</imagefile>
+      <geometry>
+         <rectangle>1842,2011,2158,2150</rectangle>
+      </geometry>
+      <datafield1><text>23-R</text></datafield1>
+      <datafield2><text>TEST SIGN OF</text><text>COUNTER</text></datafield2>
+      <datafield3><text>COUNT</text><text>BUT C05</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>233</key>
+      <imagefile>MP00082-37.jpg</imagefile>
+      <geometry>
+         <rectangle>2127,1216,2442,1356</rectangle>
+      </geometry>
+      <datafield1><text>23-F</text></datafield1>
+      <datafield2><text>FETCH DEST</text><text>ADDR</text></datafield2>
+      <datafield3><text>BA&lt;-RD,DATI</text><text>R12&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>622</key>
+      <imagefile>MP00082-37.jpg</imagefile>
+      <geometry>
+         <rectangle>2126,1482,2442,1619</rectangle>
+      </geometry>
+      <datafield1><text>23-G</text></datafield1>
+      <datafield2><text>INCREMENT RDST</text></datafield2>
+      <datafield3><text>RD&lt;-RD+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>235</key>
+      <imagefile>MP00082-37.jpg</imagefile>
+      <geometry>
+         <rectangle>2569,1215,2882,1354</rectangle>
+      </geometry>
+      <datafield1><text>23-H</text></datafield1>
+      <datafield2><text>DECREMENT RDST</text><text>ENAB STACK OVERFLOW</text></datafield2>
+      <datafield3><text>RD&lt;-RD-2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>624</key>
+      <imagefile>MP00082-37.jpg</imagefile>
+      <geometry>
+         <rectangle>2569,1481,2883,1619</rectangle>
+      </geometry>
+      <datafield1><text>23-I</text></datafield1>
+      <datafield2><text>FETCH DEST ADDR</text></datafield2>
+      <datafield3><text>BA&lt;-RD,DATI</text><text>R12&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>632</key>
+      <imagefile>MP00082-37.jpg</imagefile>
+      <geometry>
+         <rectangle>2570,1745,2883,1882</rectangle>
+      </geometry>
+      <datafield1><text>23-Q</text></datafield1>
+      <datafield2><text>FETCH</text><text>SHIFT COUNT</text></datafield2>
+      <datafield3><text>BA&lt;-R12,DATI</text><text>C&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>236</key>
+      <imagefile>MP00082-37.jpg</imagefile>
+      <geometry>
+         <rectangle>3009,952,3319,1090</rectangle>
+      </geometry>
+      <datafield1><text>23-J</text></datafield1>
+      <datafield2><text>FETCH INDEX</text><text>DATA</text></datafield2>
+      <datafield3><text>BA&lt;-PC,DATI</text><text>B&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>625</key>
+      <imagefile>MP00082-37.jpg</imagefile>
+      <geometry>
+         <rectangle>3008,1215,3319,1355</rectangle>
+      </geometry>
+      <datafield1><text>23-K</text></datafield1>
+      <datafield2><text>INCREMENT PC</text></datafield2>
+      <datafield3><text>PC&lt;-PC+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>626</key>
+      <imagefile>MP00082-37.jpg</imagefile>
+      <geometry>
+         <rectangle>3008,1481,3320,1618</rectangle>
+      </geometry>
+      <datafield1><text>23-L</text></datafield1>
+      <datafield2><text>DETERMINE</text><text>DEST ADDR</text></datafield2>
+      <datafield3><text>R12&lt;-RD+B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>237</key>
+      <imagefile>MP00082-37.jpg</imagefile>
+      <geometry>
+         <rectangle>3445,689,3756,827</rectangle>
+      </geometry>
+      <datafield1><text>23-M</text></datafield1>
+      <datafield2><text>FETCH INDEX</text><text>DATA</text></datafield2>
+      <datafield3><text>BA&lt;-PC,DATI</text><text>B&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>627</key>
+      <imagefile>MP00082-37.jpg</imagefile>
+      <geometry>
+         <rectangle>3445,953,3757,1090</rectangle>
+      </geometry>
+      <datafield1><text>23-N</text></datafield1>
+      <datafield2><text>INCREMENT PC</text></datafield2>
+      <datafield3><text>PC&lt;-PC+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>630</key>
+      <imagefile>MP00082-37.jpg</imagefile>
+      <geometry>
+         <rectangle>3445,1216,3757,1355</rectangle>
+      </geometry>
+      <datafield1><text>23-O</text></datafield1>
+      <datafield2><text>DETERMINE ADDR</text><text>OF DEST ADDR</text></datafield2>
+      <datafield3><text>R12&lt;-RD+B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>631</key>
+      <imagefile>MP00082-37.jpg</imagefile>
+      <geometry>
+         <rectangle>3445,1481,3757,1618</rectangle>
+      </geometry>
+      <datafield1><text>23-P</text></datafield1>
+      <datafield2><text>FETCH DEST</text><text>ADDR</text></datafield2>
+      <datafield3><text>BA&lt;-R12,DATI</text><text>R12&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>434</key>
+      <imagefile>MP00082-38.jpg</imagefile>
+      <geometry>
+         <rectangle>1922,207,2237,357</rectangle>
+      </geometry>
+      <datafield1><text>24-A</text></datafield1>
+      <datafield2><text>TEST IR9 TO</text><text>DETERMINE ASH/ASHC</text></datafield2>
+      <datafield3><text>B&lt;-RS</text><text>BUT IR9</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>516</key>
+      <imagefile>MP00082-38.jpg</imagefile>
+      <geometry>
+         <rectangle>796,510,1112,661</rectangle>
+      </geometry>
+      <datafield1><text>24-B</text></datafield1>
+      <datafield2><text>SHIFT UPPER PART</text><text>OF OPERAND</text></datafield2>
+      <datafield3><text>SR(B15-B-BX),COUNT</text><text>BUT C05</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>512</key>
+      <imagefile>MP00082-38.jpg</imagefile>
+      <geometry>
+         <rectangle>796,811,1111,962</rectangle>
+      </geometry>
+      <datafield1><text>24-C</text></datafield1>
+      <datafield2><text>STORE UPPER RESULT</text><text>TEST SIGN ZBIT</text></datafield2>
+      <datafield3><text>RS&lt;-B</text><text>BUT CCN CCZ</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>447</key>
+      <imagefile>MP00082-38.jpg</imagefile>
+      <geometry>
+         <rectangle>354,1066,670,1218</rectangle>
+      </geometry>
+      <datafield1><text>24-D</text></datafield1>
+      <datafield2><text>SAVE BX IN B</text><text>CLEAR NBIT</text></datafield2>
+      <datafield3><text>B&lt;-BX</text><text>SL(BX-0)</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>445</key>
+      <imagefile>MP00082-38.jpg</imagefile>
+      <geometry>
+         <rectangle>796,1065,1111,1217</rectangle>
+      </geometry>
+      <datafield1><text>24-E</text></datafield1>
+      <datafield2><text>SAVE BX IN B</text><text>CLEAR NBIT</text></datafield2>
+      <datafield3><text>B&lt;-BX</text><text>SL(BX-0)</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>545</key>
+      <imagefile>MP00082-38.jpg</imagefile>
+      <geometry>
+         <rectangle>1240,1064,1556,1217</rectangle>
+      </geometry>
+      <datafield1><text>24-F</text></datafield1>
+      <datafield2><text>SAVE BX IN B</text><text>SET NBIT</text></datafield2>
+      <datafield3><text>B&lt;-BX</text><text>SL(BX-1)</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>634</key>
+      <imagefile>MP00082-38.jpg</imagefile>
+      <geometry>
+         <rectangle>355,1318,670,1471</rectangle>
+      </geometry>
+      <datafield1><text>24-G</text></datafield1>
+      <datafield2><text>SET ZBIT</text></datafield2>
+      <datafield3><text>SL(BX-1)</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>635</key>
+      <imagefile>MP00082-38.jpg</imagefile>
+      <geometry>
+         <rectangle>797,1319,1114,1471</rectangle>
+      </geometry>
+      <datafield1><text>24-H</text></datafield1>
+      <datafield2><text>CLEAR ZBIT</text></datafield2>
+      <datafield3><text>SL(BX-0)</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>636</key>
+      <imagefile>MP00082-38.jpg</imagefile>
+      <geometry>
+         <rectangle>798,1571,1115,1723</rectangle>
+      </geometry>
+      <datafield1><text>24-I</text></datafield1>
+      <datafield2><text>NBIT&lt;-OVX</text></datafield2>
+      <datafield3><text>MTX&lt;-B</text><text>SL(BX-OVX)</text><text>BUT CCN</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>637</key>
+      <imagefile>MP00082-38.jpg</imagefile>
+      <geometry>
+         <rectangle>1242,1570,1557,1722</rectangle>
+      </geometry>
+      <datafield1><text>24-J</text></datafield1>
+      <datafield2><text>NBIT&lt;-OVX</text></datafield2>
+      <datafield3><text>SL(BX-OVX)</text><text>BUT C05</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>454</key>
+      <imagefile>MP00082-38.jpg</imagefile>
+      <geometry>
+         <rectangle>573,1824,889,1974</rectangle>
+      </geometry>
+      <datafield1><text>24-K</text></datafield1>
+      <datafield2><text>CLEAR CBIT</text></datafield2>
+      <datafield3><text>SL(BX-0)</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>554</key>
+      <imagefile>MP00082-38.jpg</imagefile>
+      <geometry>
+         <rectangle>1028,1824,1344,1974</rectangle>
+      </geometry>
+      <datafield1><text>24-L</text></datafield1>
+      <datafield2><text>SET CBIT</text></datafield2>
+      <datafield3><text>SL(BX-1)</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>550</key>
+      <imagefile>MP00082-38.jpg</imagefile>
+      <geometry>
+         <rectangle>1482,1823,1798,1974</rectangle>
+      </geometry>
+      <datafield1><text>24-M</text></datafield1>
+      <datafield2><text>CLEAR CBIT</text></datafield2>
+      <datafield3><text>SL(BX-0)</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>641</key>
+      <imagefile>MP00082-38.jpg</imagefile>
+      <geometry>
+         <rectangle>1030,2075,1345,2227</rectangle>
+      </geometry>
+      <datafield1><text>24-N</text></datafield1>
+      <datafield2><text>TRANSFER CONDITION</text><text>CODES TO PSW</text></datafield2>
+      <datafield3><text>CC&lt;-BX</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>517</key>
+      <imagefile>MP00082-38.jpg</imagefile>
+      <geometry>
+         <rectangle>3030,461,3343,613</rectangle>
+      </geometry>
+      <datafield1><text>24-O</text></datafield1>
+      <datafield2><text>FETCH LOWER PART</text><text>OF OPERAND</text></datafield2>
+      <datafield3><text>BX&lt;-RS v 1</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>727</key>
+      <imagefile>MP00082-38.jpg</imagefile>
+      <geometry>
+         <rectangle>2592,712,2906,863</rectangle>
+      </geometry>
+      <datafield1><text>24-P</text></datafield1>
+      <datafield2><text>SHIFT DOUBLE OPERAND</text><text>RIGHT-INCREMENT COUNTER</text></datafield2>
+      <datafield3><text>SR(B15-B-BX),COUNT</text><text>BUT BX00 C05</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>707</key>
+      <imagefile>MP00082-38.jpg</imagefile>
+      <geometry>
+         <rectangle>3032,712,3346,863</rectangle>
+      </geometry>
+      <datafield1><text>24-Q</text></datafield1>
+      <datafield2><text>SHIFT DOUBLE OPERAND</text><text>RIGHT-INCREMENT COUNTER</text></datafield2>
+      <datafield3><text>SR(B15-B-BX),COUNT</text><text>BUT BX00 C05</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>703</key>
+      <imagefile>MP00082-38.jpg</imagefile>
+      <geometry>
+         <rectangle>3191,1013,3502,1166</rectangle>
+      </geometry>
+      <datafield1><text>24-R</text></datafield1>
+      <datafield2><text>CLEAR COUNTER TO</text><text>INDICATE CBIT=0</text></datafield2>
+      <datafield3><text>COUNT</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>723</key>
+      <imagefile>MP00082-38.jpg</imagefile>
+      <geometry>
+         <rectangle>2922,1266,3236,1418</rectangle>
+      </geometry>
+      <datafield1><text>24-S</text></datafield1>
+      <datafield2><text>STORE UPPER RESULT</text><text>TEST SIGN ZBIT</text></datafield2>
+      <datafield3><text>RS&lt;-B</text><text>BUT CCN,CCZ</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>466</key>
+      <imagefile>MP00082-38.jpg</imagefile>
+      <geometry>
+         <rectangle>2569,1721,2885,1873</rectangle>
+      </geometry>
+      <datafield1><text>24-T</text></datafield1>
+      <datafield2><text>STORE LOWER RESULT</text><text>CLEAR NBIT</text><text>TEST FOR ZERO</text></datafield2>
+      <datafield3><text>RS v 1&lt;-BX</text><text>SL(BX-0)</text><text>BUT CCZ</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>464</key>
+      <imagefile>MP00082-38.jpg</imagefile>
+      <geometry>
+         <rectangle>3011,1720,3324,1872</rectangle>
+      </geometry>
+      <datafield1><text>24-U</text></datafield1>
+      <datafield2><text>STORE LOWER RESULT</text><text>CLEAR NBIT</text></datafield2>
+      <datafield3><text>RS v 1&lt;-BX</text><text>SL(BX-0)</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>564</key>
+      <imagefile>MP00082-38.jpg</imagefile>
+      <geometry>
+         <rectangle>3449,1720,3759,1872</rectangle>
+      </geometry>
+      <datafield1><text>24-V</text></datafield1>
+      <datafield2><text>STORE LOWER RESULT</text><text>SET NBIT</text></datafield2>
+      <datafield3><text>RS v 1&lt;-BX</text><text>SL(BX-1)</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>467</key>
+      <imagefile>MP00082-38.jpg</imagefile>
+      <geometry>
+         <rectangle>2570,1972,2885,2123</rectangle>
+      </geometry>
+      <datafield1><text>24-W</text></datafield1>
+      <datafield2><text>SET ZBIT</text></datafield2>
+      <datafield3><text>SL(BX-1)</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>465</key>
+      <imagefile>MP00082-38.jpg</imagefile>
+      <geometry>
+         <rectangle>3011,1973,3323,2122</rectangle>
+      </geometry>
+      <datafield1><text>24-X</text></datafield1>
+      <datafield2><text>CLEAR ZBIT</text></datafield2>
+      <datafield3><text>SL(BX-0)</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>430</key>
+      <imagefile>MP00082-39.jpg</imagefile>
+      <geometry>
+         <rectangle>1963,181,2284,319</rectangle>
+      </geometry>
+      <datafield1>25-A<text></text></datafield1>
+      <datafield2><text>TEST COUNTER FOR</text><text>ZERONESS</text></datafield2>
+      <datafield3><text>B&lt;-RS,COUNT</text><text>BUT C05</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>456</key>
+      <imagefile>MP00082-39.jpg</imagefile>
+      <geometry>
+         <rectangle>828,470,1143,610</rectangle>
+      </geometry>
+      <datafield1><text>25-B</text></datafield1>
+      <datafield2><text>TEST IR9 TO</text><text>DETERMINE ASH/ASHC</text></datafield2>
+      <datafield3><text>BX&lt;-RS v 1</text><text>BUT IR9</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>500</key>
+      <imagefile>MP00082-39.jpg</imagefile>
+      <geometry>
+         <rectangle>607,767,921,903</rectangle>
+      </geometry>
+      <datafield1><text>25-C</text></datafield1>
+      <datafield2><text>CLEAR BX TO</text><text>INDICATE CBIT=0</text></datafield2>
+      <datafield3><text>BX&lt;-0</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>501</key>
+      <imagefile>MP00082-39.jpg</imagefile>
+      <geometry>
+         <rectangle>1048,766,1364,903</rectangle>
+      </geometry>
+      <datafield1><text>25-M</text></datafield1>
+      <datafield2><text>NO OPERATION</text><text>GOTO 25-N</text></datafield2>
+      <datafield3><text>NOP</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>452</key>
+      <imagefile>MP00082-39.jpg</imagefile>
+      <geometry>
+         <rectangle>2878,471,3193,608</rectangle>
+      </geometry>
+      <datafield1><text>25-O</text></datafield1>
+      <datafield2><text>TEST IR9 TO</text><text>DETERMINE ASH/ASHC</text></datafield2>
+      <datafield3><text>BX&lt;-RS v 1</text><text>BUT IR9</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>652</key>
+      <imagefile>MP00082-39.jpg</imagefile>
+      <geometry>
+         <rectangle>3444,766,3755,905</rectangle>
+      </geometry>
+      <datafield1><text>25-H</text></datafield1>
+      <datafield2><text>ZERO BX SO THAT</text><text>ZERO&apos;S SHIFT INTO B</text></datafield2>
+      <datafield3><text>BX&lt;-0</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>653</key>
+      <imagefile>MP00082-39.jpg</imagefile>
+      <geometry>
+         <rectangle>2316,1061,2632,1200</rectangle>
+      </geometry>
+      <datafield1><text>25-E</text></datafield1>
+      <datafield2><text>SHIFT DOUBLE OPERAND</text><text>LEFT-DECREMENT COUNTER</text></datafield2>
+      <datafield3><text>R17&lt;-B</text><text>SL(B-BX-0),COUNT</text><text>BUT C05</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>657</key>
+      <imagefile>MP00082-39.jpg</imagefile>
+      <geometry>
+         <rectangle>2316,1352,2631,1491</rectangle>
+      </geometry>
+      <datafield1><text>25-F</text></datafield1>
+      <datafield2><text>TEST R17 TO</text><text>DETERMINE CBIT</text></datafield2>
+      <datafield3><text>T&lt;-R17</text><text>BUT CCN</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>751</key>
+      <imagefile>MP00082-39.jpg</imagefile>
+      <geometry>
+         <rectangle>2316,1643,2632,1782</rectangle>
+      </geometry>
+      <datafield1><text>25-G</text></datafield1>
+      <datafield2><text>SET COUNTER TO</text><text>INDICATE CBIT=1</text></datafield2>
+      <datafield3><text>COUNT</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>651</key>
+      <imagefile>MP00082-39.jpg</imagefile>
+      <geometry>
+         <rectangle>1967,1934,2285,2073</rectangle>
+      </geometry>
+      <datafield1><text>25-N</text></datafield1>
+      <datafield2><text>STORE UPPER RESULT</text><text>TEST SIGN ZBIT</text></datafield2>
+      <datafield3><text>RS&lt;-B</text><text>BUT CCN,CCZ</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>753</key>
+      <imagefile>MP00082-39.jpg</imagefile>
+      <geometry>
+         <rectangle>3445,1056,3756,1195</rectangle>
+      </geometry>
+      <datafield1><text>25-I</text></datafield1>
+      <datafield2><text>SHIFT SINGLE OPERAND</text><text>LEFT-DECREMENT COUNTER</text></datafield2>
+      <datafield3><text>R17&lt;-B</text><text>SL(B-BX-0),COUNT</text><text>BUT C05</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>757</key>
+      <imagefile>MP00082-39.jpg</imagefile>
+      <geometry>
+         <rectangle>3445,1345,3756,1486</rectangle>
+      </geometry>
+      <datafield1><text>25-J</text></datafield1>
+      <datafield2><text>TEST R17 TO</text><text>DETERMINE CBIT</text></datafield2>
+      <datafield3><text>T&lt;-R17</text><text>BUT CCN</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>655</key>
+      <imagefile>MP00082-39.jpg</imagefile>
+      <geometry>
+         <rectangle>3008,1642,3320,1782</rectangle>
+      </geometry>
+      <datafield1><text>25-K</text></datafield1>
+      <datafield2><text>CLEAR BX TO</text><text>INDICATE CBIT=0</text></datafield2>
+      <datafield3><text>BX&lt;-0</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>755</key>
+      <imagefile>MP00082-39.jpg</imagefile>
+      <geometry>
+         <rectangle>3446,1642,3756,1781</rectangle>
+      </geometry>
+      <datafield1><text>25-L</text></datafield1>
+      <datafield2><text>SET BX TO</text><text>INDICATE CBIT=1</text></datafield2>
+      <datafield3><text>BX&lt;-MINUS 1</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>001</key>
+      <imagefile>MP00082-40.jpg</imagefile>
+      <geometry>
+         <rectangle>833,154,1149,302</rectangle>
+      </geometry>
+      <datafield1><text>26-M</text></datafield1>
+      <datafield2><text>MOVE PC TO BREG</text></datafield2>
+      <datafield3><text>B&lt;-PC</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>432</key>
+      <imagefile>MP00082-40.jpg</imagefile>
+      <geometry>
+         <rectangle>834,404,1149,556</rectangle>
+      </geometry>
+      <datafield1><text>26-N</text></datafield1>
+      <datafield2><text>MOVE PC TO R5</text></datafield2>
+      <datafield3><text>R5&lt;-PC</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>731</key>
+      <imagefile>MP00082-40.jpg</imagefile>
+      <geometry>
+         <rectangle>834,658,1150,809</rectangle>
+      </geometry>
+      <datafield1><text>26-O</text></datafield1>
+      <datafield2><text>CLEAR THE PC</text></datafield2>
+      <datafield3><text>PC&lt;-0</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>733</key>
+      <imagefile>MP00082-40.jpg</imagefile>
+      <geometry>
+         <rectangle>834,909,1149,1062</rectangle>
+      </geometry>
+      <datafield1><text>26-P</text></datafield1>
+      <datafield2><text>TEST FOR</text><text>ZERO PC</text></datafield2>
+      <datafield3><text>T&lt;-R7</text><text>BUT ZBIT</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>720</key>
+      <imagefile>MP00082-40.jpg</imagefile>
+      <geometry>
+         <rectangle>416,1164,731,1314</rectangle>
+      </geometry>
+      <datafield1><text>26-HH</text></datafield1>
+      <datafield2><text>CLEAR INSTR REG</text><text>TO HALT PROCESSOR</text></datafield2>
+      <datafield3><text>IR&lt;-0</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>722</key>
+      <imagefile>MP00082-40.jpg</imagefile>
+      <geometry>
+         <rectangle>835,1163,1149,1313</rectangle>
+      </geometry>
+      <datafield1><text>26-Q</text></datafield1>
+      <datafield2><text>PUT ALL ONES</text><text>IN PC</text></datafield2>
+      <datafield3><text>R7&lt;-R7-1</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>734</key>
+      <imagefile>MP00082-40.jpg</imagefile>
+      <geometry>
+         <rectangle>835,1416,1151,1567</rectangle>
+      </geometry>
+      <datafield1><text>26-R</text></datafield1>
+      <datafield2><text>TEST FOR</text><text>ZERO PC</text></datafield2>
+      <datafield3><text>T&lt;-R7</text><text>BUT ZBIT</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>726</key>
+      <imagefile>MP00082-40.jpg</imagefile>
+      <geometry>
+         <rectangle>418,1669,733,1820</rectangle>
+      </geometry>
+      <datafield1><text>26-II</text></datafield1>
+      <datafield2><text>CLEAR INSTR REG</text><text>TO HALT PROCESSOR</text></datafield2>
+      <datafield3><text>IR&lt;-0</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>724</key>
+      <imagefile>MP00082-40.jpg</imagefile>
+      <geometry>
+         <rectangle>836,1669,1149,1821</rectangle>
+      </geometry>
+      <datafield1><text>26-S</text></datafield1>
+      <datafield2><text>MOVE ALL ONES </text><text>TO BREG</text></datafield2>
+      <datafield3><text>B&lt;-MINUS 1</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>735</key>
+      <imagefile>MP00082-40.jpg</imagefile>
+      <geometry>
+         <rectangle>837,1920,1151,2072</rectangle>
+      </geometry>
+      <datafield1><text>26-T</text></datafield1>
+      <datafield2><text>EXCLUSIVE OR</text><text>PC AND B</text></datafield2>
+      <datafield3><text>R7&lt;-R7 - B</text><text>BUT ZBIT</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>730</key>
+      <imagefile>MP00082-40.jpg</imagefile>
+      <geometry>
+         <rectangle>419,2173,735,2324</rectangle>
+      </geometry>
+      <datafield1><text>26-JJ</text></datafield1>
+      <datafield2><text>CLEAR INSTR REG</text><text>TO HALT PROCESSOR</text></datafield2>
+      <datafield3><text>IR&lt;-0</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>732</key>
+      <imagefile>MP00082-40.jpg</imagefile>
+      <geometry>
+         <rectangle>837,2173,1152,2324</rectangle>
+      </geometry>
+      <datafield1><text>26-U</text></datafield1>
+      <datafield2><text>MOVE 16 TO COUNTER</text></datafield2>
+      <datafield3><text>C&lt;-16</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>736</key>
+      <imagefile>MP00082-40.jpg</imagefile>
+      <geometry>
+         <rectangle>1365,404,1680,556</rectangle>
+      </geometry>
+      <datafield1><text>26-V</text></datafield1>
+      <datafield2><text>CLEAR BREG</text></datafield2>
+      <datafield3><text>B&lt;-R7+B+1</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>743</key>
+      <imagefile>MP00082-40.jpg</imagefile>
+      <geometry>
+         <rectangle>1365,657,1681,808</rectangle>
+      </geometry>
+      <datafield1><text>26-W</text></datafield1>
+      <datafield2><text>PUT (000001) IN BREG</text></datafield2>
+      <datafield3><text>B&lt;-R7+B+1</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>737</key>
+      <imagefile>MP00082-40.jpg</imagefile>
+      <geometry>
+         <rectangle>1365,910,1683,1062</rectangle>
+      </geometry>
+      <datafield1><text>26-X</text></datafield1>
+      <datafield2><text>MOVE BREG TO BXREG</text></datafield2>
+      <datafield3><text>BX&lt;-B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>742</key>
+      <imagefile>MP00082-40.jpg</imagefile>
+      <geometry>
+         <rectangle>1366,1163,1682,1313</rectangle>
+      </geometry>
+      <datafield1><text>26-Y</text></datafield1>
+      <datafield2><text>ADD R7 AND BXREG</text><text>DECREMENT COUNT</text></datafield2>
+      <datafield3><text>R7&lt;-R7+BX</text><text>COUNT</text><text>BUT C05</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>725</key>
+      <imagefile>MP00082-40.jpg</imagefile>
+      <geometry>
+         <rectangle>1367,1416,1682,1567</rectangle>
+      </geometry>
+      <datafield1><text>26-AA</text></datafield1>
+      <datafield2><text>INCREMENT PC</text><text>BRANCH ON COUT</text></datafield2>
+      <datafield3><text>R7&lt;-R7+1</text><text>BUT COUT</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>721</key>
+      <imagefile>MP00082-40.jpg</imagefile>
+      <geometry>
+         <rectangle>1784,1416,2098,1567</rectangle>
+      </geometry>
+      <datafield1><text>26-Z</text></datafield1>
+      <datafield2><text>SHIFT BREG LEFT</text><text>ZERO LEAST SIG.BREG.BIT</text></datafield2>
+      <datafield3><text>SL(B-0)</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>540</key>
+      <imagefile>MP00082-40.jpg</imagefile>
+      <geometry>
+         <rectangle>1367,1921,1683,2071</rectangle>
+      </geometry>
+      <datafield1><text>26-KK</text></datafield1>
+      <datafield2><text>CLEAR INST REG</text><text>TO HALT PROCESSOR</text></datafield2>
+      <datafield3><text>IR&lt;-0</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>741</key>
+      <imagefile>MP00082-40.jpg</imagefile>
+      <geometry>
+         <rectangle>1367,2173,1682,2324</rectangle>
+      </geometry>
+      <datafield1><text>26-LL</text></datafield1>
+      <datafield2><text>NO OPERATION</text></datafield2>
+      <datafield3><text>NOP</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>740</key>
+      <imagefile>MP00082-40.jpg</imagefile>
+      <geometry>
+         <rectangle>2377,406,2690,558</rectangle>
+      </geometry>
+      <datafield1><text>26-BB</text></datafield1>
+      <datafield2><text>CLEAR R15</text></datafield2>
+      <datafield3><text>R15&lt;-0</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>647</key>
+      <imagefile>MP00082-40.jpg</imagefile>
+      <geometry>
+         <rectangle>2377,659,2691,811</rectangle>
+      </geometry>
+      <datafield1><text>26-CC</text></datafield1>
+      <datafield2><text>ADD TWO TO R15</text></datafield2>
+      <datafield3><text>R15&lt;-R15+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>654</key>
+      <imagefile>MP00082-40.jpg</imagefile>
+      <geometry>
+         <rectangle>2378,912,2692,1063</rectangle>
+      </geometry>
+      <datafield1><text>26-DD</text></datafield1>
+      <datafield2><text>SET R15 EQUAL</text><text>TO (000005)</text></datafield2>
+      <datafield3><text>R15&lt;-R15+R15+1</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>656</key>
+      <imagefile>MP00082-40.jpg</imagefile>
+      <geometry>
+         <rectangle>2378,1164,2692,1315</rectangle>
+      </geometry>
+      <datafield1><text>26-EE</text></datafield1>
+      <datafield2><text>SET R15 EQUAL</text><text>TO (000013)</text></datafield2>
+      <datafield3><text>R15&lt;-R15+R15+1</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>201</key>
+      <imagefile>MP00082-40.jpg</imagefile>
+      <geometry>
+         <rectangle>2378,1415,2692,1567</rectangle>
+      </geometry>
+      <datafield1><text>26-FF</text></datafield1>
+      <datafield2><text>SET R15 EQUAL TO</text><text>(000026)</text></datafield2>
+      <datafield3><text>R15&lt;-R15+R15
+      </text></datafield3>
+   </annotation>
+   <annotation>
+      <key>202</key>
+      <imagefile>MP00082-40.jpg</imagefile>
+      <geometry>
+         <rectangle>2378,1670,2692,1819</rectangle>
+      </geometry>
+      <datafield1><text>26-GG</text></datafield1>
+      <datafield2><text>FETCH NEW PSW</text></datafield2>
+      <datafield3><text>BA&lt;-R15,DATI</text><text>PSW&lt;-UDATA</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>577</key>
+      <imagefile>MP00082-40.jpg</imagefile>
+      <geometry>
+         <rectangle>2377,1920,2693,2070</rectangle>
+      </geometry>
+      <datafield1><text>26-K</text></datafield1>
+      <datafield2><text>DECREMENT VECTOR</text><text>ADDR</text></datafield2>
+      <datafield3><text>R15&lt;-R15-2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>646</key>
+      <imagefile>MP00082-40.jpg</imagefile>
+      <geometry>
+         <rectangle>2377,2172,2692,2323</rectangle>
+      </geometry>
+      <datafield1><text>26-L</text></datafield1>
+      <datafield2><text>FETCH NEW</text><text>PC</text></datafield2>
+      <datafield3><text>BA&lt;-R15,DATI</text><text>B&lt;-UDATA</text><text>KERNAL</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>017</key>
+      <imagefile>MP00082-40.jpg</imagefile>
+      <geometry>
+         <rectangle>3381,663,3696,813</rectangle>
+      </geometry>
+      <datafield1><text>26-A</text></datafield1>
+      <datafield2><text>MOVE VECTOR</text><text>TO R15</text></datafield2>
+      <datafield3><text>R15&lt;-B</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>460</key>
+      <imagefile>MP00082-40.jpg</imagefile>
+      <geometry>
+         <rectangle>3382,915,3696,1065</rectangle>
+      </geometry>
+      <datafield1><text>26-B</text></datafield1>
+      <datafield2><text>MOVE PSW TO</text><text>BREG</text></datafield2>
+      <datafield3><text>B&lt;-PSW</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>470</key>
+      <imagefile>MP00082-40.jpg</imagefile>
+      <geometry>
+         <rectangle>3384,1167,3697,1317</rectangle>
+      </geometry>
+      <datafield1><text>26-C</text></datafield1>
+      <datafield2><text>INCREMENT VECTOR</text><text>ADDR</text></datafield2>
+      <datafield3><text>R15&lt;-R15+2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>504</key>
+      <imagefile>MP00082-40.jpg</imagefile>
+      <geometry>
+         <rectangle>3384,1418,3697,1570</rectangle>
+      </geometry>
+      <datafield1><text>26-D</text></datafield1>
+      <datafield2><text>FETCH NEW PSW</text></datafield2>
+      <datafield3><text>BA&lt;-R15,DATI</text><text>PSW&lt;-UDATA</text><text>KERNAL</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>560</key>
+      <imagefile>MP00082-40.jpg</imagefile>
+      <geometry>
+         <rectangle>3384,1672,3700,1820</rectangle>
+      </geometry>
+      <datafield1><text>26-E</text></datafield1>
+      <datafield2><text>DECREMENT SP</text><text>ENAB STACK OVERFLOW</text></datafield2>
+      <datafield3><text>R6&lt;-R6-2</text><text>ENAB STOV</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>562</key>
+      <imagefile>MP00082-40.jpg</imagefile>
+      <geometry>
+         <rectangle>3382,1920,3695,2069</rectangle>
+      </geometry>
+      <datafield1><text>26-F</text></datafield1>
+      <datafield2><text>PLACE SP ADDR</text><text>ON BUS ADDR LINES</text></datafield2>
+      <datafield3><text>BA&lt;-R6</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>566</key>
+      <imagefile>MP00082-40.jpg</imagefile>
+      <geometry>
+         <rectangle>2881,914,3194,1064</rectangle>
+      </geometry>
+      <datafield1><text>26-G</text></datafield1>
+      <datafield2><text>OUTPUT OLD PSW</text><text>ENAB DOUBLE BUS ERRORS</text></datafield2>
+      <datafield3><text>DATO</text><text>UDATA&lt;-B</text><text>ENAB DBE</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>570</key>
+      <imagefile>MP00082-40.jpg</imagefile>
+      <geometry>
+         <rectangle>2882,1166,3195,1317</rectangle>
+      </geometry>
+      <datafield1><text>26-H</text></datafield1>
+      <datafield2><text>DECREMENT SP</text><text>ENAB STACK OVERFLOW</text></datafield2>
+      <datafield3><text>R6&lt;-R6-2</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>572</key>
+      <imagefile>MP00082-40.jpg</imagefile>
+      <geometry>
+         <rectangle>2882,1418,3195,1569</rectangle>
+      </geometry>
+      <datafield1><text>26-I</text></datafield1>
+      <datafield2><text>PLACE SP ADDR</text><text>ON BUS ADDR LINES</text></datafield2>
+      <datafield3><text>BA&lt;-R6</text></datafield3>
+   </annotation>
+   <annotation>
+      <key>573</key>
+      <imagefile>MP00082-40.jpg</imagefile>
+      <geometry>
+         <rectangle>2883,1671,3195,1822</rectangle>
+      </geometry>
+      <datafield1><text>26-J</text></datafield1>
+      <datafield2><text>PUSH OLD PC</text><text>ON STACK</text></datafield2>
+      <datafield3><text>DATO</text><text>UDATA&lt;-PC</text></datafield3>
+   </annotation>
+</document>

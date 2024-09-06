@@ -1,0 +1,324 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Find datapath objects for current UPC.
+   -> annoted uflow has function descriptions in datafields of state "boxes"
+    (read from uflow.xml)
+  - these select function blocks in the datapath schematic
+    (read from datapath.xml)
+  Example from FPMS MP00082:
+    uflow = 016, datafield = "BA<-PC,DATI , IR,B<-UDATA
+    severals patterns select datapath for diplay for display: VBA (mem),BA, UNIBUS, SPM (registers), B reg, IR reg
+
+   An importand literal is the "<-" arrow, marks registers as source or destination
+
+    <regex>  has wxRegEx Advanced Format "ARE"
+            https://docs.wxwidgets.org/3.2/overview_resyntax.html
+    <keylist> is  comma-separeted list of identifiuer
+
+    the literal "<-" must be encoded as "&lt;-";
+
+    <datafield> specifies against which uflow input datafield to match when using
+            getKeyListByMatch(vector<string>,...)
+            1 = State code in sheet "2-B"
+            2 = multiline comment "fetch dest addr"
+            3 = multiline micro instructions "BA<-R12,DATI , R12<-UDATA"
+
+   <keypattern>
+      <datafield>  </datafield>
+      <regex>  </regex>
+      <keylist>  </keylist>
+      <info>  </info>
+   </keypattern>
+
+
+-->
+<document>
+
+    <!-- register as source, right of "<-" -->
+   <keypattern>
+      <datafield>3</datafield>
+      <regex> &lt;-.*\mB\M </regex>
+      <keylist> B_REG,ARROW_B_REG_B_MUX,B_MUX,ARROW_B_MUX_ALU,ALU,ARROW_ALU_AMUX,AMUX,ARROW_AMUX_SSMUX,SSMUX </keylist>
+      <info> single "B" as source, "arrowB* </info>
+   </keypattern>
+   <keypattern>
+      <datafield>3</datafield>
+      <regex> &lt;-.*\mBX\M </regex>
+      <keylist> BX_REG,ARROW_BX_REG_B_MUX,B_MUX,ARROW_B_MUX_ALU,ALU,ARROW_ALU_AMUX,AMUX,ARROW_AMUX_SSMUX,SSMUX </keylist>
+      <info> single "BX" as source, "arrowB* </info>
+   </keypattern>
+   <keypattern>
+      <datafield>3</datafield>
+      <regex> (\mCOUNT\M)|(\mC5\M) </regex>
+      <keylist> COUNTER </keylist>
+      <info> EIS COUNTER, or BUT C5 </info>
+   </keypattern>
+   <keypattern>
+      <datafield>3</datafield>
+      <regex> ^(?!BA).*&lt;-.*((PC)|(RS)|(RD)|(R[0-7]+)) </regex>
+      <keylist> SPAM,SPM,ARROW_SPM_ALU,ARROW_SPAM_SPM,ARROW_SPM_ALU,ALU,ARROW_ALU_AMUX,AMUX,ARROW_AMUX_SSMUX,SSMUX </keylist>
+      <info> any CPU register as source, right of arrow. sometimes "RD" too. neg lookahaed: no BA left of arrow </info>
+   </keypattern>
+   <keypattern>
+      <datafield>3</datafield>
+      <regex> ^BA.*&lt;-.*((PC)|(RS)|(RD)|(R[0-7]+)) </regex>
+      <keylist> SPAM,SPM,ARROW_SPAM_SPM </keylist>
+      <info> "BA arrow any CPU register" as source, right of arrow. BA arrow apeinted by separate BA rule.</info>
+   </keypattern>
+   <keypattern>
+      <datafield>3</datafield>
+      <regex> &lt;-.*(PSW) </regex>
+      <keylist> PSW,ARROW_PSW_AMUX,AMUX,ARROW_AMUX_SSMUX,SSMUX </keylist>
+      <info> PSW as source, right of arrow. </info>
+   </keypattern>
+
+    <!-- register as destination. left of "<-" -->
+   <keypattern>
+      <datafield>3</datafield>
+      <regex> ((PC)|(RS)|(RD)|(R[0-7]+)).*&lt;- </regex>
+      <keylist> SPAM,SPM,ARROW_SSMUX_TOP,ARROW_TO_SPM,ARROW_SPAM_SPM </keylist>
+      <info> any CPU register as destination, left of arrow. sometimes "RS" too </info>
+   </keypattern>
+   <keypattern>
+      <datafield>3</datafield>
+      <regex> \mB\M.*&lt;- </regex>
+      <keylist> B_REG,ARROW_SSMUX_TOP,ARROW_TO_B_REG </keylist>
+      <info> single "B" as destination, "Barrow", ",Barrow" "\nBarrow" </info>
+   </keypattern>
+   <keypattern>
+      <datafield>3</datafield>
+      <regex> \mBX\M.*&lt;- </regex>
+      <keylist> BX_REG,ARROW_SSMUX_TOP,ARROW_TO_BX_REG </keylist>
+      <info> single "BX" as destination, "BXarrow", ",BXarrow" "\nBarrow" </info>
+   </keypattern>
+   <keypattern>
+      <datafield>3</datafield>
+      <regex> \mC\M.*&lt;- </regex>
+      <keylist> ARROW_SSMUX_TOP,ARROW_TO_COUNTER,COUNTER </keylist>
+      <info> single "C" as destination, "Barrow", ",Barrow" "\nBarrow" </info>
+   </keypattern>
+   <keypattern>
+      <datafield>3</datafield>
+      <regex> (PSW).*&lt;- </regex>
+      <keylist> PSW,ARROW_PSW_MUX_PSW,ARROW_LOAD_PSW_PSW,PSW_MUX,ARROW_TO_PSW_MUX,ARROW_SSMUX_TOP </keylist>
+      <info> PSW as destination, left of arrow </info>
+   </keypattern>
+
+    <!-- B,BX SHIFT -->
+   <keypattern>
+      <datafield>3</datafield>
+      <regex> BX0. </regex>
+      <keylist> BX_REG </keylist>
+      <info> EIS BX00,BX01 </info>
+   </keypattern>
+   <keypattern>
+      <datafield>3</datafield>
+      <regex> ((SL)|(SR)).*\(\mB\M </regex>
+      <keylist> B_REG,ARROW_B_MODE_10_B_REG </keylist>
+      <info> SL/R(B..) </info>
+   </keypattern>
+   <keypattern>
+      <datafield>3</datafield>
+      <regex> ((SL)|(SR)).*\(\mBX\M </regex>
+      <keylist> BX_REG,ARROW_BX_MODE_10_BX_REG </keylist>
+      <info> SL/R(BX..) </info>
+   </keypattern>
+   <keypattern>
+      <datafield>3</datafield>
+      <regex> B-BX </regex>
+      <keylist> ARROW_BX_REG_B_REG</keylist>
+      <info> SL(..B-BX*) </info>
+   </keypattern>
+   <keypattern>
+      <datafield>3</datafield>
+      <regex> ASLB </regex>
+      <keylist> B_REG,ARROW_B_MODE_10_B_REG </keylist>
+      <info> special B shift </info>
+   </keypattern>
+
+    <!-- ALU -->
+   <keypattern>
+      <datafield>3</datafield>
+      <regex> (\+) </regex>
+      <keylist> ALU,ARROW_AUX_ALU_CONTROL_ALU_S30,ARROW_ALU_S30_ALU </keylist>
+      <info> every "+" is ALU OP </info>
+   </keypattern>
+   <keypattern>
+      <datafield>3</datafield>
+      <regex> \mOP\M </regex>
+      <keylist> ALU,ARROW_AUX_ALU_CONTROL_ALU_S30,ARROW_ALU_S30_ALU </keylist>
+      <info> ALU OP ... not NOP </info>
+   </keypattern>
+   <keypattern>
+      <datafield>3</datafield>
+      <regex> &lt;-.*[^0-9]- </regex>
+      <keylist> ALU,ARROW_AUX_ALU_CONTROL_ALU_S30,ARROW_ALU_S30_ALU </keylist>
+      <info> "-reg" right of arrow, which is not part of SL/SR </info>
+   </keypattern>
+   <keypattern>
+      <datafield>3</datafield>
+      <regex> &lt;-.*(-|\+)1 </regex>
+      <keylist> ARROW_CONST_ONE_B_MUX,B_MUX,ARROW_B_MUX_ALU,ALU,ARROW_AUX_ALU_CONTROL_ALU_S30,ARROW_ALU_S30_ALU </keylist>
+      <info> "-+1" right of arrow. const of b mux </info>
+   </keypattern>
+   <keypattern>
+      <datafield>3</datafield>
+      <regex> &lt;-.*(-|\+)2 </regex>
+      <keylist> ARROW_CONST_ONE_B_MUX,B_MUX,ARROW_B_MUX_ALU,ALU,ARROW_CIN_ALU,ARROW_AUX_ALU_CONTROL_ALU_S30,ARROW_ALU_S30_ALU </keylist>
+      <info> "-+2" right of arrow. const of b mux + cin </info>
+   </keypattern>
+   <keypattern>
+      <datafield>3</datafield>
+      <regex> (~) </regex>
+      <keylist> ALU,ARROW_AUX_ALU_CONTROL_ALU_S30,ARROW_ALU_S30_ALU </keylist>
+      <info> bit inverse is ALU OP </info>
+   </keypattern>
+   <keypattern>
+      <datafield>3</datafield>
+      <regex> (&amp;) </regex>
+      <keylist> ALU,ARROW_AUX_ALU_CONTROL_ALU_S30,ARROW_ALU_S30_ALU </keylist>
+      <info> bit AND is ALU OP </info>
+   </keypattern>
+   <keypattern>
+      <datafield>3</datafield>
+      <regex> (SEX) </regex>
+      <keylist> SSMUX,ARROW_SEX_SSMUX </keylist>
+      <info> from IR DECODE? </info>
+   </keypattern>
+   <keypattern>
+      <datafield>3</datafield>
+      <regex> (SWAB) </regex>
+      <keylist> SSMUX,ARROW_SWAP_SSMUX </keylist>
+      <info> from IR DECODE? </info>
+   </keypattern>
+   <keypattern>
+      <datafield>3</datafield>
+      <regex> &lt;-.*(?&lt;![A-Z0-9])0(?![A-Z0-9]) </regex>
+      <keylist> ARROW_CONSTANTS_AMUX,AMUX,ARROW_AMUX_SSMUX,SSMUX </keylist>
+      <info> constant "0" right of arrow not part of other number or text. "(?&lt;! .." is "look behind negative" </info>
+   </keypattern>
+<!-- 1 and 2 handled with +/- prefix
+   <keypattern>
+      <datafield>3</datafield>
+      <regex> &lt;-.*(?&lt;![A-Z0-9])1(?![A-Z0-9]) </regex>
+      <keylist> ARROW_CONSTANTS_AMUX,AMUX,ARROW_AMUX_SSMUX,SSMUX </keylist>
+      <info> constant "1" right of arrow not part of other number or text, also "MINUS 1" </info>
+   </keypattern>
+   <keypattern>
+      <datafield>3</datafield>
+      <regex> &lt;-.*(?&lt;![A-Z0-9])2(?![A-Z0-9]) </regex>
+      <keylist> ARROW_CONSTANTS_AMUX,ARROW_AMUX_SSMUX,SSMUX </keylist>
+      <info> constant "2" right of arrow not part of other number or text </info>
+   </keypattern>
+-->
+   <keypattern>
+      <datafield>3</datafield>
+      <regex> &lt;-.*(?&lt;![A-Z0-9])16(?![A-Z0-9]) </regex>
+      <keylist> ARROW_CONST_SIXTEEN_B_MUX,B_MUX,ARROW_B_MUX_ALU,ALU,ARROW_ALU_AMUX,AMUX,ARROW_AMUX_SSMUX,SSMUX </keylist>
+      <info> constant "16" right of arrow not part of other number or text </info>
+   </keypattern>
+   <keypattern>
+      <datafield>3</datafield>
+      <regex> (LOAD CC) </regex>
+      <keylist> CC_LOGIC,ARROW_ALU_CC_LOGIC,ARROW_CC_LOGIC_CC_DATA,ARROW_CC_DATA_PSW_MUX </keylist>
+      <info>  </info>
+   </keypattern>
+   <keypattern>
+      <datafield>3</datafield>
+      <regex> CC.*&lt;- </regex>
+      <keylist> CC_LOGIC,ARROW_ALU_CC_LOGIC,ARROW_CC_LOGIC_CC_DATA,ARROW_CC_DATA_PSW_MUX </keylist>
+      <info> alternative LOAD CC </info>
+   </keypattern>
+   <keypattern>
+      <datafield>2</datafield> <!-- in comment field! -->
+      <regex> (ZBIT)|(CBIT)|(VBIT)|(NBIT)|(UBIT) </regex>
+      <keylist> CC_LOGIC,ARROW_CC_LOGIC_CC_DATA,ARROW_CC_DATA_PSW_MUX </keylist>
+      <info> TEST/SET CC bits. UBIT typo in uflow.xml? </info>
+   </keypattern>
+   <keypattern>
+      <datafield>2</datafield> <!-- in comment field! -->
+      <regex> (ZBIT)|(CBIT)|(VBIT)|(NBIT)|(UBIT) </regex>
+      <keylist> CC_LOGIC,ARROW_CC_LOGIC_CC_DATA,ARROW_CC_DATA_PSW_MUX </keylist>
+      <info> TEST/SET CC bits. UBIT typo in uflow.xml? </info>
+   </keypattern>
+   <keypattern>
+      <datafield>3</datafield>
+      <regex> ((PC)|(RS)|(RD)|(R[0-7]+)) OP B </regex>
+      <keylist> B_REG,ARROW_B_REG_B_MUX,B_MUX,ARROW_B_MUX_ALU,ALU,SPAM,ARROW_SPAM_SPM,SPM,ARROW_SPM_ALU  </keylist>
+      <info> special case Rx OP ALU, without transfering result </info>
+   </keypattern>
+   <keypattern>
+      <datafield>3</datafield>
+      <regex> ((BUT)|(SET)|(CLEAR)) .BIT </regex>
+      <keylist> ALU,ARROW_ALU_CC_LOGIC,CC_LOGIC </keylist>
+      <info> BUT/SET/CLEAR single BIT, "BUT" separate </info>
+   </keypattern>
+   <keypattern>
+      <datafield>3</datafield>
+      <regex> BUT.*CC. </regex>
+      <keylist> ALU,ARROW_ALU_CC_LOGIC,CC_LOGIC </keylist>
+      <info> BUT CCx, BUT separate </info>
+   </keypattern>
+
+
+    <!-- UNIBUS -->
+   <keypattern>
+      <datafield>3</datafield>
+      <regex> (BA).*&lt;- </regex>
+      <keylist> VBA,BA,DRIVER_ADDRESS,UNIBUS,ARROW_SPM_VBA,ARROW_VBA_BA,ARROW_VBA_ADDER_BA,ARROW_BA_DRIVER_ADDRESS,ARROW_DRIVER_ADDRESS_UNIBUS </keylist>
+      <info>  write bus address  </info>
+   </keypattern>
+   <keypattern>
+      <datafield>3</datafield>
+      <regex> (DATI)|(DATIP)|(DATO)|(DATOB) </regex>
+      <keylist> BUS_CONTROL,DRIVER_CONTROL,UNIBUS,ARROW_BUS_CONTROL_DRIVER_CONTROL,ARROW_DRIVER_CONTROL_UNIBUS </keylist>
+      <info> C1,C0,MSYN,SSYN </info>
+   </keypattern>
+   <keypattern>
+      <datafield>3</datafield>
+      <regex> &lt;-.*(UDATA) </regex>
+      <keylist> UNIBUS,DRIVER_DATA,AMUX,SSMUX,ARROW_DRIVER_DATA_UNIBUS,ARROW_DRIVER_DATA_AMUX, ARROW_AMUX_SSMUX,ARROW_SSMUX_TOP</keylist>
+      <info> UNIBUS data as source for DATI </info>
+   </keypattern>
+   <keypattern>
+      <datafield>3</datafield>
+      <regex> (UDATA).*&lt;- </regex>
+      <keylist> UNIBUS,DRIVER_DATA,ARROW_DRIVER_DATA_UNIBUS,ARROW_SSMUX_DRIVER_DATA </keylist>
+      <info> UNIBUS data as destination for DATO </info>
+   </keypattern>
+
+    <!-- UFLOW -->
+   <keypattern>
+      <datafield>3</datafield>
+      <regex> (IR).*&lt;- </regex>
+      <keylist> IR,ARROW_SSMUX_TOP,ARROW_TO_IR,ARROW_LOAD_IR,IR_DECODE,ARROW_IR_IR_DECODE,ARROW_IR_AUX_ALU_CONTROL,AUX_ALU_CONTROL</keylist>
+      <info> write IR </info>
+   </keypattern>
+   <keypattern>
+      <datafield>3</datafield>
+      <regex> IR9 </regex>
+         <keylist> IR </keylist>
+      <info> explicit test IR:9 for ASH/ASHC </info>
+   </keypattern>
+   <keypattern>
+      <datafield>3</datafield>
+      <regex> IR DECODE </regex>
+         <keylist> IR_DECODE,ARROW_IR_DECODE_MBRANCH_CONTROL,ARROW_IR_DECODE_AUX_ALU_CONTROL,AUX_ALU_CONTROL </keylist>
+      <info>  </info>
+   </keypattern>
+   <keypattern>
+      <datafield>3</datafield>
+      <regex> (BUT) </regex>
+      <keylist> BUT_DECODE,MBRANCH_CONTROL,ARROW_BUT_DECODE_MBRANCH_CONTROL </keylist>
+      <info>  </info>
+   </keypattern>
+
+    <!-- MISC -->
+    <!-- ENAB STOV ? -->
+    <!-- MAINT ? -->
+    <!-- PREVIOUS ? -->
+    <!-- KERNAL ? -->
+    <!-- "T <-" is test, not amux, not ssmux -->
+    <!-- "CC <-" is test, not amux, not ssmux -->
+
+</document>
