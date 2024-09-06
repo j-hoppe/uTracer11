@@ -1,0 +1,77 @@
+       1                                	.title	M9312 'DB' BOOT prom for RM0x controller
+       2                                
+       3                                	; This source code is an modified copy of the DEC M9312 23-755A9 boot PROM.
+       4                                	;
+       5                                	; This boot PROM is for the RH11 controllers with RM0x drives.
+       6                                	;
+       7                                	; Multiple units and/or CSR addresses are supported via different entry points.
+       8                                
+       9  FDC0h                         rmcsr	=176700				; std RH11 csrbase
+      10                                
+      11  0000h                         rpcs	=+0				; control status offset
+      12  0002h                         rpwc	=+2				; word count offset
+      13  0004h                         rpba	=+4				; bus addr offset
+      14  0008h                         rpcs2	=+10				; control status 2 offset
+      15  000Eh                         rpas	=+16				; atten summary offset
+      16  001Ah                         rpof	=+32				; offset register offset
+      17                                
+      18                                	.asect
+      19                                	; ---- Simple boot drive 0 from 0
+      20  0000h                         	. = 0
+      21  0000h  005Fh   1000h          	jmp	@#start0
+      22                                
+      23                                	; ---- Reboot drive 0 on power event
+      24  0014h                         	. = 24				; Power ON/OFF
+      25  0014h  1000h                  	.word	     start0		; PC
+      26  0016h  00E0h                  	.word	     340		; PSW priority level 7
+      27                                
+      28                                	; ----- Main boot addresses
+      29  1000h                         	.=10000 			;  arbitrary position > 3000
+      30                                
+      31                                start:
+      32                                	; 4 unit numbers => 4 entry addresses
+      33                                
+      34                                start0:
+      35  1000h  15C0h   0000h          	mov	#0,r0
+      36  1004h  010Bh                  	br	drvnr
+      37  1006h  00A0h                  	nop
+      38                                start1:
+      39  1008h  15C0h   0001h          	mov	#1,r0
+      40  100Ch  0107h                  	br	drvnr
+      41  100Eh  00A0h                  	nop
+      42                                start2:
+      43  1010h  15C0h   0002h          	mov	#2,r0
+      44  1014h  0103h                  	br	drvnr
+      45  1016h  00A0h                  	nop
+      46                                start3:
+      47  1018h  15C0h   0003h          	mov	#3,r0
+      48                                
+      49                                drvnr:
+      50  101Ch  0005h                  	reset
+      51  101Eh  15C1h   FDC0h          	mov	#rmcsr,r1		; boot std csr, unit <R0>
+      52                                					; then skip over pseudo reboot vector
+      53  1022h  1031h   0008h          	mov	r0,rpcs2(r1)		; set unit number into controller
+      54  1026h  15C2h   0039h          	mov	#071,r2			; READ+GO command code
+      55  102Ah  15C9h   0011h          	mov	#021,(r1)		; RIP+GO command
+      56  102Eh  15F1h   1800h   001Ah  	mov	#014000,rpof(r1)	; set 16b mode, inhibit ECC mode
+      57  1034h  1C71h   000Eh   000Eh  	mov	rpas(r1),rpas(r1)	; clear attention bits
+      58                                
+      59  103Ah  15F1h   FE00h   0002h  boot:	mov	#-512.,rpwc(r1)		; set word count
+      60  1040h  1243h                  	mov	(r1),r3			; get unit number
+      61  1042h  45C3h   00FFh          	bic	#377,r3			; clear command byte
+      62  1046h  5083h                  	bis	r2,r3			; insert read command code
+      63  1048h  10C9h                  	mov	r3,(r1)			; execute read command
+      64  104Ah  8BC9h                  2$:	tstb	(r1)			; test unit ready
+      65  104Ch  80FEh                  	bpl	2$			; br if not yet
+      66                                
+      67  104Eh  0BC9h                  	tst	(r1)			; test any error
+      68  1050h  8002h                  	bpl	3$			; br if not
+      69                                
+      70  1052h  0005h                  	reset				; error, reset the world
+      71  1054h  01E3h                  	br	drvnr			; retry. r0 unchanged
+      72                                
+      73  1056h  45C9h   00FFh          3$:	bic	#377,(r1)		; nop command, clear controller
+      74  105Ah  0A07h                  	clr	pc			; jump to bootstrap start
+      75                                
+      76                                	.end
+      76                                

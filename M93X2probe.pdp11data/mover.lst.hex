@@ -1,0 +1,112 @@
+       1                                
+       2                                		.TITLE	MOVER
+       3                                
+       4                                	.asect
+       5  0200h                         	.=1000	      ;
+       6                                
+       7                                HELLO:
+       8                                
+       9                                     ;	 MOV	 #sgnon,R1	 ;STARTING ADDRESS OF STRING
+      10                                      ;  mov	 pc,r3		 ; ret addr
+      11                                       ; br	 PMSG
+      12                                  ; move
+      13  0200h  15C2h   0400h          	  mov #2000, r2
+      14  0204h  15C0h   1000h          	  mov #10000,r0
+      15  0208h  15C1h   0C00h          	 mov #6000,r1
+      16                                
+      17                                lbl1:
+      18                                
+      19  020Ch  1411h                  	  mov (r0)+,(r1)+
+      20                                
+      21  020Eh  0AC2h                  	  dec r2
+      22  0210h  02FDh                  	  bne lbl1
+      23                                
+      24  0212h  15C2h   0100h          	  mov #400, r2
+      25  0216h  15C0h   1000h          	  mov #10000,r0
+      26                                lbl2:
+      27  021Ah  15D0h   01FFh          	  mov #777,(r0)+
+      28  021Eh  0AC2h                  	  dec r2
+      29  0220h  02FCh                  	  bne lbl2
+      30                                
+      31  0222h  15C1h   0C10h          	  mov  #6020,r1
+      32  0226h  0049h                  	  jmp (r1)
+      33  0228h  0000h                  	halt
+      34                                
+      35                                ;---------------------------------------
+      36                                ; PMSG PutMessage to console
+      37                                ;
+      38                                ;	input:	R1	pointer to Message
+      39                                ;		R3	return address
+      40                                ;	uses:	R0	for console output address
+      41                                ;		R5 Console xmit buffer
+      42                                ;	howto call:
+      43                                ;
+      44                                ;
+      45                                ;
+      46                                ;------------------------------------------
+      47                                	; kbs = 177560
+      48                                	; xbuf= 177566
+      49                                	; xbuf control = 177564
+      50  000Dh                         CR=15
+      51  000Ah                         LF=12
+      52                                
+      53                                PMSG:
+      54  022Ah  15C5h   FF70h          		mov	#177560,r5	; console xbuf addr in r5
+      55                                
+      56  022Eh  9440h                  PMSG1:	MOVB	(R1)+,R0		;FETCH NEXT CHARACTER
+      57  0230h  0306h                  		BEQ	PMSGE			;IF ZERO, EXIT LOOP
+      58  0232h  8BF5h   0004h          PMSG2:	tstb	4(r5)		; wait for xmit buffer available
+      59  0236h  80FDh                  		bpl	PMSG2			; br if not yet
+      60  0238h  9035h   0006h          	movb	r0,6(r5)		; PRINT byte
+      61  023Ch  01F8h                  		BR	PMSG1			;REPEAT LOOP
+      62  023Eh  0073h   FFFEh          PMSGE:		jmp -2(r3)
+      63                                
+      64                                
+      65  0242h    48h     65h     6Ch  MSG:		.ASCIZ /Hello, world!/<CR><LF>
+          0245h    6Ch     6Fh     2Ch  
+          0248h    20h     77h     6Fh  
+          024Bh    72h     6Ch     64h  
+          024Eh    21h     0Dh     0Ah  
+          0251h    00h                  
+      66  0252h    4Dh     4Fh     56h  sgnon:		.ASCIZ /MOVER moves your code at 10000-10776(8) to your desired destination/<CR><LF>
+          0255h    45h     52h     20h  
+          0258h    6Dh     6Fh     76h  
+          025Bh    65h     73h     20h  
+          025Eh    79h     6Fh     75h  
+          0261h    72h     20h     63h  
+          0264h    6Fh     64h     65h  
+          0267h    20h     61h     74h  
+          026Ah    20h     31h     30h  
+          026Dh    30h     30h     30h  
+          0270h    2Dh     31h     30h  
+          0273h    37h     37h     36h  
+          0276h    28h     38h     29h  
+          0279h    20h     74h     6Fh  
+          027Ch    20h     79h     6Fh  
+          027Fh    75h     72h     20h  
+          0282h    64h     65h     73h  
+          0285h    69h     72h     65h  
+          0288h    64h     20h     64h  
+          028Bh    65h     73h     74h  
+          028Eh    69h     6Eh     61h  
+          0291h    74h     69h     6Fh  
+          0294h    6Eh     0Dh     0Ah  
+          0297h    00h                  
+      67  0298h    50h     6Ch     65h  msg1:		.ASCIZ /Please, enter destination address in octal:/
+          029Bh    61h     73h     65h  
+          029Eh    2Ch     20h     65h  
+          02A1h    6Eh     74h     65h  
+          02A4h    72h     20h     64h  
+          02A7h    65h     73h     74h  
+          02AAh    69h     6Eh     61h  
+          02ADh    74h     69h     6Fh  
+          02B0h    6Eh     20h     61h  
+          02B3h    64h     64h     72h  
+          02B6h    65h     73h     73h  
+          02B9h    20h     69h     6Eh  
+          02BCh    20h     6Fh     63h  
+          02BFh    74h     61h     6Ch  
+          02C2h    3Ah     00h          
+      68                                .end
+      69                                
+      69                                

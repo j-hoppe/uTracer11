@@ -1,0 +1,76 @@
+	.title	M9312 'DB' BOOT prom for RM0x controller
+
+	; This source code is an modified copy of the DEC M9312 23-755A9 boot PROM.
+	;
+	; This boot PROM is for the RH11 controllers with RM0x drives.
+	;
+	; Multiple units and/or CSR addresses are supported via different entry points.
+
+rmcsr	=176700				; std RH11 csrbase
+
+rpcs	=+0				; control status offset
+rpwc	=+2				; word count offset
+rpba	=+4				; bus addr offset
+rpcs2	=+10				; control status 2 offset
+rpas	=+16				; atten summary offset
+rpof	=+32				; offset register offset
+
+	.asect
+	; ---- Simple boot drive 0 from 0
+	. = 0
+	jmp	@#start0
+
+	; ---- Reboot drive 0 on power event
+	. = 24				; Power ON/OFF
+	.word	     start0		; PC
+	.word	     340		; PSW priority level 7
+
+	; ----- Main boot addresses
+	.=10000 			;  arbitrary position > 3000
+
+start:
+	; 4 unit numbers => 4 entry addresses
+
+start0:
+	mov	#0,r0
+	br	drvnr
+	nop
+start1:
+	mov	#1,r0
+	br	drvnr
+	nop
+start2:
+	mov	#2,r0
+	br	drvnr
+	nop
+start3:
+	mov	#3,r0
+
+drvnr:
+	reset
+	mov	#rmcsr,r1		; boot std csr, unit <R0>
+					; then skip over pseudo reboot vector
+	mov	r0,rpcs2(r1)		; set unit number into controller
+	mov	#071,r2			; READ+GO command code
+	mov	#021,(r1)		; RIP+GO command
+	mov	#014000,rpof(r1)	; set 16b mode, inhibit ECC mode
+	mov	rpas(r1),rpas(r1)	; clear attention bits
+
+boot:	mov	#-512.,rpwc(r1)		; set word count
+	mov	(r1),r3			; get unit number
+	bic	#377,r3			; clear command byte
+	bis	r2,r3			; insert read command code
+	mov	r3,(r1)			; execute read command
+2$:	tstb	(r1)			; test unit ready
+	bpl	2$			; br if not yet
+
+	tst	(r1)			; test any error
+	bpl	3$			; br if not
+
+	reset				; error, reset the world
+	br	drvnr			; retry. r0 unchanged
+
+3$:	bic	#377,(r1)		; nop command, clear controller
+	clr	pc			; jump to bootstrap start
+
+	.end

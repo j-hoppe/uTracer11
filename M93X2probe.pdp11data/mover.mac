@@ -1,0 +1,69 @@
+
+		.TITLE	MOVER
+
+	.asect
+	.=1000	      ;
+
+HELLO:
+
+     ;	 MOV	 #sgnon,R1	 ;STARTING ADDRESS OF STRING
+      ;  mov	 pc,r3		 ; ret addr
+       ; br	 PMSG
+  ; move
+	  mov #2000, r2
+	  mov #10000,r0
+	 mov #6000,r1
+
+lbl1:
+
+	  mov (r0)+,(r1)+
+
+	  dec r2
+	  bne lbl1
+
+	  mov #400, r2
+	  mov #10000,r0
+lbl2:
+	  mov #777,(r0)+
+	  dec r2
+	  bne lbl2
+
+	  mov  #6020,r1
+	  jmp (r1)
+	halt
+
+;---------------------------------------
+; PMSG PutMessage to console
+;
+;	input:	R1	pointer to Message
+;		R3	return address
+;	uses:	R0	for console output address
+;		R5 Console xmit buffer
+;	howto call:
+;
+;
+;
+;------------------------------------------
+	; kbs = 177560
+	; xbuf= 177566
+	; xbuf control = 177564
+CR=15
+LF=12
+
+PMSG:
+		mov	#177560,r5	; console xbuf addr in r5
+
+PMSG1:	MOVB	(R1)+,R0		;FETCH NEXT CHARACTER
+		BEQ	PMSGE			;IF ZERO, EXIT LOOP
+PMSG2:	tstb	4(r5)		; wait for xmit buffer available
+		bpl	PMSG2			; br if not yet
+	movb	r0,6(r5)		; PRINT byte
+		BR	PMSG1			;REPEAT LOOP
+PMSGE:		jmp -2(r3)
+
+
+MSG:		.ASCIZ /Hello, world!/<CR><LF>
+sgnon:		.ASCIZ /MOVER moves your code at 10000-10776(8) to your desired destination/<CR><LF>
+msg1:		.ASCIZ /Please, enter destination address in octal:/
+.end
+

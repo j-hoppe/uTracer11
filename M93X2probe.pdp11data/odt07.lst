@@ -1,0 +1,587 @@
+       1                                	.title	M9312 for uTracer11  11/34-etc Console/Diagnostic Program
+       2                                
+       3                                	; This source code is derived from an exact copy of the DEC M9312 23-248F1 console PROM.
+       4                                	;
+       5                                	; This console/diagnostic PROM is for 11/04-34-etc CPUs.
+       6                                	;
+       7                                	; Standard devices are 82S137, 74S573 or other compatible bipolar PROMs
+       8                                	; with a 1024x4 TriState 18pin DIP architecture.
+       9                                
+      10                                	; 2024-July-05 by Dr. Wolfgang Schmitz
+      11                                	;
+      12                                	; The modifications of the console program are meant to be a substitute for a physical M9312 board in a PDP11,
+      13                                	; which is equipped with Joerg Hoppe's uTracer11 board in place of an M9312.
+      14                                	;
+      15                                	; The code is fully relocatable and can be loaded and  executed anywhere in PDP11's RAM.
+      16                                	; (compilation is done at addr 10000 for convenience).
+      17                                	; The entry point for execution is still .base+20, so if you e.g. should load the compiled code
+      18                                	; to addr 9000, you would start the console program at 9020.
+      19                                	;
+      20                                	; Boot loaders for PDP11 devices can be loaded immediately behind this program.
+      21                                	; There is no more restriction to a maximum of 4 "Boot-PROMs" like on a physical M9312.
+      22                                	; Instead, the boot loaders are connected through a linked chain, similar to the old conventions of
+      23                                	; M9312 but more flexible.
+      24                                	; There is an end-of-chain marker to let the console program know, when to finish the search for more
+      25                                	; boot loaders.
+      26                                  ;
+      27                                  ; About DIAGNOSTICS:
+      28                                  ; I decided to eliminate most of the diagnostics at startup (DIAG:	; PRIMARY DIAGNOSTIC ENTRY POINT)
+      29                                  ; just keeping the basic tests T1 on register R3
+      30                                  ; and completely those at	.=base+564  (>>RESTRT: ; SECONDARY DIAGNOSTIC ENTRY POINT) .
+      31                                  ; There were some absolute addresses in these tests and it did look worthwhile to convert this
+      32                                  ; stuff into "relocatible".
+      33                                
+      34                                
+      35 177560                         dlbase	=177560 	; console DL11 base
+      36 177560                         dlrcsr	=dlbase+0	; console RX status
+      37 177562                         dlrbuf	=dlbase+2	; console RX data
+      38 177564                         dlxcsr	=dlbase+4	; console TX status
+      39 177566                         dlxbuf	=dlbase+6	; console TX data
+      40                                
+      41 000500                         memloc	=500		; low memory test location
+      42                                
+      43                                ;btprom =173000 				  ; lowest boot PROM base address (old convention of physical M9312)
+      44 011000                         btprom	      = 11000 ;@bootpr1 	; lowest boot PROM base address for uTracer environment
+      45                                
+      46 000001                         bit0	=000001 	; plain old bit definitions
+      47 000002                         bit1	=000002 	;
+      48 000004                         bit2	=000004 	;
+      49 000010                         bit3	=000010 	;
+      50 000020                         bit4	=000020 	;
+      51 000040                         bit5	=000040 	;
+      52 000100                         bit6	=000100 	;
+      53 000200                         bit7	=000200 	;
+      54 000400                         bit8	=000400 	;
+      55 001000                         bit9	=001000 	;
+      56 002000                         bit10	=002000 	;
+      57 004000                         bit11	=004000 	;
+      58 010000                         bit12	=010000 	;
+      59 020000                         bit13	=020000 	;
+      60 040000                         bit14	=040000 	;
+      61 100000                         bit15	=100000 	;
+      62                                
+      63 000040                         BL	=040		; ascii SPACE
+      64 000015                         CR	=015		; ascii CR
+      65 000012                         LF	=012		; ascii LF
+      66 000400                         U	=bit8		; upperbyte multiplier
+      67 000001                         L	=bit0		; lowerbyte multiplier
+      68                                
+      69                                	.asect
+      70 010000                         	.=10000        ; original .=165000
+      71                                
+      72 010000                         base	=.
+      73                                
+      74 010000 010000                  data0:	.word	data0		; test data structures
+      75 010002 010000                  	.word	data0		;
+      76 010004    000                  data1:	.byte	000		;
+      77 010005    200                  	.byte	200		;
+      78 010006 177777                  data2:	.word	177777		;
+      79 010010 010006                  	.word	data2		;
+      80 010012 010006                  	.word	data2		;
+      81 010014 000500                  	.word	memloc+0	;
+      82 010016 000501                  	.word	memloc+1	;
+      83                                
+      84                                	; ------------------------------------------------------------
+      85                                	; ------------------------------------------------------------
+      86                                
+      87 010020                         	.=base+20
+      88                                DIAG:	; PRIMARY DIAGNOSTIC ENTRY POINT
+      89                                
+      90                                	; ------------------------------------------------------------
+      91                                	; ------------------------------------------------------------
+      92                                
+      93 010020 005003                  T1:	clr	r3			; R3=000000 C=0
+      94 010022 005203                  	inc	r3			; R3=000001 C=0
+      95 010024 005103                  	com	r3			; R3=177776 C=1
+      96 010026 006203                  	asr	r3			; R3=177777 C=0
+      97 010030 006303                  	asl	r3			; R3=177776 C=1
+      98 010032 006003                  	ror	r3			; R3=177777 C=0
+      99 010034 005703                  	tst	r3			; R3=177777 C=0
+     100 010036 005403                  	neg	r3			; R3=000001 C=1
+     101 010040 005303                  	dec	r3			; R3=000000 C=1
+     102 010042 005603                  	sbc	r3			; R3=177777 C=1
+     103 010044 006103                  	rol	r3			; R3=177777 C=1
+     104 010046 005503                  	adc	r3			; R3=000000 C=1
+     105 010050 000303                  	swab	r3			; R3=000000 C=0
+     106 010052 001377                  	bne	.			; br . if FAIL
+     107 010054 000433                  	br	NODIAG
+     108                                	; ------------------------------------------------------------
+     109                                
+     110 010144                         	.=base+144
+     111                                NODIAG: ; NO DIAGNOSTIC ENTRY POINT
+     112                                
+     113 010144 010701                  	mov	pc,r1			; ret addr
+     114 010146 000546                  	br	prteol			; print EOL
+     115                                
+     116 010150 010701                  	mov	pc,r1			; ret addr
+     117 010152 000520                  	br	prtoct			; print 6 octal R0 + space
+     118                                
+     119 010154 010400                  	mov	r4,r0			; get R4 value
+     120 010156 000516                  	br	prtoct			; print 6 octal R4 + space
+     121                                
+     122 010160 010600                  nxtdpy: mov	sp,r0			; get R6 value
+     123 010162 010701                  	mov	pc,r1			; ret addr
+     124 010164 000513                  	br	prtoct			; print 6 octal R6 + space
+     125                                
+     126 010166 010500                  	mov	r5,r0			; get R5 value
+     127 010170 000511                  	br	prtoct			; print 6 octal R5 + space
+     128                                
+     129 010172 010605                  	mov	sp,r5			; save old pc in R5
+     130                                
+     131 010174 010701                  nxtcmd: mov	pc,r1			; ret addr
+     132 010176 000532                  	br	prteol			; print EOL
+     133                                
+     134 010200 112702  000100          	movb	#<'@>,r2		; prompt char @
+     135 010204 010703                  	mov	pc,r3			; ret addr
+     136 010206 000545                  	br	txchar			; print char in R2
+     137 010210 010706                  	mov	pc,sp			; save pc for display
+     138 010212 000535                  	br	rxchar			; read one char into R2 low
+     139 010214 000302                  	swab	r2			; save old char in high
+     140 010216 000533                  	br	rxchar			; read next char into R2 low
+     141                                
+     142 010220 020227  046040          	cmp	r2,#<'L*U>+<BL*L>	; check for 'L ' load address
+     143 010224 001442                  	beq	cmdlda			; br if yes
+     144                                
+     145 010226 020402                  	cmp	r4,r2			; same cmd this time as last time?
+     146 010230 001001                  	bne	1$			; br if not
+     147 010232 005725                  	tst	(r5)+			; yes, bump stored load addr for autoinc
+     148 010234 010204                  1$:	mov	r2,r4			; remember cmd for next time
+     149                                
+     150 010236 020227  042440          	cmp	r2,#<'E*U>+<BL*L>	; check for 'E ' examine memory
+     151 010242 001440                  	beq	cmdexm			; br if yes
+     152                                
+     153 010244 020227  042040          	cmp	r2,#<'D*U>+<BL*L>	; check for 'D ' deposit memory
+     154 010250 001424                  	beq	cmddep			; br if yes
+     155                                
+     156 010252 020227  051415          	cmp	r2,#<'S*U>+<CR*L>	; check for 'S<CR>' start
+     157 010256 001002                  	bne	2$			; br if not
+     158                                
+     159 010260 000005                  	reset				; start; reset the world
+     160 010262 000115                  	jmp	(r5)			; jump to saved value from 'load address'
+     161                                
+     162                                2$:
+     163                                	; at this point, code has changed from the ORIGINAL!
+     164                                	; we arrive here, to look for potential boot driver code immediately following this program
+     165                                	; and to jump into this code in case of a match.
+     166                                	; thus the first device driver is expected at address .base + 1000(8);
+     167                                	; in case of "no boot ROM plugged in" = no device driver loaded,
+     168                                	; then	      .word   17777	       signals the (preliminary) end of the bootprom chain
+     169                                	;
+     170                                	; in order to keep this code fully relocatable, the address .base+1000(8) cannot be supplied statically
+     171                                	; as it was in the real M9312, so we cannot use the #btprom=173000 as it formerly was,
+     172                                	; but will calculate this address as offset from the current pc address
+     173                                	;
+     174                                	; this is done next
+     175                                	;
+     176                                
+     177 000512                         	offset = base+1000 - . -2     ; calculate distance from here ( . ) to bootp1 (base+1000)
+     178 010264 010704                  	mov   pc,r4		 ; save actual location (pc) to r4
+     179 010266 062704  000512          	add	  #offset,r4		    ; and add offset ; now r4 holds the addr of base+1000 ...
+     180                                ;	mov   r4,r5			 ; save this addr
+     181                                ;	add	#<4*200>,r5			; now maximum start addr for a prom ( 4 proms with 200(o) each)
+     182                                ;2$:	 br	 NODIAG
+     183                                ;2$:	 mov	 #btprom,r4		 ; address of first boot prom  ; original code as reminder...
+     184                                
+     185                                3$:
+     186 010272 021427  017777          	cmp  (r4),#17777		; check for next prom exists,  #17777 = end of chain
+     187 010276 001722                  	beq	NODIAG			; nope, go back to start
+     188 010300 022402                  	cmp	(r4)+,r2		; compare command (in r2) vs boot prom id code in ((r4))
+     189                                					; AND let r4 point to the offset to next boot header
+     190 010302 001402                  	beq	cmdboo			; br if a match
+     191 010304 061404                  	add	(r4),r4 		; else add offset to next boot prom header
+     192 010306 000771                  	br	3$			; not yet, loop for next prom
+     193                                
+     194 010310 010701                  cmdboo: mov	pc,r1			; ret addr
+     195 010312 000417                  	br	getoct			; get unit number (or zero) in R0
+     196 010314 000005                  	reset			       ; reset the world
+     197                                
+     198                                	;; for now
+     199                                	;movb	 @#btprom+24,r5 	 ; (?WHY?) grab byte at offset 24 in 1st prom
+     200                                	;rolb	 r5			 ; (?WHY?) rotate left
+     201                                	;rolb	 r5			 ; (?WHY?) and again
+     202 010316 000164  000010          	jmp	10(r4)			; jump into boot prom at actual offset +12
+     203                                					; which is boot std CSR and unit in R0
+     204                                
+     205 010322 010701                  cmddep: mov	pc,r1			; ret addr
+     206 010324 000412                  	br	getoct			; get octal data into R0
+     207 010326 010015                  	mov	r0,(r5) 		; store data at saved load address
+     208 010330 000721                  	br	nxtcmd			; get another command
+     209                                
+     210 010332 010701                  cmdlda: mov	pc,r1			; ret addr
+     211 010334 000406                  	br	getoct			; get octal addr into R0
+     212 010336 010005                  	mov	r0,r5			; save load address in R5
+     213                                
+     214 010340 005004                  cmdnxt: clr	r4			; clear out command memory
+     215 010342 000714                  	br	nxtcmd			; get another command
+     216                                
+     217 010344 010506                  cmdexm: mov	r5,sp			; save load address into SP for display
+     218 010346 011505                  	mov	(r5),r5 		; get memory data into R5 for display
+     219 010350 000703                  	br	nxtdpy			; go display SP and R5 as addr/data
+     220                                
+     221                                	; --------------------------------------------------
+     222                                
+     223                                	; get a new octal number, terminate input by CR
+     224                                	;
+     225                                	; R0 = input octal value
+     226                                	; R1 = return address
+     227                                	; R2 = temp char
+     228                                	; R3 = temp addr
+     229                                
+     230 010352 005000                  getoct: clr	r0			; accumulate value here
+     231 010354 005002                  1$:	clr	r2			; new character goes here
+     232 010356 010703                  	mov	pc,r3			; ret addr
+     233 010360 000452                  	br	rxchar			; read a char into R2
+     234 010362 120227  000015          	cmpb	r2,#CR			; was the char a CR
+     235 010366 001433                  	beq	retR1			; yes, return
+     236 010370 162702  000070          	sub	#<'8>,r2		; offset by ascii 8 code
+     237 010374 062702  000010          	add	#<'8>-<'0>,r2		; good char now in range 0..7
+     238 010400 103357                  	bcc	cmdnxt			; br if bad char - FAIL exit
+     239 010402 006300                  	asl	r0			; shift old value left 3b
+     240 010404 006300                  	asl	r0			;
+     241 010406 006300                  	asl	r0			;
+     242 010410 050200                  	bis	r2,r0			; insert 3 new bits in lsb
+     243 010412 000760                  	br	1$			; loop for more char
+     244                                
+     245                                	; print an octal number followed by one <SP>
+     246                                	;
+     247                                	; R0 = register value to print
+     248                                	; R1 = return address
+     249                                	; R2 = temp char
+     250                                	; R3 = temp addr
+     251                                
+     252 010414 012702  000030          prtoct: mov	#<'0/bit1>,r2		; ascii 0 right 1b
+     253 010420 000261                  	sec				; shift a 1 into R0 lsb as done bit
+     254 010422 006100                  1$:	rol	r0			; msb out of R0
+     255 010424 106102                  	rolb	r2			; into lsb of R2
+     256 010426 010703                  	mov	pc,r3			; ret addr
+     257 010430 000434                  	br	txchar			; print char in R2
+     258 010432 012702  020206          	mov	#<BL*bit8>+200+<'0/bit3>,r2 ; ascii SP upper, ascii 0 right 3b lower
+     259 010436 006300                  2$:	asl	r0			; msb out of R0
+     260 010440 001403                  	beq	3$			; when R0 has gone to zero we are done
+     261 010442 106102                  	rolb	r2			; into lsb of R2
+     262 010444 103774                  	bcs	2$			; loop once more if flagbit was set
+     263 010446 000765                  	br	1$			; go get last bit and print char
+     264 010450 000302                  3$:	swab	r2			; move the SP from upper byte to lower
+     265 010452 010703                  	mov	pc,r3			; ret addr
+     266 010454 000422                  	br	txchar			; print the space char in R2
+     267 010456 022121                  retR1:	cmp	(r1)+,(r1)+		; bump return address ptr R1 by +4
+     268 010460 000161  177776          	jmp	-2(r1)			; return to (R1)-2
+     269                                
+     270                                	; print 1*<LF> followed by 12*<CR>
+     271                                	;
+     272                                	; R1 = return address
+     273                                	; R2 = temp char
+     274                                	; R3 = temp addr
+     275                                
+     276                                ;prteol: mov	 #<300*U>+<LF*L>,r2	  ; LSB is LF, MSB is count  #<30*U>+<LF*L>,r2
+     277                                ;1$:	 mov	 pc,r3			 ; ret addr
+     278                                ;	 br	 txchar 		 ; print char in R2
+     279                                ;	 add	 (pc),r2		 ; bump count
+     280                                ;	 ble	 retR1			 ; done if expired
+     281                                ;	 clrb	 r2			 ;
+     282                                ;	 bisb	 #CR,r2 		 ; set char to CR
+     283                                ;	 br	 1$			 ; loop
+     284                                
+     285                                prteol:
+     286 010464 012702  000015          	mov	#CR, r2
+     287 010470 010703                  	mov	pc,r3
+     288 010472 000413                  	br	txchar
+     289 010474 012702  000012          	mov	#LF,r2
+     290 010500 010703                  	mov	pc,r3
+     291 010502 000407                  	br	txchar
+     292 010504 000764                  	br	retR1
+     293                                	; --------------------------------------------------
+     294                                
+     295                                	; character RX routine
+     296                                	;
+     297                                	; R2 = new 7bit character returned in R2<7:0>, R2<15:08> n/c
+     298                                	; R3 = return address
+     299                                
+     300 010506 105737  177560          rxchar: tstb	@#dlrcsr		; wait for RX ready
+     301 010512 100375                  	bpl	rxchar			; no character yet, loop
+     302 010514 105002                  	clrb	r2			; clear low byte only
+     303 010516 153702  177562          	bisb	@#dlrbuf,r2		; insert character in low byte
+     304                                					; fall thru for auto echo
+     305                                
+     306                                	; character TX routine
+     307                                	;
+     308                                	; R2 = 8b character to TX in R2<7:0>
+     309                                	; R3 = return address
+     310                                
+     311 010522 105737  177564          txchar: tstb	@#dlxcsr		; wait for TX ready
+     312 010526 100375                  	bpl	txchar			; not ready yet, loop
+     313 010530 110237  177566          	movb	r2,@#dlxbuf		; TX exactly what we RX'ed
+     314 010534 142702  100200          	bicb	#<200*U>+<200*L>,r2	; clear MSB upper/lower characters
+     315                                
+     316 010540 022323                  retR3:	cmp	(r3)+,(r3)+		; bump return address ptr R3 by +4
+     317 010542 000163  177776          	jmp	-2(r3)			; return to (R3)-2
+     318                                
+     319                                	; ------------------------------------------------------------
+     320                                	; ------------------------------------------------------------
+     321                                
+     322 010564                         	.=base+564
+     323                                RESTRT: ; SECONDARY DIAGNOSTIC ENTRY POINT
+     324                                
+     325                                	; ------------------------------------------------------------
+     326                                	; ------------------------------------------------------------
+     327                                
+     328 010564 000000                    halt
+     329                                
+     330                                	; ------------------------------------------------------------
+     331                                
+     332 010774                         	.=base+774
+     333 010774    060     101          verson: .ascii	"0A"			; version ID
+     334                                
+     335 010776                         	.=base+776
+     336 010776 123162                  crc16:	.word	<123162>		; CRC-16 will go here
+     337                                
+     338 011000                         	.=base+1000
+     339                                
+     340                                ;bootp1: .word 17777	; if no 1st bootprom follows, the 17777 is used to signify
+     341                                					; "no bootprom available" as an "end of chain" marker
+     342                                		      ; this word is to be overwritten, if a bootloader is "added"
+     343                                		      ; here
+     344                                
+     345                                
+     346                                bootp1: 		; bootprom #1 should be at 11000
+     347                                
+     348                                ;-----------------------------------------------------------------------------------------------------
+     349                                	  ;
+     350                                ;	START of RL11 controller
+     351                                ;
+     352                                
+     353                                	; This source code is a modified copy of the DEC M9312 23-751A9 boot PROM.
+     354                                	;
+     355                                	; This boot PROM is for the RL11 controller with RL01/RL02 drives.
+     356                                	;
+     357                                	; Multiple units and/or CSR addresses are supported via different entry points.
+     358                                	;
+     359                                	; Standard devices are 82S131, Am27S13, 74S571 or other compatible bipolar
+     360                                	; PROMs with a 512x4 TriState 16pin DIP architecture. This code resides in
+     361                                	; the low half of the device; the top half is blank and unused.
+     362                                	;
+     363                                	; Alternatively, 82S129 compatible 256x4 TriState 16pin DIP devices can be
+     364                                	; used, as the uppermost address line (hardwired low) is an active low chip
+     365                                	; select (and will be correctly asserted low).
+     366                                
+     367 174400                         rlcsr	=174400 			; std RL11 csrbase
+     368                                
+     369 000000                         rlcs	=+0				; control/status
+     370 000002                         rlba	=+2				; bus address
+     371 000004                         rlda	=+4				; disk address
+     372 000006                         rlmp	=+6				; multipurpose
+     373                                
+     374 000004                         cmstat	=2*2				; get status
+     375 000006                         cmseek	=3*2				; seek
+     376 000010                         cmrdhd	=4*2				; read header
+     377 000014                         cmrdda	=6*2				; read data
+     378                                
+     379 165564                         diags	=165564 			; console diags phase2 entry
+     380                                					; this will never be used!!
+     381                                
+     382                                	.asect
+     383 011000                         	.=11000 			; originally 173000, for test purposes = 11000 (1st boot prom)
+     384                                
+     385                                	; --------------------------------------------------
+     386                                
+     387 011000    114     104          strtDL:  .ascii  "LD"			 ; device code (reversed)
+     388                                
+     389 011002 000176                  	.word	lastDL - .			  ; offset to next boot header
+     390                                
+     391 011004 000261                  dl0n:	sec				; boot std csr, unit zero, no diags
+     392 011006 012700  000000          dl0d:	mov	#0,r0			; boot std csr, unit zero, with diags
+     393 011012 012701  174400          dlNr:	mov	#rlcsr,r1		; boot std csr, unit <R0>
+     394 011016 010704                  dlNb:	mov	pc,r4			; boot csr <R1>, unit <R0>
+     395 011020 000240                  	nop				; never branch to diags ; originally: bcc     diag  ; br if diags requested
+     396 011022 000402                  	br	go			; return to (R4)+2 from diags
+     397                                					; then skip over pseudo reboot vector
+     398                                
+     399                                	; --------------------------------------------------
+     400                                
+     401 011024 173000                  	.word	173000			; prom start addess @ 24	   ; these vectors will not be used!
+     402 011026 000340                  	.word	340			; and priority level @ 26
+     403                                
+     404                                	; --------------------------------------------------
+     405                                
+     406 011030 010003                  go:	mov	r0,r3			; save unit number
+     407 011032 000303                  	swab	r3			; unit number in upper byte
+     408 011034 010311                  	mov	r3,(r1) 		; set unit, NOP cmd
+     409                                
+     410 011036 012761  000013  000004  	mov	#013,rlda(r1)		; subcmd reset+getstatus
+     411 011044 052703  000004          	bis	#cmstat,r3		; get status cmd (r3lo is 0)
+     412 011050 010311                  	mov	r3,(r1) 		; execute
+     413 011052 105711                  1$:	tstb	(r1)			; test for ready
+     414 011054 100376                  	bpl	1$			; wait
+     415                                
+     416 011056 105003                  	clrb	r3			; unit number in upper byte
+     417 011060 052703  000010          	bis	#cmrdhd,r3		; read header cmd
+     418 011064 010311                  	mov	r3,(r1) 		; execute
+     419 011066 105711                  2$:	tstb	(r1)			; test for ready
+     420 011070 100376                  	bpl	2$			; wait
+     421                                
+     422 011072 016102  000006          	mov	rlmp(r1),r2		; retrieve cyl/head/sector
+     423 011076 042702  000077          	bic	#77,r2			; set sector to zero
+     424 011102 005202                  	inc	r2			; set head 0, seek to cyl 0
+     425 011104 010261  000004          	mov	r2,rlda(r1)		; into da for seek
+     426 011110 105003                  	clrb	r3			; unit number in upper byte
+     427 011112 052703  000006          	bis	#cmseek,r3		; seek cmd
+     428 011116 010311                  	mov	r3,(r1) 		; execute
+     429 011120 105711                  3$:	tstb	(r1)			; test for ready
+     430 011122 100376                  	bpl	3$			; wait
+     431                                
+     432 011124 005061  000004          	clr	rlda(r1)		; select cyl0/head0/sector0
+     433 011130 012761  177000  000006  	mov	#-512.,rlmp(r1) 	; set word count
+     434 011136 105003                  	clrb	r3			; unit number in upper byte
+     435 011140 052703  000014          	bis	#cmrdda,r3		; read data cmd
+     436 011144 010311                  	mov	r3,(r1) 		; execute
+     437 011146 105711                  4$:	tstb	(r1)			; test for ready
+     438 011150 100376                  	bpl	4$			; wait
+     439                                
+     440 011152 005711                  	tst	(r1)			; test for error
+     441 011154 100003                  	bpl	5$			; br if ok
+     442 011156 000005                  	reset				; ERROR - reset the world
+     443 011160 000164  000002          	jmp	2(r4)			; retry
+     444                                
+     445 011164 042711  000377          5$:	bic	#377,(r1)		; execute nop cmd
+     446 011170 005007                  	clr	pc			; jump to bootstrap at zero
+     447                                
+     448                                	; --------------------------------------------------
+     449                                
+     450 011172 000137  165564          diagRL:   jmp	  @#diags		  ; jump to console diags ; this will never be used
+     451                                
+     452                                	; --------------------------------------------------
+     453                                
+     454 011176                         	.=strtDL+176
+     455 011176 171540                  crc16DL:  .word   <171540>		  ; CRC-16 will go here
+     456                                
+     457                                lastDL: ;.word	17777			; next boot prom starts here
+     458                                					; 17777 signals (preliminary) end of boot prom chain
+     459                                					; will be overwritten, if another boot prom is loaded to the chain
+     460                                
+     461                                
+     462                                
+     463                                
+     464 011200                         	.=base+1000+200
+     465                                ;-----------------------------------------------------------------------------------------------------
+     466                                	  ;
+     467                                ;	START of DY controller
+     468                                ;
+     469                                
+     470                                	; This source code is an exact copy of the DEC M9312 23-811A9 boot PROM.
+     471                                	;
+     472                                	; This boot PROM is for any RX211/RX02 compatible floppy controller.
+     473                                	;
+     474                                	; Multiple units and/or CSR addresses are supported via different entry points.
+     475                                	;
+     476                                	; Standard devices are 82S131, Am27S13, 74S571 or other compatible bipolar
+     477                                	; PROMs with a 512x4 TriState 16pin DIP architecture. This code resides in
+     478                                	; the low half of the device; the top half is blank and unused.
+     479                                	;
+     480                                	; Alternatively, 82S129 compatible 256x4 TriState 16pin DIP devices can be
+     481                                	; used, as the uppermost address line (hardwired low) is an active low chip
+     482                                	; select (and will be correctly asserted low).
+     483                                
+     484 177170                         rxcsr	=177170 			; std RX211 csrbase
+     485                                
+     486 000000                         rxcs	=+0				; command/status
+     487 000002                         rxdb	=+2				; data buffer
+     488                                
+     489 165564                         diags	=165564 			; console diags phase2 entry
+     490                                					; this will never be used!!
+     491                                	.asect
+     492 173000                         	.=173000
+     493 011200                         	.=11200 			; originally 173000, for test purposes = 11200 (2nd boot prom)
+     494                                
+     495                                	; --------------------------------------------------
+     496                                
+     497 011200    131     104          strtDY:  .ascii  "YD"			 ; device code (reversed)
+     498                                
+     499 011202 000176                  	.word	lastDY - .			; offset to next boot header
+     500                                
+     501 011204 000261                  dy0n:	sec				; boot std csr, unit zero, no diags
+     502 011206 012700  000000          dy0d:	mov	#0,r0			; boot std csr, unit zero, with diags
+     503 011212 012701  177170          dyNr:	mov	#rxcsr,r1		; boot std csr, unit <R0>
+     504 011216 010704                  dyNb:	mov	pc,r4			; boot csr <R1>, unit <R0>
+     505                                
+     506 011220 000240                  	nop				; never branch to diags ; originally: bcc     diag  ; br if diags requested
+     507 011222 000402                  	br	goDY			  ; return to (R4)+2 from diags
+     508                                					; then skip over pseudo reboot vector
+     509                                
+     510                                	; --------------------------------------------------
+     511                                
+     512 011224 173000                  	.word	173000			; prom start addess @ 24	   ; these vectors will not be used!
+     513 011226 000340                  	.word	340			; and priority level @ 26
+     514                                
+     515                                	; --------------------------------------------------
+     516                                
+     517 011230 005103                  goDY:	  com	  r3			  ; complement density flag
+     518 011232 000005                  	reset				; clear all device registers
+     519 011234 012704  000401          	mov	#401,r4 		; sector 1 and track 1
+     520 011240 005002                  	clr	r2			; init buffer address
+     521 011242 012705  000200          	mov	#200,r5 		; assume double density
+     522 011246 042703  177377          	bic	#^c400,r3		; single density?
+     523 011252 001001                  	bne	2$			; br if not
+     524 011254 006205                  	asr	r5			; adjust for single density
+     525 011256 050700                  2$:	bis	pc,r0			; bis #173x60,r0 + r0=0/1 => r0=173x60/173x61
+     526 011260 156003  000036          	bisb	4$-.(r0),r3		; bis 007(unit0) or 027(unit1) into r3
+     527 011264 040700                  	bic	pc,r0			; bic #173x66,r0
+     528 011266 010706                  	mov	pc,sp			; mov #3$,sp: init state to step1
+     529 011270 000423                  3$:	br	7$			; step1
+     530 011272 000432                  	br	9$			; step2
+     531 011274 000416                  	br	6$			; step3
+     532 011276 000415                  	br	6$			; step4
+     533 011300 000425                  	br	8$			; step5
+     534 011302 000430                  	br	10$			; step6
+     535 011304 000407                  	br	5$			; step7
+     536 011306 060502                  	add	r5,r2			; address += 2
+     537 011310 060502                  	add	r5,r2			;
+     538 011312 122424                  	cmpb	(r4)+,(r4)+		; sector += 2
+     539 011314 120427                  	cmpb	r4,(pc)+		; cmpb r4,#007; last sector read?
+     540 011316    007     027          4$:	.byte	007,027 		; unit in <4>, read+go in <2:0>
+     541 011320 003756                  	ble	2$			; br if more to read
+     542                                
+     543 011322 005007                  	clr	pc			; jump to bootstrap at zero
+     544                                
+     545 011324 010261  000002          5$:	mov	r2,rxdb(r1)		; set bus address
+     546 011330 000403                  	br	7$			; more
+     547                                
+     548 011332 110461  000002          6$:	movb	r4,rxdb(r1)		; set sector or track
+     549 011336 000304                  	swab	r4			; swap sector/track
+     550                                
+     551 011340 032711  100240          7$:	bit	#100240,(r1)		; wait for error<15>, treq<7>, or done<5>
+     552 011344 001775                  	beq	7$			; keep looping, no bits set
+     553 011346 100630                  	bmi	go			; retry if error bit set
+     554 011350 005726                  	tst	(sp)+			; flush one word off list
+     555 011352 000116                  	jmp	(sp)			; go execute step1..step7
+     556                                
+     557 011354 042703  000004          8$:	bic	#4,r3			; change to empty+go
+     558 011360 010311                  9$:	mov	r3,(r1) 		; set command
+     559 011362 000766                  	br	7$			; more
+     560                                
+     561 011364 110561  000002          10$:	movb	r5,rxdb(r1)		; set ? to 1
+     562 011370 000763                  	br	7$			; more
+     563                                
+     564                                	; --------------------------------------------------
+     565                                
+     566                                
+     567 011372 000137  165564          diagDY:   jmp	  @#diags		  ; jump to console diags ; this will never be used
+     568                                
+     569                                	; --------------------------------------------------
+     570                                
+     571 011376                         	.=strtDY+176
+     572 011376 057141                  crcDY:	.word	<057141>		; CRC-16 will go here
+     573                                
+     574                                
+     575 011400 017777                  lastDY: .word  17777		       ; next boot prom starts here
+     576                                					; 17777 signals (preliminary) end of boot prom chain
+     577                                					; will be overwritten, if another boot prom is loaded to the chain
+     578                                
+     579                                
+     580                                
+     581                                ;----------------------------------------------------------------------------------------------------------
+     582                                
+     583 011400                         	.=base+1000+400
+     584 011400 017777                         .word   17777		       ; preliminary end of bootprom chain
+     585                                
+     586                                	.end
+     586                                

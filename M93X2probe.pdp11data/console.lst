@@ -1,0 +1,390 @@
+       1                                	.title	M9312 11/04-34-etc Console/Diagnostic PROM
+       2                                
+       3                                	; This source code is an exact copy of the DEC M9312 23-248F1 console PROM.
+       4                                	;
+       5                                	; This console/diagnostic PROM is for 11/04-34-etc CPUs.
+       6                                	;
+       7                                	; Standard devices are 82S137, 74S573 or other compatible bipolar PROMs
+       8                                	; with a 1024x4 TriState 18pin DIP architecture.
+       9                                	;
+      10                                	; some changes to suit running from ram, djrm May 2019
+      11                                
+      12 177560                         dlbase =177560	       ; DL11 base
+      13                                ;dlbase =777560	       ; console DL11 base
+      14                                ;dlbase  =177550	 ; unibone DL11 base
+      15                                
+      16 177560                         dlrcsr	=dlbase+0	; console RX status
+      17 177562                         dlrbuf	=dlbase+2	; console RX data
+      18 177564                         dlxcsr	=dlbase+4	; console TX status
+      19 177566                         dlxbuf	=dlbase+6	; console TX data
+      20                                
+      21 000500                         memloc	=500		; low memory test location
+      22 003000                         btprom	=3000		; lowest boot PROM base address
+      23                                
+      24 160100                         swtreg	=760100
+      25                                
+      26 000001                         bit0	=000001 	; plain old bit definitions
+      27 000002                         bit1	=000002 	;
+      28 000004                         bit2	=000004 	;
+      29 000010                         bit3	=000010 	;
+      30 000020                         bit4	=000020 	;
+      31 000040                         bit5	=000040 	;
+      32 000100                         bit6	=000100 	;
+      33 000200                         bit7	=000200 	;
+      34 000400                         bit8	=000400 	;
+      35 001000                         bit9	=001000 	;
+      36 002000                         bit10	=002000 	;
+      37 004000                         bit11	=004000 	;
+      38 010000                         bit12	=010000 	;
+      39 020000                         bit13	=020000 	;
+      40 040000                         bit14	=040000 	;
+      41 100000                         bit15	=100000 	;
+      42                                
+      43 000040                         BL	=040		; ascii SPACE
+      44 000015                         CR	=015		; ascii CR
+      45 000012                         LF	=012		; ascii LF
+      46 000400                         U	=bit8		; upperbyte multiplier
+      47 000001                         L	=bit0		; lowerbyte multiplier
+      48                                
+      49                                	.ENABL AMA
+      50                                	.asect
+      51                                ;	 .=145000
+      52 005000                         	.=5000
+      53                                
+      54 005000                         base	=.
+      55                                
+      56 005000 005000                  data0:	.word	data0		; test data structures
+      57 005002 005000                  	.word	data0		;
+      58 005004    000                  data1:	.byte	000		;
+      59 005005    200                  	.byte	200		;
+      60 005006 177777                  data2:	.word	177777		;
+      61 005010 005006                  	.word	data2		;
+      62 005012 005006                  	.word	data2		;
+      63 005014 000500                  	.word	memloc+0	;
+      64 005016 000501                  	.word	memloc+1	;
+      65                                
+      66                                	; ------------------------------------------------------------
+      67                                	; ------------------------------------------------------------
+      68                                
+      69 005020                         	.=base+20
+      70                                DIAG:	; PRIMARY DIAGNOSTIC ENTRY POINT
+      71                                
+      72                                	; ------------------------------------------------------------
+      73                                	; ------------------------------------------------------------
+      74                                
+      75 005020 005003                  T1:	clr	r3			; R3=000000 C=0
+      76 005022 005203                  	inc	r3			; R3=000001 C=0
+      77 005024 005103                  	com	r3			; R3=177776 C=1
+      78 005026 006203                  	asr	r3			; R3=177777 C=0
+      79 005030 006303                  	asl	r3			; R3=177776 C=1
+      80 005032 006003                  	ror	r3			; R3=177777 C=0
+      81 005034 005703                  	tst	r3			; R3=177777 C=0
+      82 005036 005403                  	neg	r3			; R3=000001 C=1
+      83 005040 005303                  	dec	r3			; R3=000000 C=1
+      84 005042 005603                  	sbc	r3			; R3=177777 C=1
+      85 005044 006103                  	rol	r3			; R3=177777 C=1
+      86 005046 005503                  	adc	r3			; R3=000000 C=1
+      87 005050 000303                  	swab	r3			; R3=000000 C=0
+      88 005052 001377                  	bne	.			; br . if FAIL
+      89                                
+      90                                	; ------------------------------------------------------------
+      91                                
+      92 005054 012702  005000          T2:	mov	#data0,r2		; R2=165000
+      93 005060 011203                  	mov	(r2),r3 		; R2=165000 R3=165000
+      94 005062 022203                  	cmp	(r2)+,r3		; R2=165002 R3=165000
+      95 005064 001377                  	bne	.			; br . if FAIL
+      96 005066 063203                  	add	@(r2)+,r3		; R2=165004 R3=152000
+      97 005070 165203                  	sub	@-(r2),r3		; R2=165002 R3=165000
+      98 005072 044203                  	bic	-(r2),r3		; R2=165000 R3=000000
+      99 005074 056203  000012          	bis	12(r2),r3		; R2=165000 R3=165006
+     100 005100 037203  000012          	bit	@12(r2),r3		; R2=165000 R3=165006
+     101 005104 001777                  	beq	.			; br . if FAIL
+     102                                
+     103                                	; ------------------------------------------------------------
+     104                                
+     105 005106 010703                  T3:	mov	pc,r3			; R3=165110
+     106 005110 000123                  	jmp	(r3)+			; jmp self, R3=165112
+     107 005112 012703  005122          	mov	#T3B,r3 		; R3=165122
+     108 005116 000133                  	jmp	@(r3)+			; R3=165124 PC=165120
+     109 005120 000113                  T3A:	jmp	(r3)			; R3=165124 PC=165124
+     110 005122 005120                  T3B:	.word	T3A			; point to previous instr
+     111                                
+     112                                	; ------------------------------------------------------------
+     113                                
+     114 005124 105737  005004          T4:	tstb	data1			; test a byte, if we get here...
+     115 005130 001377                  	bne	.			; br . if FAIL
+     116 005132 022222                  	cmp	(r2)+,(r2)+		; (R2)+=165000 (R2)+=165002 R2=165004
+     117 005134 105722                  	tstb	(r2)+			; (R2)+=000 R2=165005
+     118 005136 001377                  	bne	.			; br . if FAIL
+     119 005140 105712                  	tstb	(r2)			; R2=165005 (R2)=200
+     120 005142 100377                  	bpl	.			; br . if fail
+     121                                
+     122                                	; ------------------------------------------------------------
+     123                                	; ------------------------------------------------------------
+     124                                
+     125 005144                         	.=base+144
+     126                                NODIAG: ; NO DIAGNOSTIC ENTRY POINT
+     127                                
+     128 005144 010701                  	mov	pc,r1			; ret addr
+     129 005146 000554                  	br	prteol			; print EOL
+     130                                
+     131 005150 010701                  	mov	pc,r1			; ret addr
+     132 005152 000526                  	br	prtoct			; print 6 octal R0 + space
+     133                                
+     134 005154 010400                  	mov	r4,r0			; get R4 value
+     135 005156 000524                  	br	prtoct			; print 6 octal R4 + space
+     136                                
+     137 005160 010600                  nxtdpy: mov	sp,r0			; get R6 value
+     138 005162 010701                  	mov	pc,r1			; ret addr
+     139 005164 000521                  	br	prtoct			; print 6 octal R6 + space
+     140                                
+     141 005166 010500                  	mov	r5,r0			; get R5 value
+     142 005170 000517                  	br	prtoct			; print 6 octal R5 + space
+     143                                
+     144 005172 010605                  	mov	sp,r5			; save old pc in R5
+     145                                
+     146 005174 010701                  nxtcmd: mov	pc,r1			; ret addr
+     147 005176 000540                  	br	prteol			; print EOL
+     148                                
+     149 005200 112702  000100          	movb	#<'@>,r2		; prompt char @
+     150 005204 010703                  	mov	pc,r3			; ret addr
+     151 005206 000554                  	br	txchar			; print char in R2
+     152 005210 010706                  	mov	pc,sp			; save pc for display
+     153 005212 000544                  	br	rxchar			; read one char into R2 low
+     154 005214 000302                  	swab	r2			; save old char in high
+     155 005216 000542                  	br	rxchar			; read next char into R2 low
+     156                                
+     157 005220 020227  046040          	cmp	r2,#<'L*U>+<BL*L>	; check for 'L ' load address
+     158 005224 001450                  	beq	cmdlda			; br if yes
+     159                                
+     160 005226 020402                  	cmp	r4,r2			; same cmd this time as last time?
+     161 005230 001001                  	bne	1$			; br if not
+     162 005232 005725                  	tst	(r5)+			; yes, bump stored load addr for autoinc
+     163 005234 010204                  1$:	mov	r2,r4			; remember cmd for next time
+     164                                
+     165 005236 020227  042440          	cmp	r2,#<'E*U>+<BL*L>	; check for 'E ' examine memory
+     166 005242 001446                  	beq	cmdexm			; br if yes
+     167                                
+     168 005244 020227  042040          	cmp	r2,#<'D*U>+<BL*L>	; check for 'D ' deposit memory
+     169 005250 001432                  	beq	cmddep			; br if yes
+     170                                
+     171 005252 020227  051415          	cmp	r2,#<'S*U>+<CR*L>	; check for 'S<CR>' start
+     172 005256 001002                  	bne	2$			; br if not
+     173                                
+     174 005260 000005                  	reset				; start; reset the world
+     175 005262 000115                  	jmp	(r5)			; jump to saved value from 'load address'
+     176                                
+     177 005264 012704  003000          2$:	mov	#btprom,r4		; address of first boot prom
+     178 005270 031427  000200          3$:	bit	(r4),#200		; check for next prom exists
+     179 005274 001323                  	bne	NODIAG			; nope, go back to start
+     180 005276 022402                  	cmp	(r4)+,r2		; compare command vs boot prom id code
+     181 005300 001405                  	beq	cmdboo			; br if a match
+     182 005302 061404                  	add	(r4),r4 		; else offset to next boot prom header
+     183 005304 020427  004000          	cmp	r4,#btprom+<4*200>	; check if ran off the end
+     184 005310 001731                  	beq	nxtcmd			; br if yes
+     185 005312 000766                  	br	3$			; not yet, loop for next prom
+     186                                
+     187 005314 010701                  cmdboo: mov	pc,r1			; ret addr
+     188 005316 000423                  	br	getoct			; get unit number (or zero) in R0
+     189 005320 000005                  	reset				; reset the world
+     190                                ;	movb	@#btprom+24,r5		; (?WHY?) grab byte at offset 24 in 1st prom
+     191 005322 113705  160100          	movb	@#swtreg,r5		; get switches, move bit 1 into carry for diags test in boot prom
+     192 005326 106005                  	rorb	r5			;
+     193 005330 106005                  	rorb	r5			;
+     194 005332 000164  000010          	jmp	10(r4)			; jump into boot prom at actual offset +12
+     195                                					; which is boot std CSR and unit in R0
+     196                                
+     197 005336 010701                  cmddep: mov	pc,r1			; ret addr
+     198 005340 000412                  	br	getoct			; get octal data into R0
+     199 005342 010015                  	mov	r0,(r5) 		; store data at saved load address
+     200 005344 000713                  	br	nxtcmd			; get another command
+     201                                
+     202 005346 010701                  cmdlda: mov	pc,r1			; ret addr
+     203 005350 000406                  	br	getoct			; get octal addr into R0
+     204 005352 010005                  	mov	r0,r5			; save load address in R5
+     205                                
+     206 005354 005004                  cmdnxt: clr	r4			; clear out command memory
+     207 005356 000706                  	br	nxtcmd			; get another command
+     208                                
+     209 005360 010506                  cmdexm: mov	r5,sp			; save load address into SP for display
+     210 005362 011505                  	mov	(r5),r5 		; get memory data into R5 for display
+     211 005364 000675                  	br	nxtdpy			; go display SP and R5 as addr/data
+     212                                
+     213                                	; --------------------------------------------------
+     214                                
+     215                                	; get a new octal number, terminate input by CR
+     216                                	;
+     217                                	; R0 = input octal value
+     218                                	; R1 = return address
+     219                                	; R2 = temp char
+     220                                	; R3 = temp addr
+     221                                
+     222 005366 005000                  getoct: clr	r0			; accumulate value here
+     223 005370 005002                  1$:	clr	r2			; new character goes here
+     224 005372 010703                  	mov	pc,r3			; ret addr
+     225 005374 000453                  	br	rxchar			; read a char into R2
+     226 005376 120227  000015          	cmpb	r2,#CR			; was the char a CR
+     227 005402 001433                  	beq	retR1			; yes, return
+     228 005404 162702  000070          	sub	#<'8>,r2		; offset by ascii 8 code
+     229 005410 062702  000010          	add	#<'8>-<'0>,r2		; good char now in range 0..7
+     230 005414 103357                  	bcc	cmdnxt			; br if bad char - FAIL exit
+     231 005416 006300                  	asl	r0			; shift old value left 3b
+     232 005420 006300                  	asl	r0			;
+     233 005422 006300                  	asl	r0			;
+     234 005424 050200                  	bis	r2,r0			; insert 3 new bits in lsb
+     235 005426 000760                  	br	1$			; loop for more char
+     236                                
+     237                                	; print an octal number followed by one <SP>
+     238                                	;
+     239                                	; R0 = register value to print
+     240                                	; R1 = return address
+     241                                	; R2 = temp char
+     242                                	; R3 = temp addr
+     243                                
+     244 005430 012702  000030          prtoct: mov	#<'0/bit1>,r2		; ascii 0 right 1b
+     245 005434 000261                  	sec				; shift a 1 into R0 lsb as done bit
+     246 005436 006100                  1$:	rol	r0			; msb out of R0
+     247 005440 106102                  	rolb	r2			; into lsb of R2
+     248 005442 010703                  	mov	pc,r3			; ret addr
+     249 005444 000435                  	br	txchar			; print char in R2
+     250 005446 012702  020206          	mov	#<BL*bit8>+200+<'0/bit3>,r2 ; ascii SP upper, ascii 0 right 3b lower
+     251 005452 006300                  2$:	asl	r0			; msb out of R0
+     252 005454 001403                  	beq	3$			; when R0 has gone to zero we are done
+     253 005456 106102                  	rolb	r2			; into lsb of R2
+     254 005460 103774                  	bcs	2$			; loop once more if flagbit was set
+     255 005462 000765                  	br	1$			; go get last bit and print char
+     256 005464 000302                  3$:	swab	r2			; move the SP from upper byte to lower
+     257 005466 010703                  	mov	pc,r3			; ret addr
+     258 005470 000423                  	br	txchar			; print the space char in R2
+     259 005472 022121                  retR1:	cmp	(r1)+,(r1)+		; bump return address ptr R1 by +4
+     260 005474 000161  177776          	jmp	-2(r1)			; return to (R1)-2
+     261                                
+     262                                	; print 1*<LF> followed by 12*<CR>
+     263                                	;
+     264                                	; R1 = return address
+     265                                	; R2 = temp char
+     266                                	; R3 = temp addr
+     267                                
+     268 005500 012702  014012          prteol: mov	#<30*U>+<LF*L>,r2	; LSB is LF, MSB is count
+     269 005504 010703                  1$:	mov	pc,r3			; ret addr
+     270 005506 000414                  	br	txchar			; print char in R2
+     271 005510 061702                  	add	(pc),r2 		; bump count
+     272 005512 003767                  	ble	retR1			; done if expired
+     273 005514 105002                  	clrb	r2			;
+     274 005516 152702  000015          	bisb	#CR,r2			; set char to CR
+     275 005522 000770                  	br	1$			; loop
+     276                                
+     277                                	; --------------------------------------------------
+     278                                
+     279                                	; character RX routine
+     280                                	;
+     281                                	; R2 = new 7bit character returned in R2<7:0>, R2<15:08> n/c
+     282                                	; R3 = return address
+     283                                
+     284 005524 105737  177560          rxchar: tstb	@#dlrcsr		; wait for RX ready
+     285 005530 100375                  	bpl	rxchar			; no character yet, loop
+     286 005532 105002                  	clrb	r2			; clear low byte only
+     287 005534 153702  177562          	bisb	@#dlrbuf,r2		; insert character in low byte
+     288                                					; fall thru for auto echo
+     289                                	; character TX routine
+     290                                	;
+     291                                	; R2 = 8b character to TX in R2<7:0>
+     292                                	; R3 = return address
+     293                                
+     294 005540 105737  177564          txchar: tstb	@#dlxcsr		; wait for TX ready
+     295 005544 100375                  	bpl	txchar			; not ready yet, loop
+     296 005546 110237  177566          	movb	r2,@#dlxbuf		; TX exactly what we RX'ed
+     297 005552 142702  100200          	bicb	#<200*U>+<200*L>,r2	; clear MSB upper/lower characters
+     298                                
+     299 005556 022323                  retR3:	cmp	(r3)+,(r3)+		; bump return address ptr R3 by +4
+     300 005560 000163  177776          	jmp	-2(r3)			; return to (R3)-2
+     301                                
+     302                                	; ------------------------------------------------------------
+     303                                	; ------------------------------------------------------------
+     304                                
+     305 005564                         	.=base+564
+     306                                RESTRT: ; SECONDARY DIAGNOSTIC ENTRY POINT
+     307                                
+     308                                	; ------------------------------------------------------------
+     309                                	; ------------------------------------------------------------
+     310                                
+     311 005564 012705  005006          T6:	mov	#data2,r5		; ptr to data R5=165006
+     312 005570 012702  000500          	mov	#memloc,r2		; ptr to memory R2=500
+     313 005574 011503                  	mov	(r5),r3 		; R3=177777
+     314 005576 005012                  	clr	(r2)			; M[500]=0
+     315 005600 112512                  	movb	(r5)+,(r2)		; M[500]=377 R5=165007
+     316 005602 005202                  	inc	r2			; R2=501
+     317 005604 112512                  	movb	(r5)+,(r2)		; M[501]=377 R5=165010
+     318 005606 005302                  	dec	r2			; R2=500
+     319 005610 023512                  	cmp	@(r5)+,(r2)		; @M[DATA2]=M[500]? R5=165012
+     320 005612 001015                  	bne	T6Z			; br if FAIL
+     321 005614 005202                  	inc	r2			; R2=501
+     322 005616 143522                  	bicb	@(r5)+,(r2)+		; R5=165014 R2=502
+     323 005620 024542                  	cmp	-(r5),-(r2)		; R5=165012 R2=500
+     324 005622 143522                  	bicb	@(r5)+,(r2)+		; R5=165014 R2=501
+     325 005624 001010                  	bne	T6Z			; br if FAIL
+     326 005626 010502                  	mov	r5,r2			; R2=500
+     327 005630 016505  177772          	mov	-6(r5),r5		; R5=177777
+     328 005634 110532                  	movb	r5,@(r2)+		; R5=177777 R2=502
+     329 005636 150572  000000          	bisb	r5,@0(r2)		; R5=177777
+     330 005642 020352                  	cmp	r3,@-(r2)		; R5=177777 R2=500
+     331 005644 001407                  	beq	T7			; br if PASS
+     332 005646 000000                  T6Z:	halt				; FAILED
+     333                                
+     334                                	; ------------------------------------------------------------
+     335                                
+     336 005650 005723                  T7A:	tst	(r3)+			; bump return pc, test HALT instr
+     337 005652 001011                  	bne	T7Z			; br in not a halt to HALT
+     338 005654 021605                  T7B:	cmp	(sp),r5 		; top of stack word whould match
+     339 005656 001007                  	bne	T7Z			; br if FAIL
+     340 005660 000203                  	rts	r3			; return to caller
+     341 005662 000000                  	halt				; die
+     342                                
+     343 005664 011206                  T7:	mov	(r2),sp 		; setup stack pointer
+     344 005666 012702  005650          	mov	#T7A,r2 		; addr of subr
+     345 005672 005726                  	tst	(sp)+			; test sp pop
+     346 005674 004312                  	jsr	r3,(r2) 		; jsr to test code entry T7A
+     347 005676 000000                  T7Z:	halt				; should bump past this
+     348 005700 004362  000004          	jsr	r3,4(r2)		; jsr to test code entry T7B
+     349                                
+     350                                	; ------------------------------------------------------------
+     351                                
+     352 005704 012705  160000          T8:	mov	#160000,r5		; 28KW memory boundary
+     353 005710 005037  000006          	clr	@#6			; zap trap priority level
+     354 005714 012737  005722  000004  	mov	#T8A,@#4		; point trap handler at next instr
+     355 005722 012706  000502          T8A:	mov	#memloc+2,sp		; reset the stack pointer
+     356 005726 005745                  	tst	-(r5)			; set R5 as last memory address
+     357                                					; will continue to trap thru 4 until OK
+     358                                					; this effectively sizes memory in R5
+     359                                
+     360 005730 005003                  	clr	r3			; init memory addr at zero
+     361 005732 010313                  T8B:	mov	r3,(r3) 		; ADDR -> (ADDR)
+     362 005734 005723                  	tst	(r3)+			; reread and bump pointer
+     363 005736 020305                  	cmp	r3,r5			; hit memsize limit?
+     364 005740 101774                  	blos	T8B			; loop until done
+     365                                
+     366 005742 005003                  	clr	r3			; init memory addr at zero
+     367 005744 005413                  T8C:	neg	(r3)			; negate current data to -ADDR
+     368 005746 060313                  	add	r3,(r3) 		; add ADDR + (-ADDR) to get ZERO
+     369 005750 005723                  	tst	(r3)+			; reread, test for zero, bump pointer
+     370 005752 001004                  	bne	T8D			; br if FAIL
+     371 005754 020305                  	cmp	r3,r5			; hit memsize limit?
+     372 005756 101772                  	blos	T8C			; loop until done
+     373                                
+     374 005760 000164  000002          	jmp	2(r4)			; PASS - return to CALLER at offset+2
+     375                                
+     376 005764 014304                  T8D:	mov	-(r3),r4		; memory FAIL, put bad data to R4
+     377 005766 010300                  	mov	r3,r0			; put bad addr to R0
+     378 005770 005006                  	clr	sp			; zap SP
+     379 005772 000000                  	halt				; and DIE
+     380                                
+     381                                	; ------------------------------------------------------------
+     382                                
+     383 005774                         	.=base+774
+     384 005774    060     101          verson: .ascii	"0A"			; version ID
+     385                                
+     386 005776                         	.=base+776
+     387 005776 123162                  crc16:	.word	<123162>		; CRC-16 will go here
+     388                                
+     389                                	.end
+     389                                
