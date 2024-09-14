@@ -78,10 +78,10 @@ void Pdp11Simulator34::onConsoleInputline(std::string inputLine)
         halt = true ; // atomic
         console->printf("Macro CPU now HALTed.\n") ;
     } else {
-        console->printf("Illegale input \"%s\"\n", inputLine.c_str()) ;
+        console->printf("Illegal input: \"%s\"\n", inputLine.c_str()) ;
         error = true ;
     }
-    // print full menu on input error, esle prompt only
+    // print full menu on input error, else print prompt only
     consolePrompt(error) ;
 }
 
