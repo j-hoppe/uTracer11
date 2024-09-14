@@ -1,7 +1,7 @@
-/* tcpmessageinterface.h - receive /transmit messages over TCP/IP
- ASCII data stream is read/written over TCP/IP socket
- in own threads.
- Stream of messages conencted to application via thread-safe MessageQueue
+/* tcpmessageinterface.h - receive/transmit uTracer11 messages over TCP/IP
+
+ ASCII data stream is read/written over TCP/IP socket in own threads.
+ Stream of messages connected to application via thread-safe MessageQueue
  */
 
 #ifndef __TCPMESSAGEINTERFACE_H__

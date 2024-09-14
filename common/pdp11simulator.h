@@ -5,26 +5,53 @@
   Message interface via TCP/IP.
 
 */
+#ifndef __PDP11SIMULATOR_H__
+#define __PDP11SIMULATOR_H__
+
+
+
 #include <vector>
 #include "messages.h"
 #include "messagequeue.h"
 #include "tcpmessageinterface.h"
 
 class Pdp11Simulator {
+
+public:
+// stdin, stdout for user commands
+    class Console {
+    private:
+        std::thread *inputThread = nullptr;
+        void processInput() ;
+
+    public:
+        Pdp11Simulator *simulator = nullptr;
+        Console() {} ;
+        ~Console() {} ;
+
+
+        // better use these functions for output, perhaps later re-routing
+        int printf(const char *format, ...) ;
+        void start() ;
+    };
+
+
+    Console *console ;
 private:
     TcpMessageInterface *messageInterface ;
 
 public:
-    // pointer to single instance as message context
+    // pointer to Singleton instance as message context
     static Pdp11Simulator* instance;
 
-    //  must link to frame work queues
-    Pdp11Simulator(TcpMessageInterface * _messageInterface):
-        messageInterface(_messageInterface) {
+    //  must link to console and frame work queues
+    Pdp11Simulator(Console *_console, TcpMessageInterface * _messageInterface):
+        console(_console), messageInterface(_messageInterface) {
         instance = this ;
+        console->simulator = this ; // link to onConsoleInputLine()
     }
 
-	// state of simulated UNIBUS
+    // state of simulated UNIBUS
     UnibusSignals unibusSignals;
 
     // emulator tells the message interface about its visibile internal state
@@ -32,19 +59,19 @@ public:
     std::vector<MessagesStateVar> stateVars;
 
     void stateVarRegisterClear() {
-    	stateVars.clear() ;
+        stateVars.clear() ;
     }
 
     // name, width, and internal location of a emulator internal variable
     void stateVarRegister(const char *name, void *varPointer, int varSize, int bitCount) {
-    	MessagesStateVar stateVar;
-    	strncpy(stateVar.name, name, stateVar.nameSize-1) ;
-    	stateVar.name[stateVar.nameSize] = 0 ;
-    	stateVar.bitCount = bitCount ;
-    	stateVar.object = varPointer ;
-	stateVar.objectSizeof = varSize;
-    	stateVar.value = 0 ; // not used here
-    	stateVars.push_back(stateVar);
+        MessagesStateVar stateVar;
+        strncpy(stateVar.name, name, stateVar.nameSize-1) ;
+        stateVar.name[stateVar.nameSize] = 0 ;
+        stateVar.bitCount = bitCount ;
+        stateVar.object = varPointer ;
+        stateVar.objectSizeof = varSize;
+        stateVar.value = 0 ; // not used here
+        stateVars.push_back(stateVar);
     }
 
 
@@ -60,9 +87,13 @@ public:
         }
     }
 
-     void respond(Message *msg) {
+    void respond(Message *msg) {
         messageInterface->transmitQueue.push(msg) ;
     }
+
+    // eval user commands, called in parallel thread!
+    virtual void onConsoleInputline(std::string inputLine) ; // abstract
+
 
     virtual void setup(); // initalization, once
     virtual void loop(); // contains the while(true) main loop
@@ -71,7 +102,7 @@ public:
 
     // is simualted micro machine running on own speed+
     // false = single micro step, true = running
-    virtual void setMicroRunState(bool state) ; // abstract
+    virtual void setMicroClockEnable(bool state) ; // abstract
 
     // GUI executes one micro step
     virtual void microStep(); // abstract
@@ -93,3 +124,4 @@ public:
     // a simulator repsonds
 };
 
+#endif // __PDP11SIMULATOR_H__

@@ -3,6 +3,7 @@
 #ifndef __APPLICATION_H__
 #define __APPLICATION_H__
 
+#include "pdp11simulator.h"
 #include "tcpmessageinterface.h"
 // The Application class. This class shows a window
 // containing a statusbar with the text "Hello World"
@@ -13,9 +14,8 @@ public:
 
 	void help();
 	void processCmdline(int _argc, char *_argv[]);
+	Pdp11Simulator::Console console ;
 	TcpMessageInterface messageInterface ;
-	void connectToClient() ;
-
 };
 
 extern Application app;

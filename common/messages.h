@@ -602,7 +602,7 @@ public:
 };
 
 // parsing instantiates the name and size fields of stateVars
-// text repesentation: "name:size name:bitcount ....", bitcount decimal
+// text representation: "name:size name:bitcount ....", bitcount decimal
 // stateVars: name and bitwidth filled
 class ResponseStateDef : public Message {
 public:

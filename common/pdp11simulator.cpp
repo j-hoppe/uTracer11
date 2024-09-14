@@ -3,6 +3,7 @@
   Receives requests and generates responses, which are wrapped into regular methods.
   Message interface via TCP/IP.
 */
+#include <iostream>
 #include <cstdio>
 #include <cassert>
 
@@ -12,6 +13,46 @@
 
 // class var
 Pdp11Simulator* Pdp11Simulator::instance;
+
+
+
+// Just a clone of std::printf().
+// Later:  perhaps ungarble output with typed input,
+// use separate input/output windows, or add logging.
+int Pdp11Simulator::Console::printf(const char *format, ...)
+{
+    va_list args;  // Declare a variable argument list
+    // Initialize the va_list to retrieve additional arguments
+    va_start(args, format);
+    // Pass the format and va_list to vprintf
+    int result = vprintf(format, args);
+	fflush(stdout) ;
+    // Clean up the va_list when done
+    va_end(args);
+	return result ;
+}
+
+
+// thread for non-blocking readline()
+void Pdp11Simulator::Console::processInput() {
+   std::string input;
+    while (true) {
+        std::getline(std::cin, input);
+        // std::cout << "Received input: " << input << std::endl;
+		if (simulator != nullptr) {
+			simulator->onConsoleInputline(input);
+		} else
+			fprintf(stderr, "Console: no simulator connected\n") ;
+    }
+}
+
+
+// start recieving. must connect to a simulator later, and accept commands for it
+void Pdp11Simulator::Console::start()
+{
+    inputThread = new std::thread(&Pdp11Simulator::Console::processInput, this);
+}
+
 
 
 /****** Route Messages to handlers *****/
@@ -171,6 +212,13 @@ const char* Pdp11Simulator::getVersion()
     return nullptr;
 }
 
+void Pdp11Simulator::onConsoleInputline(std::string inputLine)
+{
+    UNREFERENCED_PARAMETER(inputLine);
+    fprintf(stderr, "Abstract Pdp11Simulator::onConsoleInputline() called\n");
+}
+
+
 void Pdp11Simulator::onRequestKY11LBSignalWrite(RequestKY11LBSignalWrite* requestKY11LBSignalWrite) {
     UNREFERENCED_PARAMETER(requestKY11LBSignalWrite);
     fprintf(stderr, "Abstract Pdp11Simulator::onRequestKY11LBSignalWrite() called\n");
@@ -227,7 +275,7 @@ void Pdp11Simulator::onCpuUnibusCycle(uint8_t c1c0, uint32_t addr, uint16_t data
     respond(new ResponseUnibusCycle(c1c0, addr, data, nxm, /*expected*/false));
 }
 
-void Pdp11Simulator::setMicroRunState(bool state) {
+void Pdp11Simulator::setMicroClockEnable(bool state) {
     UNREFERENCED_PARAMETER(state);
     fprintf(stderr, "Abstract Pdp11Simulator::setRunState() called\n");
 }

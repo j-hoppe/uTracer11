@@ -5,10 +5,10 @@
 
  It is a Linux console application.
 
- The actual simulator runs in an own thread.
- Messages to Simualtor are created by receiver,
+ The actual simulator runs in an main thread.
+ Messages to Simulator are created by receiver,
  delivered in a thread-save fifo
- and deleted by caller Simualtor
+ and deleted by caller Simulator
  Messages from simulator
 
  */
@@ -24,12 +24,12 @@
 Application app;
 
 void Application::help() {
-	printf("pdp1134sim - PDP11/34 simulator with utracer11 interface\n");
-	printf("   Implements utracer11 message interface as TCP/IP server.\n");
-	printf("call:\n");
-	printf("./pdp1134sim <port>\n");
-	printf("<port> = decimal TCP/IP port number to listen\n");
-	printf("         Recommended <port> is 65392, the decimal UART base 177560.\n");
+	console.printf("pdp1134sim - PDP11/34 simulator with utracer11 interface\n");
+	console.printf("   Implements utracer11 message interface as TCP/IP server.\n");
+	console.printf("call:\n");
+	console.printf("./pdp1134sim <port>\n");
+	console.printf("<port> = decimal TCP/IP port number to listen\n");
+	console.printf("         Recommended <port> is 65392, the decimal UART base 177560.\n");
 	exit(1);
 }
 
@@ -43,11 +43,15 @@ void Application::processCmdline(int _argc, char *_argv[]) {
 }
 
 int main(int argc, char *argv[]) {
+
+	app.console.start() ;
+
 	// instantiate a simulator, 11/34 or 11/40 or whatever
-	Pdp11Simulator34 simulator(&app.messageInterface);
-	// simulator = new Pdp11Simulator40();
+	
+	Pdp11Simulator34 simulator(&app.console, &app.messageInterface);
 
 	app.processCmdline(argc, argv);
+
 
 	app.messageInterface.connectToClient();
 	app.messageInterface.start(); // start receiver/transmitter threads
@@ -55,5 +59,6 @@ int main(int argc, char *argv[]) {
 
 	// start simulator in main thread
 	simulator.setup() ;
+    
 	simulator.loop() ;
 }

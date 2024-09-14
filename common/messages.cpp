@@ -8,7 +8,6 @@
 #include <ctype.h>
 #include "utils.h" // UNREFERENCED_PARAMETER
 #include "messages.h" // own stuff
-//#include "console.h"
 #ifdef USED
 
 // convert octal/hex/decimal string to long val.

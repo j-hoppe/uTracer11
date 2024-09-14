@@ -1,9 +1,9 @@
-/*
- * tcpmessageinterface.cpp
- *
- *  Created on: Jun 28, 2024
- *      Author: joerg
+/* tcpmessageinterface.cpp - receive/transmit uTracer11 messages over TCP/IP
+
+ ASCII data stream is read/written over TCP/IP socket in own threads.
+ Stream of messages connected to application via thread-safe MessageQueue
  */
+
 #include <cstdlib>
 #include <cstdio>
 #include <cstring> // memset
@@ -61,7 +61,7 @@ void TcpMessageInterface::connectToClient() {
         perror("listen");
         exit(EXIT_FAILURE);
     }
-    fprintf(stderr, "Server is listening on port %d\n", tcpPort);
+    fprintf(stderr, "Server is listening on port %d for client to connect ...\n", tcpPort);
 
     if ((tcpSocket = accept(server_fd, (struct sockaddr*) &address,
                             (socklen_t*) &addrlen)) < 0) {
@@ -97,9 +97,13 @@ void TcpMessageInterface::receiveRequests() {
                 // add message to queue
                 Message* msg = Message::parse(line.c_str());
                 if (msg == nullptr) {
-                    fprintf(stderr, "Non-message text from client: \"%s\"\n", line.c_str());
+					// parse error
+					msg = new ResponseError(Message::errorBuffer) ;
+					fprintf(stderr, "Non-message text from client: \"%s\"\n", msg->render());
+					transmitQueue.push(msg) ; // direct response, only valid msg go to simulator
                 } else {
-                    fprintf(stderr, "Message from client: %s\n", msg->render());
+					// do not flood console with traffic
+                    //fprintf(stderr, "Message from client: %s\n", msg->render());
                     receiveQueue.push(msg) ; // do be deleted by pop()-caller
                 }
             }
@@ -127,7 +131,8 @@ void TcpMessageInterface::transmitResponses() {
             close(tcpSocket);
             break;
         }
-		fprintf(stderr, "Message to client: %s\n", msgTxt.c_str());
+		// do not flood console
+		// fprintf(stderr, "Message to client: %s\n", msgTxt.c_str());
         nanosleep(&waitTimespec10ms, nullptr) ;
     }
 }
