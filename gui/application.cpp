@@ -182,6 +182,12 @@ int Application::FilterEvent(wxEvent& event)
         case WXK_F4: // single step
             pdp11Adapter->uStep();
             return Event_Processed;
+        case WXK_F10: // toggle full screen
+        	if (mainFrame->IsFullScreen())
+				mainFrame->ShowFullScreen(false, 0);
+            else
+		        mainFrame->ShowFullScreen(true, 0); // with menubars, caption an all other decoration
+			return Event_Processed;
         }
     }
     return Event_Skip; // continue processing all others
@@ -265,6 +271,8 @@ bool Application::OnInit()
 
         mainFrame->Layout();
         mainFrame->Refresh();
+		
+		wxLogInfo("Toggle fullscreen with F10");
 
 	
 	// query version from M93X2probe

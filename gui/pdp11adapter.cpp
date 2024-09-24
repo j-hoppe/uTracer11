@@ -57,7 +57,7 @@ Pdp11Adapter::Pdp11Adapter()
 
 void Pdp11Adapter::setupGui(wxFileName _resourceDir)
 {
-    auto app = &wxGetApp();
+    Application *app = &wxGetApp();
     // generic panels before and optical left of specific ones
     resourceDir = _resourceDir;
 
@@ -216,9 +216,15 @@ void Pdp11Adapter::powerDown() { // actions same for all pdp11s
 // operation on change of manclkenable, same for all PDP11's
 void Pdp11Adapter::setManClkEnable(bool _manClkEnable) {
     manClkEnable = _manClkEnable;
-    if (_manClkEnable)
+    auto infoLabel = wxGetApp().mainFrame->uMachineStateText ;
+    if (_manClkEnable) {
+		infoLabel->SetLabel("uMachine is RUNNING") ;
         doLogEvent("Manual Micro Clock enabled"); // same for all pdp11's
-    else doLogEvent("Manual Micro Clock disabled");
+    } else {
+    	infoLabel->SetLabel("uMachine STOPPED") ;
+    	doLogEvent("Manual Micro Clock disabled");
+	}
+    infoLabel->GetParent()->Layout() ;
 }
 
 

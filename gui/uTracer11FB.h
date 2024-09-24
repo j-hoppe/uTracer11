@@ -1,5 +1,3 @@
-
-
 ///////////////////////////////////////////////////////////////////////////
 // C++ code generated with wxFormBuilder (version 4.1.0-0-g733bf3d)
 // http://www.wxformbuilder.org/
@@ -385,6 +383,7 @@ class MainFrameFB : public wxFrame
 		wxBoxSizer* topHorizontalSizer;
 		wxNotebook* toolsNotebook;
 		wxPanel* runPanel;
+		wxStaticText* uMachineStateText;
 		wxToggleButton* manClockEnableButton;
 		wxNotebook* documentsNotebookFB;
 		wxPanel* EventPanelFB;

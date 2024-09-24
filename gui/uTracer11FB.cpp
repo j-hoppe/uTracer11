@@ -1007,6 +1007,12 @@ MainFrameFB::MainFrameFB( wxWindow* parent, wxWindowID id, const wxString& title
 	wxBoxSizer* executePanelSizer;
 	executePanelSizer = new wxBoxSizer( wxVERTICAL );
 
+	uMachineStateText = new wxStaticText( runPanel, wxID_ANY, wxT("µMachine running"), wxDefaultPosition, wxSize( -1,-1 ), wxALIGN_CENTER_HORIZONTAL );
+	uMachineStateText->Wrap( -1 );
+	uMachineStateText->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, wxEmptyString ) );
+
+	executePanelSizer->Add( uMachineStateText, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5 );
+
 	powerCycleButton = new wxButton( runPanel, wxID_ANY, wxT("Power Cycle"), wxDefaultPosition, wxDefaultSize, 0 );
 	executePanelSizer->Add( powerCycleButton, 0, wxALL|wxEXPAND, 5 );
 

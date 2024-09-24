@@ -69,7 +69,7 @@ void Pdp11Simulator34::onConsoleInputline(std::string inputLine)
 {
     bool error = false ;
     if (inputLine == "exit") {
-        console->printf("Stoping simulator program ... \n") ;
+        console->printf("Stopping simulator program ... \n") ;
 		exit(0) ;
     } else if (inputLine == "run") {
         halt = false ; // atomic
