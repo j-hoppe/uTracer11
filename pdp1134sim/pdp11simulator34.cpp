@@ -25,15 +25,25 @@ From M9312 Field Maintenance Print Set (Oct 1978, MP00617).pdf
 
 
 
-const char* Pdp11Simulator34::getVersion()
+const char* Pdp11Simulator34::getVersionText()
 {
     return "PDP11/34 simulator fake";
 }
 
+const char* Pdp11Simulator34::getStateText()
+{
+	static char buffer[80];
+	snprintf(buffer, sizeof(buffer), "Macro CPU %s, micro machine %s\n",
+    		!halt ? "running" : "halted",
+    		microClockEnabled? "running" : "halted");
+    return buffer;
+}
+
 void Pdp11Simulator34::onRequestKY11LBSignalWrite(RequestKY11LBSignalWrite* requestKY11LBSignalWrite) {
     if (!strcasecmp(requestKY11LBSignalWrite->signalName, "MCE")) {
-        // manual clock enable - machine stopped
+        // Manual Clock Enable = ! Micro Clock Enable machine stopped
         setMicroClockEnable(!requestKY11LBSignalWrite->val);
+
     }
     else if (!strcasecmp(requestKY11LBSignalWrite->signalName, "MC")) {
         // GUI wants micro step via KY11 header, raising sigal edge or pulse
@@ -48,7 +58,8 @@ void Pdp11Simulator34::onRequestKY11LBSignalWrite(RequestKY11LBSignalWrite* requ
 void Pdp11Simulator34::consolePrompt(bool printMenu) {
     if (printMenu) {
         console->printf("\n") ;
-        console->printf("***  %s ***\n", getVersion()) ;
+        console->printf("***  %s ***\n", getVersionText()) ;
+        console->printf("%s\n", getStateText());
         console->printf("Commands:\n");
         console->printf("run  - start Macro CPU\n") ;
         console->printf("halt - stop Macro CPU (micro machine still running)\n") ;
@@ -200,6 +211,7 @@ upc 523
 void Pdp11Simulator34::setMicroClockEnable(bool state)
 {
     microClockEnabled = state;
+    console->printf("%s\n", getStateText()) ;
 }
 
 void Pdp11Simulator34::microStep()
@@ -336,7 +348,7 @@ void Pdp11Simulator34::setup() {
     stateVarRegister("CYCLES", &mcyclecount, sizeof(mcyclecount), 32);
 
     // micro machine start running, but macro CPU starts halted
-    microClockEnabled = true ;
+    setMicroClockEnable(true);
     halt = true ;
 
     consolePrompt(true) ; // first user menu

@@ -39,7 +39,9 @@ private:
     void setMicroClockEnable(bool state) override; // 0 = single micro step, 1 = running
     void microStep() override;
 public:
-    const char* getVersion() override;
+    const char* getVersionText() override;
+    const char* getStateText() ;
+
 
     Pdp11Simulator34(Console *_console, TcpMessageInterface * messageInterface):
         Pdp11Simulator(_console, messageInterface) {}
