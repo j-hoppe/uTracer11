@@ -59,7 +59,7 @@ void Pdp11Adapter40::onInit() {
 
     datapathPageAnnotations.loadXml(resourceDir, "mp00082-datapath", "mp00082-datapath.xml");
 
-    // set manclock to initial state of ToggleButton
+    // set manclock to initial state of "ManClock" ToggleButton. false  = not pressed
     auto _manClkEnable = wxGetApp().mainFrame->manClockEnableButton->GetValue();
     setManClkEnable(_manClkEnable);
 
@@ -124,8 +124,8 @@ void Pdp11Adapter40::setManClkEnable(bool _manClkEnable)
 {
     km11State.mclk_enab = _manClkEnable;
 
-    auto msg = new RequestKM11SignalsWrite('A', manClkEnable);
-    km11State.outputsToKM11A(msg); // encode
+    auto msg = new RequestKM11SignalsWrite('A', 0); // empty template
+    km11State.outputsToKM11A(msg); // encode outputs to KM11 pins
     wxGetApp().messageInterface->xmtRequest(msg); // send+delete
     // answer from M93X2probe is ResponseKM11Signals
     Pdp11Adapter::setManClkEnable(_manClkEnable); // actions same for all pdp11s
@@ -463,7 +463,7 @@ void Pdp1140KM11State::inputsFromKM11B(ResponseKM11Signals* respKm11B)
 void Pdp1140KM11State::outputsToKM11A(RequestKM11SignalsWrite* reqKm11A)
 {
     reqKm11A->channel = 'A';
-	// COmapte 11/40 KM11 overlay paper with "OUT" signals  in messages.txt
+	// Compare 11/40 KM11 overlay paper with "OUT" signals  in messages.txt
 	// out00 = ---    out01 = MSTOP
 	// out10 = MCLK   out11 = MCLK ENAB 
 	auto out00 = 0;

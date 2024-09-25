@@ -42,7 +42,7 @@ void Pdp11Adapter34::onInit() {
 
     datapathPageAnnotations.loadXml(resourceDir, "mp00082-datapath", "mp00082-datapath.xml");
 
-    // set manclock to initial state of ToggleButton
+    // set manclock to initial state of "ManClock" ToggleButton. false  = not pressed
     auto _manClkEnable = wxGetApp().mainFrame->manClockEnableButton->GetValue();
     setManClkEnable(_manClkEnable);
 
@@ -111,7 +111,7 @@ void Pdp11Adapter34::paintDocumentAnnotations() {
 
 void Pdp11Adapter34::setManClkEnable(bool _manClkEnable)
 {
-    auto msg = new RequestKY11LBSignalWrite("MCE", manClkEnable);
+    auto msg = new RequestKY11LBSignalWrite("MCE", _manClkEnable);
     wxGetApp().messageInterface->xmtRequest(msg); // send+delete
     // answer from M93X2probe is ResponseKY11LBSignals
     Pdp11Adapter::setManClkEnable(_manClkEnable); // actions same for all pdp11s

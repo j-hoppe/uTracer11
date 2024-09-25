@@ -218,10 +218,10 @@ void Pdp11Adapter::setManClkEnable(bool _manClkEnable) {
     manClkEnable = _manClkEnable;
     auto infoLabel = wxGetApp().mainFrame->uMachineStateText ;
     if (_manClkEnable) {
-		infoLabel->SetLabel("uMachine is RUNNING") ;
+		infoLabel->SetLabel("uMachine is STOPPED") ;
         doLogEvent("Manual Micro Clock enabled"); // same for all pdp11's
     } else {
-    	infoLabel->SetLabel("uMachine STOPPED") ;
+    	infoLabel->SetLabel("uMachine RUNNING") ;
     	doLogEvent("Manual Micro Clock disabled");
 	}
     infoLabel->GetParent()->Layout() ;

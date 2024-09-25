@@ -536,7 +536,7 @@ void DocumentPageAnnotations::dumpKeywordsForDatafields(KeyPatternList& keyPatte
                 }
             // Print summary for each datafield
             if (!anyRegexForThisField)
-                wxLogInfo("key=%s, dataField[%d]= \"%s\" : NO MATCHING REGEXES", key, dataFieldIdx, dataFieldPrintable);
+                wxLogDebug("key=%s, dataField[%d]= \"%s\" : NO MATCHING REGEXES", key, dataFieldIdx, dataFieldPrintable);
         }
     }
 }
