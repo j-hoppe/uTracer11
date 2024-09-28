@@ -5,8 +5,8 @@
 
  It is a Linux console application.
 
- The actual simulator runs in an own thread.
- Messages to Simualtor are created by receiver,
+ The actual simulator runs in an main thread.
+ Messages to Simulator are created by receiver,
  delivered in a thread-save fifo
  and deleted by caller Simualtor
  Messages from simulator
@@ -24,36 +24,39 @@
 Application app;
 
 void Application::help() {
-	printf("pdp1140sim - PDP11/40 simulator with utracer11 interface\n");
-	printf("   Implements utracer11 message interface as TCP/IP server.\n");
-	printf("call:\n");
-	printf("./pdp1140sim <port>\n");
-	printf("<port> = decimal TCP/IP port number to listen\n");
-	printf("         Recommended <port> is 65392, the decimal UART base 177560.\n");
-	exit(1);
+    printf("pdp1140sim - PDP11/40 simulator with utracer11 interface\n");
+    printf("   Implements utracer11 message interface as TCP/IP server.\n");
+    printf("call:\n");
+    printf("./pdp1140sim <port>\n");
+    printf("<port> = decimal TCP/IP port number to listen\n");
+    printf("         Recommended <port> is 65392, the decimal UART base 177560.\n");
+    exit(1);
 }
 
 void Application::processCmdline(int _argc, char *_argv[]) {
-	argc = _argc;
-	argv = _argv;
+    argc = _argc;
+    argv = _argv;
 
-	if (argc != 2)
-		help();
-	messageInterface.tcpPort = strtol(argv[1], nullptr, 10);
+    if (argc != 2)
+        help();
+    messageInterface.tcpPort = strtol(argv[1], nullptr, 10);
 }
 
 int main(int argc, char *argv[]) {
-	// instantiate a simulator, 11/34 or 11/40 or whatever
-	Pdp11Simulator40 simulator(&app.messageInterface);
-	// simulator = new Pdp11Simulator40();
 
-	app.processCmdline(argc, argv);
+    app.console.start() ;
 
-	app.messageInterface.connectToClient();
-	app.messageInterface.start(); // start receiver/transmitter threads
-	// messages now waiting in queues
+    // instantiate a simulator, 11/34 or 11/40 or whatever
+    Pdp11Simulator40 simulator(&app.console, &app.messageInterface);
 
-	// start simulator in main thread
-	simulator.setup() ;
-	simulator.loop() ;
+    app.processCmdline(argc, argv);
+
+    app.messageInterface.connectToClient();
+    app.messageInterface.start(); // start receiver/transmitter threads
+    // messages now waiting in queues
+
+    // start simulator in main thread
+    simulator.setup() ;
+
+    simulator.loop() ;
 }
