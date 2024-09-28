@@ -81,6 +81,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;__WXMSW__;__UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\include\msvc;..\CSerialPort\include;..\common</AdditionalIncludeDirectories>
+      <DisableSpecificWarnings>4996</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -143,6 +144,7 @@
   <ItemGroup>
     <ClInclude Include="..\common\memoryimage.h" />
     <ClInclude Include="..\common\messages.h" />
+    <ClInclude Include="..\common\pdp1140km11state.h" />
     <ClInclude Include="..\common\utils.h" />
     <ClInclude Include="documentpageannotations.h" />
     <ClInclude Include="application.h" />
@@ -168,6 +170,7 @@
     <ClInclude Include="..\common\csvreader.h" />
     <ClCompile Include="..\common\memoryimage.cpp" />
     <ClCompile Include="..\common\messages.cpp" />
+    <ClCompile Include="..\common\pdp1140km11state.cpp" />
     <ClCompile Include="..\common\utils.cpp" />
     <ClCompile Include="..\CSerialPort\src\SerialPort.cpp" />
     <ClCompile Include="..\CSerialPort\src\SerialPortBase.cpp" />

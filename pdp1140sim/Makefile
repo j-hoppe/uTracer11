@@ -21,8 +21,9 @@ OBJS = $(OUTPUT_DIR)/application.o	\
 	$(OUTPUT_DIR)/messages.o \
 	$(OUTPUT_DIR)/tcpmessageinterface.o	\
 	$(OUTPUT_DIR)/pdp11simulator.o \
-	$(OUTPUT_DIR)/pdp11simulator40.o
-
+	$(OUTPUT_DIR)/pdp11simulator40.o \
+	$(OUTPUT_DIR)/pdp1140km11state.o 
+	
 	CFLAGS += -Wall -Wextra -g -fmax-errors=5 -I../common
 #	CFLAGS += -Wall -Wextra -O2
 
@@ -33,6 +34,9 @@ $(OUTPUT_DIR)/pdp1140sim:	$(OBJS)
 	$(EXTRA_CMDS)
 
 $(OUTPUT_DIR)/messages.o:	$(PROJECT_ROOT)../common/messages.cpp
+	$(CXX) -c $(CFLAGS) $(CXXFLAGS) $(CPPFLAGS) -o $@ $<
+
+$(OUTPUT_DIR)/pdp1140km11state.o:	$(PROJECT_ROOT)../common/pdp1140km11state.cpp
 	$(CXX) -c $(CFLAGS) $(CXXFLAGS) $(CPPFLAGS) -o $@ $<
 
 $(OUTPUT_DIR)/tcpmessageinterface.o:	$(PROJECT_ROOT)../common/tcpmessageinterface.cpp

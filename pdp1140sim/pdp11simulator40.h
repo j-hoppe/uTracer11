@@ -11,11 +11,17 @@
 
 #include "pdp11simulator.h"
 
+// Signals exposed o the PDP-11/40 KM11 A and B diagnostic headers
+#include "pdp1140km11state.h"
+
+
 class Pdp11Simulator40 : public Pdp11Simulator {
     // emulated CPU
     unsigned state; // position in predefined faked activity sequence
     bool microClockEnabled = false; // true = micro machine running, start stopped
+    bool currentMicroClockLevel ; // to detect edges
     uint16_t mpc; // current micro program counter
+    uint16_t nextMpc; // next micro program counter, as result of BUTs
     uint16_t    memory[0x20000]; // 18 bit addresses = 128kwords
     uint32_t    opcodecount ; // processed opcodes
     uint32_t    mcyclecount ; // processed microsteps
@@ -29,8 +35,8 @@ class Pdp11Simulator40 : public Pdp11Simulator {
     void consolePrompt(bool printMenu) ;
     void onConsoleStart() ;
     void onConsoleInputline(std::string inputLine) override ;
-    void onRequestKY11LBSignalWrite(RequestKY11LBSignalWrite* requestKY11LBSignalWrite) override;
-    void onRequestKY11LBSignalsRead(RequestKY11LBSignalsRead* requestKY11LBSignalsRead) override;
+    void onRequestKM11SignalsWrite(RequestKM11SignalsWrite* requestKM11SignalWrite) override;
+    void onRequestKM11SignalsRead(RequestKM11SignalsRead* requestKM11SignalsRead) override;
     // move UNIBUS access to base class Pdp11Simulator ?
     void onRequestUnibusDeposit(RequestUnibusDeposit* requestUnibusDeposit) override;
     void onRequestUnibusExam(RequestUnibusExam* requestUnibusExam) override;

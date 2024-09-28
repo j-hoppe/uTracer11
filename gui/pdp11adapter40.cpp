@@ -125,7 +125,7 @@ void Pdp11Adapter40::setManClkEnable(bool _manClkEnable)
     km11State.mclk_enab = _manClkEnable;
 
     auto msg = new RequestKM11SignalsWrite('A', 0); // empty template
-    km11State.outputsToKM11A(msg); // encode outputs to KM11 pins
+    km11State.outputsToKM11AWriteRequest(msg); // encode outputs to KM11 pins
     wxGetApp().messageInterface->xmtRequest(msg); // send+delete
     // answer from M93X2probe is ResponseKM11Signals
     Pdp11Adapter::setManClkEnable(_manClkEnable); // actions same for all pdp11s
@@ -136,13 +136,13 @@ void Pdp11Adapter40::uStep()
     // send falling edge 
     km11State.mclk = 0;
     auto msg = new RequestKM11SignalsWrite();
-    km11State.outputsToKM11A(msg);  // encode
+    km11State.outputsToKM11AWriteRequest(msg);  // encode
     wxGetApp().messageInterface->xmtRequest(msg); // send+delete
 
     // send raising edge 
     km11State.mclk = 1;
     msg = new RequestKM11SignalsWrite();
-    km11State.outputsToKM11A(msg);
+    km11State.outputsToKM11AWriteRequest(msg);
     wxGetApp().messageInterface->xmtRequest(msg); // send+delete
 
     // answer from M93X2probe is ResponseKY11LBSignals
@@ -186,7 +186,7 @@ void Pdp11Adapter40::onResponseKM11Signals(ResponseKM11Signals* km11Signals) {
 
     if (km11Signals->channel == 'A') {
         // parse
-        km11State.inputsFromKM11A(km11Signals);
+        km11State.inputsFromKM11AResponse(km11Signals);
 
         // process MPC events only for change
         if (microProgramCounter != km11State.pupp) {
@@ -225,7 +225,7 @@ void Pdp11Adapter40::onResponseKM11Signals(ResponseKM11Signals* km11Signals) {
     }
     else if (km11Signals->channel == 'B') {
         // parse
-        km11State.inputsFromKM11B(km11Signals);
+        km11State.inputsFromKM11BResponse(km11Signals);
         if (km11StatusPanel) { // not for simulation ?
             // display
             s = wxString::Format("%0.6o", km11State.pba);
@@ -299,176 +299,4 @@ void Pdp11Adapter40::evalUnibusCycle(ResponseUnibusCycle* unibusCycle)
     doEvalUnibusCycle(unibusCycle); // same for all pdp11's
 }
 
-/* Encode/decode KM11 signals
 
-Signal layout on DEC KM11A (CPU)
-    KD11-A Maintenance Console Overlay (A-SS-5509081-0-12)
-
-pupp6   pupp3   pupp0   bupp6   bupp3   bupp0   c
-                                                        ----    mstop
-pupp7   pupp4   pupp1   bupp7   bupp4   bupp1   v
-                                                        mclk    mclk_enab
-pupp8   pupp5   pupp2   bupp8   bupp5   bupp2   z
-
- --      --     trap    ssyn    msyn    t       n
-
-
-Signal layout on DEC KM11B (MMU / FPU)
-    KT11-D, KE11-E,F Maintenance Console Overlay (A-SS-5509081-0-13)
-
-pba15   pba12   pba09   pba06   b15     dr00    epsc
-                                                        ----    ----
-pba16   pba13   pba10   pba07   ecn00   dr09    epsv
-                                                        ----    ----
-pba17   pba14   pba11   pba08   expunfl msr00   epsz
-
-roma    romb    romc    romd    expovfl msr01   epsn
-
-
-Signals indices [col,row] on M93X2probe KM11 PCB:
-    IN (LEDs)                                           Out (switches)
-0,0     1,0     2,0     3,0     4,0     5,0     6,0
-0,1     1,1     2,1     3,1     4,1     5,1     6,1     0,0  1,0
-0,2     1,2     2,2     3,2     4,2     5,2     6,2     0,1  1,1
-0,3     1,3     2,3     3,3     4,3     5,3     6,3
-
-
-Encoding KM11-Signals - gpio bits on M93X2probe PCB
-    mcp[3][0].a = gpio0a = KM11A_IN00..12, OUT00
-    mcp[3][0].b = gpio0b = KM11A_IN13..31, OUT01
-    mcp[3][1].a = gpio1a = KM11A_IN32..50, OUT10
-    mcp[3][1].b = gpio1b = KM11A_IN51..63, OUT11
-
-    mcp[3][2], mcp[3][3] same for KM11B
-
-*/
-
-// get a KM11 signal bit from the matrix andd shift it
-#define bit(bitmask,shift) ( bitmask ? (1 << shift):0 )
-
-void Pdp1140KM11State::inputsFromKM11A(ResponseKM11Signals* respKm11A)
-{
-    if (respKm11A->channel != 'A')
-        wxLogFatalError("Pdp1140KM11Signals::inputsFromKM11A: channel A expected, is %c", respKm11A->channel);
-    // for bit-encoding see PCB of M93X2probe
-
-    // let the compiler do all the demuxing
-    auto in00 = respKm11A->gpio0a & 1;
-    auto in01 = respKm11A->gpio0a & 2;
-    auto in02 = respKm11A->gpio0a & 4;
-    //auto in03 = respKm11A->gpio0a & 8; NC
-    auto in10 = respKm11A->gpio0a & 0x10;
-    auto in11 = respKm11A->gpio0a & 0x20;
-    auto in12 = respKm11A->gpio0a & 0x40;
-
-    //auto in13 = respKm11A->gpio0b & 1; NC
-    auto in20 = respKm11A->gpio0b & 2;
-    auto in21 = respKm11A->gpio0b & 4;
-    auto in22 = respKm11A->gpio0b & 8;
-    auto in23 = respKm11A->gpio0b & 0x10;
-    auto in30 = respKm11A->gpio0b & 0x20;
-    auto in31 = respKm11A->gpio0b & 0x40;
-
-    auto in32 = respKm11A->gpio1a & 1;
-    auto in33 = respKm11A->gpio1a & 2;
-    auto in40 = respKm11A->gpio1a & 4;
-    auto in41 = respKm11A->gpio1a & 8;
-    auto in42 = respKm11A->gpio1a & 0x10;
-    auto in43 = respKm11A->gpio1a & 0x20;
-    auto in50 = respKm11A->gpio1a & 0x40;
-
-    auto in51 = respKm11A->gpio1b & 1;
-    auto in52 = respKm11A->gpio1b & 2;
-    auto in53 = respKm11A->gpio1b & 4;
-    auto in60 = respKm11A->gpio1b & 8;
-    auto in61 = respKm11A->gpio1b & 0x10;
-    auto in62 = respKm11A->gpio1b & 0x20;
-    auto in63 = respKm11A->gpio1b & 0x40;
-
-    pupp = bit(in00, 6) | bit(in01, 7) | bit(in02, 8)
-        | bit(in10, 3) | bit(in11, 4) | bit(in12, 5)
-        | bit(in20, 0) | bit(in21, 1) | bit(in22, 2);
-    bupp = bit(in30, 6) | bit(in31, 7) | bit(in32, 8)
-        | bit(in40, 3) | bit(in41, 4) | bit(in42, 5)
-        | bit(in50, 0) | bit(in51, 1) | bit(in52, 2);
-    trap = bit(in23, 0);
-    ssyn = bit(in33, 0);
-    msyn = bit(in43, 0);
-    t = bit(in53, 0);
-    c = bit(in60, 0);
-    v = bit(in61, 0);
-    z = bit(in62, 0);
-    n = bit(in63, 0);
-}
-
-void Pdp1140KM11State::inputsFromKM11B(ResponseKM11Signals* respKm11B)
-{
-    if (respKm11B->channel != 'B')
-        wxLogFatalError("Pdp1140KM11Signals::inputsFromKM11B: channel B expected, is %c", respKm11B->channel);
-    // let the compiler do all the demuxing
-    auto in00 = respKm11B->gpio0a & 1;
-    auto in01 = respKm11B->gpio0a & 2;
-    auto in02 = respKm11B->gpio0a & 4;
-    auto in03 = respKm11B->gpio0a & 8;
-    auto in10 = respKm11B->gpio0a & 0x10;
-    auto in11 = respKm11B->gpio0a & 0x20;
-    auto in12 = respKm11B->gpio0a & 0x40;
-
-    auto in13 = respKm11B->gpio0b & 1;
-    auto in20 = respKm11B->gpio0b & 2;
-    auto in21 = respKm11B->gpio0b & 4;
-    auto in22 = respKm11B->gpio0b & 8;
-    auto in23 = respKm11B->gpio0b & 0x10;
-    auto in30 = respKm11B->gpio0b & 0x20;
-    auto in31 = respKm11B->gpio0b & 0x40;
-
-    auto in32 = respKm11B->gpio1a & 1;
-    auto in33 = respKm11B->gpio1a & 2;
-    auto in40 = respKm11B->gpio1a & 4;
-    auto in41 = respKm11B->gpio1a & 8;
-    auto in42 = respKm11B->gpio1a & 0x10;
-    auto in43 = respKm11B->gpio1a & 0x20;
-    auto in50 = respKm11B->gpio1a & 0x40;
-
-    auto in51 = respKm11B->gpio1b & 1;
-    auto in52 = respKm11B->gpio1b & 2;
-    auto in53 = respKm11B->gpio1b & 4;
-    auto in60 = respKm11B->gpio1b & 8;
-    auto in61 = respKm11B->gpio1b & 0x10;
-    auto in62 = respKm11B->gpio1b & 0x20;
-    auto in63 = respKm11B->gpio1b & 0x40;
-
-    pba = bit(in00, 15) | bit(in01, 16) | bit(in02, 17)
-        | bit(in10, 12) | bit(in11, 13) | bit(in12, 14)
-        | bit(in20, 9) | bit(in21, 10) | bit(in22, 11)
-        | bit(in30, 6) | bit(in31, 7) | bit(in32, 8);
-    rom_a = bit(in03, 0);
-    rom_b = bit(in13, 0);
-    rom_c = bit(in23, 0);
-    rom_d = bit(in33, 0);
-    b_15 = bit(in40, 0);
-    ecin_00 = bit(in41, 0);
-    exp_unfl = bit(in42, 0);
-    exp_ovfl = bit(in43, 0);
-    dr00 = bit(in50, 0);
-    dr09 = bit(in51, 0);
-    msr00 = bit(in52, 0);
-    msr01 = bit(in53, 0);
-    eps_c = bit(in60, 0);
-    eps_v = bit(in61, 0);
-    eps_z = bit(in62, 0);
-    eps_n = bit(in63, 0);
-}
-
-void Pdp1140KM11State::outputsToKM11A(RequestKM11SignalsWrite* reqKm11A)
-{
-    reqKm11A->channel = 'A';
-	// Compare 11/40 KM11 overlay paper with "OUT" signals  in messages.txt
-	// out00 = ---    out01 = MSTOP
-	// out10 = MCLK   out11 = MCLK ENAB 
-	auto out00 = 0;
-    auto out01 = mstop;
-    auto out10 = mclk;
-    auto out11 = mclk_enab;
-    reqKm11A->val03 = bit(out00, 0) | bit(out01, 1) | bit(out10, 2) | bit(out11, 3);
-}

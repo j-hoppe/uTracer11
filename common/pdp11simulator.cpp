@@ -124,7 +124,7 @@ void* RequestSwitchesRead::process() {
 }
 
 void* RequestVersionRead::process() {
-    Pdp11Simulator::instance->respond(new ResponseVersion(Pdp11Simulator::instance->getVersion()));
+    Pdp11Simulator::instance->respond(new ResponseVersion(Pdp11Simulator::instance->getVersionText()));
     return nullptr;
 }
 
@@ -206,9 +206,9 @@ void *RequestStateVal::process() {
 
 /****** Protoype for event methods *****/
 
-const char* Pdp11Simulator::getVersion()
+const char* Pdp11Simulator::getVersionText()
 {
-    fprintf(stderr, "Abstract Pdp11Simulator::getVersion() called\n");
+    fprintf(stderr, "Abstract Pdp11Simulator::getVersionText() called\n");
     return nullptr;
 }
 

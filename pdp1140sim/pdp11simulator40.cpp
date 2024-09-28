@@ -21,6 +21,7 @@ From M9312 Field Maintenance Print Set (Oct 1978, MP00617).pdf
      udata=
 */
 
+#include <cctype>
 #include "utils.h"
 #include "pdp11simulator40.h"
 
@@ -40,21 +41,6 @@ const char* Pdp11Simulator40::getStateText()
     return buffer;
 }
 
-void Pdp11Simulator40::onRequestKY11LBSignalWrite(RequestKY11LBSignalWrite* requestKY11LBSignalWrite) {
-    if (!strcasecmp(requestKY11LBSignalWrite->signalName, "MCE")) {
-        // Manual Clock Enable = ! Micro Clock Enable machine stopped
-        setMicroClockEnable(!requestKY11LBSignalWrite->val);
-
-    }
-    else if (!strcasecmp(requestKY11LBSignalWrite->signalName, "MC")) {
-        // GUI wants micro step via KY11 header, raising sigal edge or pulse
-        if (requestKY11LBSignalWrite->val > 0)
-            microStep();
-    }
-
-    respond(new ResponseKY11LBSignals(mpc, 0, 0, 0, 0));
-}
-
 
 void Pdp11Simulator40::consolePrompt(bool printMenu) {
     if (printMenu) {
@@ -66,7 +52,7 @@ void Pdp11Simulator40::consolePrompt(bool printMenu) {
         console->printf("halt - stop Macro CPU (micro machine still running)\n") ;
         console->printf("exit - terminate simulator\n") ;
     }
-    console->printf("sim1134>") ;
+    console->printf("sim1140>") ;
 }
 
 
@@ -97,11 +83,49 @@ void Pdp11Simulator40::onConsoleInputline(std::string inputLine)
     consolePrompt(error) ;
 }
 
+/*
+Interface to the KM11 diagnostic board.
 
-void Pdp11Simulator40::onRequestKY11LBSignalsRead(RequestKY11LBSignalsRead* requestKY11LBSignalsRead) {
-    UNREFERENCED_PARAMETER(requestKY11LBSignalsRead);
-    // GUI wants to see the current upc
-    respond(new ResponseKY11LBSignals(mpc, 0, 0, 0, 0));
+
+*/
+
+void Pdp11Simulator40::onRequestKM11SignalsWrite(RequestKM11SignalsWrite* requestKM11SignalWrite) {
+	Pdp1140KM11State km11State ;
+
+	// all signals written
+	km11State.outputsFromKM11AWriteRequest(requestKM11SignalWrite) ;
+	if (km11State.mclk_enab != microClockEnabled)
+		setMicroClockEnable(km11State.mclk_enab);
+	if (km11State.mclk != currentMicroClockLevel) {
+		// low to high edge?
+		if (currentMicroClockLevel) {
+			mpc = nextMpc ;
+			microStep();
+		}
+		currentMicroClockLevel = km11State.mclk;
+	}
+	// send new micro pc
+	auto respKm11A = new ResponseKM11Signals() ;
+	km11State.inputsToKM11AResponse(respKm11A) ;
+    respond(respKm11A);
+}
+
+
+void Pdp11Simulator40::onRequestKM11SignalsRead(RequestKM11SignalsRead* requestKM11SignalsRead) {
+	Pdp1140KM11State km11State ;
+	if (toupper(requestKM11SignalsRead->channel) == 'A') {
+		// not clear what 
+		km11State.pupp =  mpc ;
+		// bupp is the next step to execute
+		km11State.bupp = mpc ;
+		km11State.pupp = nextMpc ; 
+		// a real simulator must set all the other km11State signals here!!
+
+		// convert state to message and send
+		auto respKm11A = new ResponseKM11Signals() ;
+		km11State.inputsToKM11AResponse(respKm11A) ;
+		respond(respKm11A);
+		}
 }
 
 void  Pdp11Simulator40::onRequestUnibusDeposit(RequestUnibusDeposit* requestUnibusDeposit) {
@@ -215,8 +239,9 @@ void Pdp11Simulator40::setMicroClockEnable(bool state)
     console->printf("%s\n", getStateText()) ;
 }
 
+// sets nextMpc
 void Pdp11Simulator40::microStep() {
-    unsigned nextMpc = 0;
+
     mcyclecount++ ;
     // execute the M9312 terminal loop:
     // 1$: tstb	@#177560
@@ -315,7 +340,6 @@ void Pdp11Simulator40::microStep() {
         state = 0; // loop
         break;
     }
-    mpc = nextMpc;
 }
 
 
@@ -323,7 +347,8 @@ void Pdp11Simulator40::microStep() {
 
 void Pdp11Simulator40::setup() {
     Pdp11Simulator::setup();
-    mpc = 0;
+    mpc = nextMpc = 0;
+	
     opcodecount = 0;
     mcyclecount = 0 ;
     state = 0;
@@ -335,6 +360,7 @@ void Pdp11Simulator40::setup() {
     // prepare for publishing
     stateVarRegisterClear() ;
     stateVarRegister("MPC", &mpc, sizeof(mpc), 16 );
+    stateVarRegister("NEXTMPC", &nextMpc, sizeof(nextMpc), 16 );
     stateVarRegister("R0", &(r[0]), sizeof(r[0]), 16 );
     stateVarRegister("R1", &(r[1]), sizeof(r[1]), 16 );
     stateVarRegister("R2", &(r[2]), sizeof(r[2]), 16 );
@@ -358,8 +384,10 @@ void Pdp11Simulator40::loop() {
     while(true) {
         // if micro machine is running: execute steps in high speed,
         // ignore "singleStep command" in messages->process()
-        if (microClockEnabled)
-            microStep() ;
+        if (microClockEnabled) {
+			mpc = nextMpc ;
+            microStep() ; 
+        }
 
         processPendingRequests() ;
     }

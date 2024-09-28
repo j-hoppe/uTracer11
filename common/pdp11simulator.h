@@ -98,7 +98,7 @@ public:
     virtual void setup(); // initalization, once
     virtual void loop(); // contains the while(true) main loop
 
-    virtual const char* getVersion() ;
+    virtual const char* getVersionText() ;
 
     // is simualted micro machine running on own speed+
     // false = single micro step, true = running

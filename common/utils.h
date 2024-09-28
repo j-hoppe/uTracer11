@@ -32,6 +32,20 @@ typedef byte uint8_t;
 #endif // WIN32
 
 
+#if defined(__WXGTK__) || defined(__WXMSW__)
+// running under wxWindows, Ubuntu or MS Windows
+#include <wx/wx.h>
+#define LOGERROR(fmt, ...)      wxLogError(fmt, __VA_ARGS__)
+#define LOGWARNING(fmt, ...)    wxLogWarning(fmt, __VA_ARGS__)
+#define LOGINFO(fmt, ...)       wxLogInfo(fmt, __VA_ARGS__)
+#else
+#include <stdio.h>
+#define LOGERROR(fmt, ...)      fprintf(stderr, "ERROR: " fmt, __VA_ARGS__)
+#define LOGWARNING(fmt, ...)    fprintf(stderr, "WARNING: " fmt, __VA_ARGS__)
+#define LOGINFO(fmt, ...)       fprintf(stderr, "INFO: " fmt, __VA_ARGS__)
+#endif
+
+
 std::string stringVectorAsCommaList(std::vector<std::string>& stringList, std::string separator = ",");
 
 // Thanks to https ://stackoverflow.com/a/44973498/524503 for bringing up the modern solution.

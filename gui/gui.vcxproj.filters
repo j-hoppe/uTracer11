@@ -81,6 +81,9 @@
     <ClInclude Include="messageinterfacetcpip.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\common\pdp1140km11state.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="application.cpp">
@@ -165,6 +168,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="messageinterfacetcpip.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\pdp1140km11state.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

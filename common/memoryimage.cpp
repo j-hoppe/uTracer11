@@ -38,18 +38,6 @@
  */
 #define	_MEMORYIMAGE_CPP_
 
-#if defined(__WXGTK__) || defined(__WXMSW__)
-// running under wxWindows, Ubuntu or MS Windows
-#include <wx/wx.h>
-#define LOGERROR(fmt, ...)      wxLogError(fmt, __VA_ARGS__)
-#define LOGWARNING(fmt, ...)    wxLogWarning(fmt, __VA_ARGS__)
-#define LOGINFO(fmt, ...)       wxLogInfo(fmt, __VA_ARGS__)
-#else
-#define LOGERROR(fmt, ...)      fprintf(stderr, "ERROR: " fmt, __VA_ARGS__)
-#define LOGWARNING(fmt, ...)    fprintf(stderr, "WARNING: " fmt, __VA_ARGS__)
-#define LOGINFO(fmt, ...)       fprintf(stderr, "INFO: " fmt, __VA_ARGS__)
-#endif
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
@@ -57,7 +45,7 @@
 #include <ctype.h>
 #include <assert.h>
 
- //#include "utils.hpp"
+#include "utils.h"    // platform independent LOG*() macros
 #include "memoryimage.h" // own
 
 // Compatibility Linux-Visual Studio

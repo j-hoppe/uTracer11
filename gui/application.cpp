@@ -183,10 +183,11 @@ int Application::FilterEvent(wxEvent& event)
             pdp11Adapter->uStep();
             return Event_Processed;
         case WXK_F10: // toggle full screen
-        	if (mainFrame->IsFullScreen())
+        	if (mainFrame->IsFullScreen()) {
 				mainFrame->ShowFullScreen(false, 0);
-            else
+        	} else {
 		        mainFrame->ShowFullScreen(true, 0); // with menubars, caption an all other decoration
+        	}
 			return Event_Processed;
         }
     }

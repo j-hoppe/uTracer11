@@ -9,7 +9,7 @@ CSerialPort_OBJS := $(addprefix $(BIN_DIR)/CSerialPort/,$(CSerialPort_SRC:.cpp=.
 
 # Define the source files for other directories
 GUI_SRC := $(wildcard ../gui/*.cpp)
-COMMON_SRC := csvreader.cpp memoryimage.cpp messages.cpp utils.cpp
+COMMON_SRC := csvreader.cpp memoryimage.cpp messages.cpp pdp1140km11state.cpp utils.cpp
 # COMMON_SRC := $(wildcard ../common/*.cpp)
 PDP11_SRC := $(wildcard ../Pdp11BusCycleDisas/*.cpp)
 
