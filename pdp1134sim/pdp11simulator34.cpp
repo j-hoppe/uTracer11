@@ -32,10 +32,10 @@ const char* Pdp11Simulator34::getVersionText()
 
 const char* Pdp11Simulator34::getStateText()
 {
-	static char buffer[80];
-	snprintf(buffer, sizeof(buffer), "Macro CPU %s, micro machine %s\n",
-    		!halt ? "running" : "halted",
-    		microClockEnabled? "running" : "halted");
+    static char buffer[80];
+    snprintf(buffer, sizeof(buffer), "Macro CPU %s, micro machine %s\n",
+             !halt ? "running" : "halted",
+             microClockEnabled? "running" : "halted");
     return buffer;
 }
 
@@ -81,7 +81,7 @@ void Pdp11Simulator34::onConsoleInputline(std::string inputLine)
     bool error = false ;
     if (inputLine == "exit") {
         console->printf("Stopping simulator program ... \n") ;
-		exit(0) ;
+        exit(0) ;
     } else if (inputLine == "run") {
         halt = false ; // atomic
         console->printf("Macro CPU now running.\n") ;
