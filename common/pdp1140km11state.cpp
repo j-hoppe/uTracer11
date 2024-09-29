@@ -231,8 +231,8 @@ void Pdp1140KM11State::outputsToKM11AWriteRequest(RequestKM11SignalsWrite* reqKm
     // out10 = MCLK   out11 = MCLK ENAB
     auto out00 = 0;
     auto out01 = mstop;
-    auto out10 = mclk;
-    auto out11 = mclk_enab;
+    auto out10 = !mclk; // "mclk_l" in fpms
+    auto out11 = !mclk_enab; // "mclk_enab_l" in fpms
     reqKm11A->val03 = setbit(out00, 0) | setbit(out01, 1) | setbit(out10, 2) | setbit(out11, 3);
 }
 
@@ -242,8 +242,8 @@ void Pdp1140KM11State::outputsFromKM11AWriteRequest(RequestKM11SignalsWrite* req
     auto out10 = getbit(reqKm11A->val03, 2);
     auto out11 = getbit(reqKm11A->val03, 3);
     mstop = out01 ;
-    mclk = out10 ;
-    mclk_enab = out11;
+    mclk = !out10 ; // "mclk_l" in fpms
+    mclk_enab = !out11; // "mclk_enab_l" in fpms
 }
 
 

@@ -133,14 +133,15 @@ void Pdp11Adapter40::setManClkEnable(bool _manClkEnable)
 
 void Pdp11Adapter40::uStep()
 {
-    // send falling edge 
-    km11State.mclk = 0;
+	// Momentary switch S4 on KM11 produces 1-0-1 on MCLK_L
+	// -> 0-1-0 on positive km11State.mclk
+    km11State.mclk = 1; // assume 0 already set
     auto msg = new RequestKM11SignalsWrite();
     km11State.outputsToKM11AWriteRequest(msg);  // encode
     wxGetApp().messageInterface->xmtRequest(msg); // send+delete
 
-    // send raising edge 
-    km11State.mclk = 1;
+    // send falling edge
+    km11State.mclk = 0;
     msg = new RequestKM11SignalsWrite();
     km11State.outputsToKM11AWriteRequest(msg);
     wxGetApp().messageInterface->xmtRequest(msg); // send+delete

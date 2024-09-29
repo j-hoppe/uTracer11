@@ -92,17 +92,24 @@ Interface to the KM11 diagnostic board.
 void Pdp11Simulator40::onRequestKM11SignalsWrite(RequestKM11SignalsWrite* requestKM11SignalWrite) {
 	Pdp1140KM11State km11State ;
 
-	// all signals written
+	// all signals written together
 	km11State.outputsFromKM11AWriteRequest(requestKM11SignalWrite) ;
-	if (km11State.mclk_enab != microClockEnabled)
-		setMicroClockEnable(km11State.mclk_enab);
-	if (km11State.mclk != currentMicroClockLevel) {
+	//1) enable/disable micro clock
+	// KM11: m_clk = "manual clock" == !microClockEnabled,
+	bool requestedMicroClockEnabled = !km11State.mclk_enab ;
+	if ( requestedMicroClockEnabled != microClockEnabled)
+		setMicroClockEnable(requestedMicroClockEnabled);
+
+	// 2) single step?
+	bool requestedMicroClockLevel = km11State.mclk;
+	if (requestedMicroClockLevel != currentMicroClockLevel) {
 		// low to high edge?
-		if (currentMicroClockLevel) {
+		if (requestedMicroClockLevel && !microClockEnabled) {
+			// single step if stopped
 			mpc = nextMpc ;
 			microStep();
 		}
-		currentMicroClockLevel = km11State.mclk;
+		currentMicroClockLevel = requestedMicroClockLevel;
 	}
 	// send new micro pc
 	auto respKm11A = new ResponseKM11Signals() ;

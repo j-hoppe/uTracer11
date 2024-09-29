@@ -6,7 +6,7 @@ class Pdp1140KM11State {
 public:
     // member variables are exact the labels on DEC 11/40 KM11 overlay sheets
     // inputs from CPU to KM11A
-    uint16_t pupp = 0;
+    uint16_t pupp = 0; // not inverted for my convenience
     uint16_t bupp = 0;
     bool trap = 0;
     bool ssyn = 0;
@@ -35,10 +35,10 @@ public:
     bool eps_z = 0;
     bool eps_n = 0;
 
-    // outputs from KM11A to CPU
-    bool mstop = 0;
-    bool mclk = 0;
-    bool mclk_enab = 0;
+    // outputs from KM11A to CPU, inverted?
+    bool mstop = 0; // active: stop micro program execution at mpc set on console switches
+    bool mclk = 0; // physically inverted
+    bool mclk_enab = 0; // physically inverted
 
     // lowlevel encode/decode
 
