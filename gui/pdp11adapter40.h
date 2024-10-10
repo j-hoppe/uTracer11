@@ -22,6 +22,7 @@ public:
     Pdp11uFlowPanel* uFlowPanel = nullptr;
     Pdp1140CpuKM11StatusPanelFB* km11StatusPanel = nullptr;
     virtual void setupGui(wxFileName _resourceDir) override;
+	virtual void updateGui(State state) override;
 
     Pdp1140KM11State km11State; // CPU internal signals. not clear wether used in simulator ?
 
@@ -32,7 +33,7 @@ public:
 
     virtual void setManClkEnable(bool manClkEnable) override;
     virtual void uStep() override;
-    virtual void uStepUntilStop(uint32_t stopUpc, int stopUnibusCycle, uint32_t stopUnibusAddress, int stopRepeatCount) override;
+    //virtual void uStepAutoUntilStop(uint32_t stopUpc, int stopUnibusCycle, uint32_t stopUnibusAddress, int stopRepeatCount) override;
 
     virtual void paintDocumentAnnotations() override;
 

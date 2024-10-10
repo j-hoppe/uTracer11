@@ -20,6 +20,7 @@ public:
     }
     // attach/arrange panels, set directories
     void setupGui(wxFileName _resourceDir) override;
+	virtual void updateGui(State state) override;
 };
 
 #endif // __PDP11ADAPTER40PHYS_H__

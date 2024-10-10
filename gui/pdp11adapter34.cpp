@@ -20,8 +20,32 @@ void Pdp11Adapter34::setupGui(wxFileName _resourceDir) {
 
     //pdp1134uWordPanel = new Pdp1134uWordPanel(app->mainFrame->documentsNotebookFxWB);
     //mainFrame->documentsNotebookFxWB->AddPage(pdp1134uWordPanel, "Current micro word", false);
-
 }
+
+// Set State of control, visibility and functions
+void Pdp11Adapter34::updateGui(State state) {
+    switch(state) {
+    case State::init:
+        return;
+        break ;
+    case State::uMachineRunning:
+        uFlowPanel->Disable() ;
+        dataPathPanel->Disable() ;
+        break ;
+    case State::uMachineManualStepping:
+       uFlowPanel->Enable() ;
+        dataPathPanel->Enable() ;
+        break ;
+    case State::uMachineAutoStepping:
+        uFlowPanel->Enable() ;
+        dataPathPanel->Enable() ;
+        break ;
+    }
+ //   uFlowPanel->GetParent()->Layout() ;
+//    dataPathPanel->GetParent()->Layout() ;
+    Pdp11Adapter::updateGui(state); // base
+}
+
 
 void Pdp11Adapter34::onInit() {
     Pdp11Adapter::onInit(); // stuff same for all models
@@ -44,7 +68,7 @@ void Pdp11Adapter34::onInit() {
 
     // set manclock to initial state of "ManClock" ToggleButton. false  = not pressed
     auto _manClkEnable = wxGetApp().mainFrame->manClockEnableButton->GetValue();
-    setManClkEnable(_manClkEnable);
+    setManClkEnable(_manClkEnable); // state change
 
     // search in current uflow MPC data for keys of datapath objects
     // like "d:\retrocmp\dec\pdp11\uTracer11\resources\pdp1134\"
@@ -63,9 +87,15 @@ void Pdp11Adapter34::onTimer(unsigned periodMs) {
     //
     // request update every 0.5secs
     timerUnprocessedMs += periodMs;
-    if (timerUnprocessedMs > 500) {
+    bool poll = (timerUnprocessedMs > 500) ;
+    if (poll)
         timerUnprocessedMs -= 500;
 
+    // do not poll data when pdp11 is running at own speed
+    if (state == State::init || state == State::uMachineRunning)
+        poll = false ;
+
+    if (poll) {
         /// TODO: which signals are suppressed if not in single ustep mode?
         /// which do you want to see "dancing" while CPU is running in real time?
         // request KY11 & unibussignals
@@ -125,8 +155,9 @@ void Pdp11Adapter34::uStep()
     Pdp11Adapter::uStepStart(); // actions same for all pdp11s
 }
 
+/*
 // test: inject fake mpc, clock must be stopped
-void Pdp11Adapter34::uStepUntilStop(uint32_t stopUpc, int stopUnibusCycle, uint32_t stopUnibusAddress, int stopRepeatCount) {
+void Pdp11Adapter34::uStepAutoUntilStop(uint32_t stopUpc, int stopUnibusCycle, uint32_t stopUnibusAddress, int stopRepeatCount) {
     UNREFERENCED_PARAMETER(stopUpc);
     UNREFERENCED_PARAMETER(stopUnibusCycle);
     UNREFERENCED_PARAMETER(stopUnibusAddress);
@@ -139,7 +170,7 @@ void Pdp11Adapter34::uStepUntilStop(uint32_t stopUpc, int stopUnibusCycle, uint3
     delete msg;
 }
 
-
+*/
 
 // 11/34 has no KM11 diag header, so this should never be called
 void Pdp11Adapter34::onResponseKM11Signals(ResponseKM11Signals* km11Signals) {
@@ -152,6 +183,7 @@ void Pdp11Adapter34::onResponseKM11Signals(ResponseKM11Signals* km11Signals) {
 // internally used for all 1134s, but not shown on simulation?
 void Pdp11Adapter34::onResponseKY11LBSignals(ResponseKY11LBSignals* ky11Signals) {
     // update display in Notebook pages
+
     if (ignoreKY11)
         return;
     if (ky11StatusPanel) {

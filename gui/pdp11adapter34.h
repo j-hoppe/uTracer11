@@ -22,6 +22,7 @@ public:
     Pdp1134DataPathPanel* dataPathPanel = nullptr;
     Pdp1134CpuKY11LBStatusPanelFB* ky11StatusPanel = nullptr; 
     virtual void setupGui(wxFileName _resourceDir) override;
+	virtual void updateGui(State state) override;
 
     virtual unsigned getMpcFetch() override { return 016; }
 
@@ -30,7 +31,7 @@ public:
 
     virtual void setManClkEnable(bool manClkEnable) override;
     virtual void uStep() override;
-    virtual void uStepUntilStop(uint32_t stopUpc, int stopUnibusCycle, uint32_t stopUnibusAddress, int stopRepeatCount) override;
+    //virtual void uStepAutoUntilStop(uint32_t stopUpc, int stopUnibusCycle, uint32_t stopUnibusAddress, int stopRepeatCount) override;
 
     virtual void paintDocumentAnnotations() override;
 

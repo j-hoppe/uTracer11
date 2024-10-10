@@ -22,8 +22,28 @@ void Pdp11Adapter40::setupGui(wxFileName _resourceDir) {
 
     //pdp1134uWordPanel = new Pdp1134uWordPanel(app->mainFrame->documentsNotebookFxWB);
     //mainFrame->documentsNotebookFxWB->AddPage(pdp1134uWordPanel, "Current micro word", false);
-
 }
+
+// Set State of control, visibility and functions
+void Pdp11Adapter40::updateGui(State state) {
+    switch(state) {
+    case State::init:
+        return;
+        break ;
+    case State::uMachineRunning:
+        uFlowPanel->Disable() ;
+        break ;
+    case State::uMachineManualStepping:
+        uFlowPanel->Enable();
+        break ;
+    case State::uMachineAutoStepping:
+        uFlowPanel->Enable() ;
+        break ;
+    }
+    //uFlowPanel->GetParent()->Layout() ;
+	Pdp11Adapter::updateGui(state); // base
+}
+
 
 void Pdp11Adapter40::onInit() {
     Pdp11Adapter::onInit(); // stuff same for all models
@@ -61,7 +81,7 @@ void Pdp11Adapter40::onInit() {
 
     // set manclock to initial state of "ManClock" ToggleButton. false  = not pressed
     auto _manClkEnable = wxGetApp().mainFrame->manClockEnableButton->GetValue();
-    setManClkEnable(_manClkEnable);
+    setManClkEnable(_manClkEnable); // state change
 
     // search in current uflow MPC data for keys of datapath objects
     // like "d:\retrocmp\dec\pdp11\uTracer11\resources\pdp1134\"
@@ -81,8 +101,15 @@ void Pdp11Adapter40::onTimer(unsigned periodMs) {
     //
     // request update every 0.5secs
     timerUnprocessedMs += periodMs;
-    if (timerUnprocessedMs > 500) {
+    bool poll = (timerUnprocessedMs > 500) ;
+    if (poll)
         timerUnprocessedMs -= 500;
+
+    // do not poll data when pdp11 is running at own speed
+    if (state == State::init || state == State::uMachineRunning)
+        poll = false ;
+	
+    if (poll) {
         // request KM11 & unibussignals
         // response from M93X2probe is ResponseKM11Signals,ResponseUnibusSignals
         auto reqKm11A = new RequestKM11SignalsRead('A');
@@ -150,8 +177,9 @@ void Pdp11Adapter40::uStep()
     Pdp11Adapter::uStepStart(); // actions same for all pdp11s
 }
 
+/*
 // test: inject fake mpc, clock must be stopped
-void Pdp11Adapter40::uStepUntilStop(uint32_t stopUpc, int stopUnibusCycle, uint32_t stopUnibusAddress, int stopRepeatCount) {
+void Pdp11Adapter40::uStepAutoUntilStop(uint32_t stopUpc, int stopUnibusCycle, uint32_t stopUnibusAddress, int stopRepeatCount) {
     UNREFERENCED_PARAMETER(stopUpc);
     UNREFERENCED_PARAMETER(stopUnibusCycle);
     UNREFERENCED_PARAMETER(stopUnibusAddress);
@@ -175,7 +203,7 @@ void Pdp11Adapter40::uStepUntilStop(uint32_t stopUpc, int stopUnibusCycle, uint3
     // hardware is still sending the real mpc, block evaluation
     delete msg;
 }
-
+*/
 
 // visualize new MPC and other signals via KM11 A+B diag header
 void Pdp11Adapter40::onResponseKM11Signals(ResponseKM11Signals* km11Signals) {

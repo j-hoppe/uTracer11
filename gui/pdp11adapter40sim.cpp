@@ -14,3 +14,12 @@ void Pdp11Adapter40Simulated::setupGui(wxFileName _resourceDir) {
     app->mainFrame->documentsNotebookFB->SetPageText(1, "PDP11/40 sim CPU signals"); // label for status panel
 }
 
+
+
+// Set State of control, visibility and functions
+void Pdp11Adapter40Simulated::updateGui(State state) {
+	Pdp11Adapter40::updateGui(state); // base
+}
+
+
+

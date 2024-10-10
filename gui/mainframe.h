@@ -23,7 +23,7 @@ public:
 
 // Notebook pages are own panels, not assigned to notebooks by wxFormBuilder project
 // but in code on PDP-11 model selection
-// Own version derived from *FB only necessary if evetn handling needed,
+// Own version derived from *FB only necessary if event handling needed,
 
 class MemoryPanel : public MemoryPanelFB {
     using MemoryPanelFB::MemoryPanelFB;

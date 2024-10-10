@@ -27,11 +27,11 @@ Abstract base class
 
 // class factory, generate Pdp11 instance by class name via type enum
 static std::map<std::string, enum Pdp11Adapter::Type> typeNames{
-    {"none", Pdp11Adapter::Type::none},
-    {"pdp1134phys", Pdp11Adapter::Type::pdp1134phys},
-    {"pdp1134sim", Pdp11Adapter::Type::pdp1134sim},
-    {"pdp1140phys", Pdp11Adapter::Type::pdp1140phys},
-    {"pdp1140sim", Pdp11Adapter::Type::pdp1140sim}
+{"none", Pdp11Adapter::Type::none},
+{"pdp1134phys", Pdp11Adapter::Type::pdp1134phys},
+{"pdp1134sim", Pdp11Adapter::Type::pdp1134sim},
+{"pdp1140phys", Pdp11Adapter::Type::pdp1140phys},
+{"pdp1140sim", Pdp11Adapter::Type::pdp1140sim}
 };
 
 // string->enum
@@ -57,7 +57,7 @@ Pdp11Adapter::Pdp11Adapter()
 
 void Pdp11Adapter::setupGui(wxFileName _resourceDir)
 {
-    Application *app = &wxGetApp();
+    Application* app = &wxGetApp();
     // generic panels before and optical left of specific ones
     resourceDir = _resourceDir;
 
@@ -79,16 +79,77 @@ void Pdp11Adapter::setupGui(wxFileName _resourceDir)
     unibusSignalsPanel = new UnibusSignalsPanelFB(app->mainFrame->pdp11StatusPanelFB);
     app->mainFrame->pdp11StatusSizerFB->Add(unibusSignalsPanel, 1, wxALL, 5);
 
-	/// Internal PDP11 simultor variables
+    /// Internal PDP11 simulator variables
     internalStatePanel = new InternalStatePanelFB(app->mainFrame->pdp11StatusPanelFB);
     app->mainFrame->pdp11StatusSizerFB->Add(internalStatePanel, 1, wxALL, 5);
-	// set "Visible" if request/responseStateDef indicates same state
-	internalStatePanel->Show(false) ;
-    app->mainFrame->pdp11StatusSizerFB->Layout() ;	
+    // set "Visible" if request/responseStateDef indicates same state
+    internalStatePanel->Show(false);
+    app->mainFrame->pdp11StatusSizerFB->Layout();
 }
+
+// Set State of common controls, visibility and functions
+void Pdp11Adapter::updateGui(State _state) {
+    doLogEvent("State change from %d to %d", state, _state); // same for all pdp11's
+    state = _state;
+    Application* app = &wxGetApp();
+    auto infoLabel = app->mainFrame->uMachineStateText; // fat state
+    auto infoLabel2 = app->mainFrame->uMachineStateText2; //additional info
+    switch (state) {
+    case State::init:
+        // other controls not yet valid
+        infoLabel->SetLabel("Initializing");
+        infoLabel2->SetLabel("");
+        infoLabel->GetParent()->Layout();
+        return;
+        break;
+    case State::uMachineRunning:
+        // hide all CPU state panels, data update meaningless
+        infoLabel->SetLabel("uMachine FULL SPEED");
+        infoLabel2->SetLabel("No MPC/signal update");
+        app->mainFrame->microStepButton->Disable();
+        app->mainFrame->microRunUntilButton->Disable();
+        app->mainFrame->microRunUntilButton->SetLabel("Start Auto Stepping");
+        tracePanel->Disable();
+        memoryPanel->Disable();
+        unibusSignalsPanel->Disable();
+        internalStatePanel->Disable();
+        break;
+    case State::uMachineManualStepping:
+        infoLabel->SetLabel("uMachine MAN CLOCK");
+        infoLabel2->SetLabel("Single step via button");
+        app->mainFrame->microStepButton->Enable();
+        app->mainFrame->microRunUntilButton->Enable();
+        app->mainFrame->microRunUntilButton->SetLabel("Start Auto Stepping");
+        tracePanel->Enable();
+        memoryPanel->Enable();
+        unibusSignalsPanel->Enable();
+        internalStatePanel->Enable();
+        break;
+    case State::uMachineAutoStepping:
+        infoLabel->SetLabel("uMachine AUTO CLOCK");
+        infoLabel2->SetLabel("Steps until condition");
+        app->mainFrame->microStepButton->Disable();
+        // when auto stepping, the "Auto Step" button is used to stop
+        app->mainFrame->microRunUntilButton->SetLabel("Stop Auto Stepping");
+        app->mainFrame->microRunUntilButton->Enable();
+        tracePanel->Enable();
+        memoryPanel->Enable();
+        unibusSignalsPanel->Enable();
+        internalStatePanel->Enable();
+        break;
+    }
+    wxGetApp().mainFrame->GetSizer()->Layout();
+    //infoLabel->GetParent()->Layout() ;
+            //tracePanel->GetParent()->Layout() ;
+//			memoryPanel->GetParent()->Layout() ;
+//	unibusSignalsPanel->GetParent()->Layout() ;
+}
+
 
 // all Pdp11 models must init their GUI
 void Pdp11Adapter::onInit() {
+    updateGui(State::init); // first state change
+
     timerUnprocessedMs = 99999; // force immediate call to onTimer()
     // generate messages to init gui, until first status updates comes in
     auto unibusSignals = ResponseUnibusSignals();
@@ -114,26 +175,26 @@ void Pdp11Adapter::onResponseVersion(ResponseVersion* responseVersion) {
 
 
 
-// enable panel with "internal state", 
+// enable panel with "internal state",
 // arragne controls for "variable = value" display
 // make panel visible
 // stateVars[].object is the text control displaying the value
 // !! Expected to be called only ONCE in lifetime !!
-void Pdp11Adapter::evalInternalStateDefinition(ResponseStateDef *responseStateDef) { 
-//    wxGetApp().pdp11Adapter->evalInternalStateDefinition(this);
-	stateVars = responseStateDef->stateVars ; // save new variable list
-	if (stateVars.size() == 0)
-		return ; // empty answer?
+void Pdp11Adapter::evalInternalStateDefinition(ResponseStateDef* responseStateDef) {
+    //    wxGetApp().pdp11Adapter->evalInternalStateDefinition(this);
+    stateVars = responseStateDef->stateVars; // save new variable list
+    if (stateVars.size() == 0)
+        return; // empty answer?
 
     // preallocated hierachry like Pdp1134CpuKY11LBStatusPanelFB
     // internalStatePanel
     //   -> statixBoxSizer      (title and frame)
     //      -> panel
     //          -> internalStateFlexGridSizerFB (2 columns), growing vertically
-    // for each variable: 
+    // for each variable:
     // add a wxStaticText with var name
     // add a wxStaticText for variable value ... because of 2 columns var an value appear in one line
-    // the 
+    // the
     auto parentPanel = internalStatePanel->internalStateFlexGridSizerPanelFB;
     auto parentSizer = internalStatePanel->internalStateFlexGridSizerFB;
     for (auto it = stateVars.begin(); it != stateVars.end(); it++) {
@@ -145,7 +206,7 @@ void Pdp11Adapter::evalInternalStateDefinition(ResponseStateDef *responseStateDe
         parentSizer->Add(tmpVarNameStaticText, 0, wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT | wxALL, 5);
 
         // register do not save the allocated wxStaticText for the variable val with the stateDefintion
-        wxStaticText* tmpVarValStaticText = new wxStaticText(parentPanel, wxID_ANY, "-",  wxDefaultPosition, wxDefaultSize, 0);
+        wxStaticText* tmpVarValStaticText = new wxStaticText(parentPanel, wxID_ANY, "-", wxDefaultPosition, wxDefaultSize, 0);
         tmpVarValStaticText->Wrap(-1);
         // tmpVarValStaticText->SetFont(wxFont(14, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, wxT("Courier New")));
         parentSizer->Add(tmpVarValStaticText, 0, wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT | wxALL, 5);
@@ -153,29 +214,29 @@ void Pdp11Adapter::evalInternalStateDefinition(ResponseStateDef *responseStateDe
     }
     // make the panel large enough to hold all added elements
     // if it has less space, scrollbars appear
-    parentPanel->SetMinSize( parentSizer->CalcMin());
+    parentPanel->SetMinSize(parentSizer->CalcMin());
 
-	// make visible
-	internalStatePanel->Show(true); 
-    wxGetApp().mainFrame->pdp11StatusSizerFB->Layout() ;
+    // make visible
+    internalStatePanel->Show(true);
+    wxGetApp().mainFrame->pdp11StatusSizerFB->Layout();
 }
 
 
 // display list of values
-void Pdp11Adapter::evalInternalStateValues(ResponseStateVals *responseStateVals) { 
-	// value list must fit previously received variable list
-		assert(stateVars.size() == responseStateVals->stateVars.size()) ;
-        for (unsigned i = 0; i < stateVars.size(); i++) {
-            auto stateVar = &stateVars[i];
-            auto value = responseStateVals->stateVars[i].value;
-            stateVar->value = value;
-            // make display dependend on # of bits
-            int digitCount = (stateVar->bitCount + 2) / 3; // num of octal digits
-            wxString valText = wxString::Format("%0*o", digitCount, value);
-            wxStaticText* tmpVarValStaticText = static_cast<wxStaticText*>(stateVar->object);
-            tmpVarValStaticText->SetLabel(valText);
-        }
-		// display
+void Pdp11Adapter::evalInternalStateValues(ResponseStateVals* responseStateVals) {
+    // value list must fit previously received variable list
+    assert(stateVars.size() == responseStateVals->stateVars.size());
+    for (unsigned i = 0; i < stateVars.size(); i++) {
+        auto stateVar = &stateVars[i];
+        auto value = responseStateVals->stateVars[i].value;
+        stateVar->value = value;
+        // make display dependend on # of bits
+        int digitCount = (stateVar->bitCount + 2) / 3; // num of octal digits
+        wxString valText = wxString::Format("%0*o", digitCount, value);
+        wxStaticText* tmpVarValStaticText = static_cast<wxStaticText*>(stateVar->object);
+        tmpVarValStaticText->SetLabel(valText);
+    }
+    // display
 }
 
 
@@ -212,19 +273,21 @@ void Pdp11Adapter::powerDown() { // actions same for all pdp11s
 }
 
 
-
 // operation on change of manclkenable, same for all PDP11's
 void Pdp11Adapter::setManClkEnable(bool _manClkEnable) {
     manClkEnable = _manClkEnable;
-    auto infoLabel = wxGetApp().mainFrame->uMachineStateText ;
     if (_manClkEnable) {
-		infoLabel->SetLabel("uMachine is STOPPED") ;
         doLogEvent("Manual Micro Clock enabled"); // same for all pdp11's
-    } else {
-    	infoLabel->SetLabel("uMachine RUNNING") ;
-    	doLogEvent("Manual Micro Clock disabled");
-	}
-    infoLabel->GetParent()->Layout() ;
+        updateGui(State::uMachineManualStepping);
+    }
+    else {
+        doLogEvent("Manual Micro Clock disabled");
+        updateGui(State::uMachineRunning);
+    }
+    // inhibit cycle disassembly whenf micro engine is free running,
+    // or single stepping  did not yet passed a "opcode fetch"
+    traceController.syncronizedWithMicroMachine = false;
+
 }
 
 
@@ -237,6 +300,29 @@ void Pdp11Adapter::uStepStart() {
 void Pdp11Adapter::uStepComplete(unsigned mpc) {
     traceController.evalUStep(mpc);
 }
+
+
+// this a blocking loop, which keeps the Gui alive 
+// take care of reentrancy for message events!
+void Pdp11Adapter::uStepAutoUntilStop(uint32_t stopUpc, int stopUnibusCycle, uint32_t stopUnibusAddress, int stopRepeatCount) {
+    UNREFERENCED_PARAMETER(stopUpc);
+    UNREFERENCED_PARAMETER(stopUnibusCycle);
+    UNREFERENCED_PARAMETER(stopUnibusAddress);
+    UNREFERENCED_PARAMETER(stopRepeatCount);
+    //	wxLogFatalError("Abstract Pdp11Adapter::uStepAutoUntilStop() called");
+    abortAutoStepping = false;
+    updateGui(State::uMachineAutoStepping);
+
+    // check for "ABORT" button press
+    while (!abortAutoStepping) {
+        wxMilliSleep(100);  // Simulate some work
+        wxYield(); // process pending GUI messages
+        // or wxApp::ProcessPendingEvents() ?
+    }
+    updateGui(State::uMachineManualStepping);
+
+}
+
 
 
 
@@ -305,6 +391,10 @@ void Pdp11Adapter::doLogEvent(const char* format, ...) {
 // msg deleted by framework
 void Pdp11Adapter::doEvalUnibusCycle(ResponseUnibusCycle* unibusCycle)
 {
+    // discard highspeed stream of captured bus cycles to prevent overflow of grids
+    if (state == State::init || state == State::uMachineRunning)
+        return;
+
     // log the cycle
     wxString s;
     if (unibusCycle->nxm)
@@ -337,7 +427,7 @@ void Pdp11Adapter::doEvalUnibusCycle(ResponseUnibusCycle* unibusCycle)
 
     // to tracer
     // Show only UNIBUS cycles which are generated by micro step of CPU under test,
-    // theses are "asynchronical".
+    // these are "asynchronical".
     // Exclude DATI/DATO generated by user memory EXAM/DEPOSIT ("requested")
     // Only if manual clock enabled, only, if first response after last micro step
     // 11/34: physical KY11LB polls 777707 ... ignore this too?
@@ -347,11 +437,11 @@ void Pdp11Adapter::doEvalUnibusCycle(ResponseUnibusCycle* unibusCycle)
         }
         unibusCycle->requested = true; // anyhow
         traceController.evalUnibusCycle(unibusCycle);
-        receivedUnibusCycleAfterUstep = true;  // ignore folowing user EXAM/DEPOSITS
+        receivedUnibusCycleAfterUstep = true;  // ignore following user EXAM/DEPOSITs
     }
 }
 
-// click into a memory grid: 
+// click into a memory grid:
 // copy addr & value from grid cell to "manual ExamDeposit controls"
 void Pdp11Adapter::onMemoryGridClick(MemoryGridController* gridController, unsigned rowIdx, unsigned colIdx)
 {
@@ -364,7 +454,7 @@ void Pdp11Adapter::onMemoryGridClick(MemoryGridController* gridController, unsig
     memoryPanel->manualDepositDataTextCtrl->SetValue(dataText);
 }
 
-// load a MACRO11 .mac or absolute papertape .ptap file into 
+// load a MACRO11 .mac or absolute papertape .ptap file into
 // memory buffer, then deposit to PDP11 via messages
 void Pdp11Adapter::loadMemoryFile(wxFileName path, memory_fileformat_t fileFormat) {
     const char* entry_label = "start";
@@ -430,16 +520,16 @@ void Pdp11Adapter::clearMemoryImage(MemoryGridController* gridController)
 
 // Deposit all "valid" memory words into physical memory
 // set SACK while active
-// output stream of Deposits. 
+// output stream of Deposits.
 // responses are the detected unibus cycle ResponseUnibusCycle()
-// issue serialPortRcvPoll() to process the responses, 
+// issue serialPortRcvPoll() to process the responses,
 //  else serial buffer overflow
 void Pdp11Adapter::depositMemoryImage() {
     auto mi = wxGetApp().messageInterface;
 
     mi->receiveAndProcessResponses(); // process pending
 
-    // activate SACK. remember: serialPortXmtMessage() deletes its argument 
+    // activate SACK. remember: serialPortXmtMessage() deletes its argument
     mi->xmtRequest(new RequestUnibusSignalWrite("SACK", 1));
 
     for (unsigned i = 0; i < MEMORY_WORD_COUNT; i++) {

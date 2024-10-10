@@ -16,3 +16,26 @@ void Pdp11Adapter40Physical::setupGui(wxFileName _resourceDir) {
 
     app->mainFrame->documentsNotebookFB->SetPageText(1, "PDP11/40 phys CPU signals"); // label for status panel
 }
+
+
+// Set State of control, visibility and functions
+void Pdp11Adapter40Physical::updateGui(State state) {
+    switch(state) {
+    case State::init:
+        return;
+        break ;
+    case State::uMachineRunning:
+        km11StatusPanel->Disable() ;
+        break ;
+    case State::uMachineManualStepping:
+        km11StatusPanel->Enable() ;
+        break ;
+    case State::uMachineAutoStepping:
+        km11StatusPanel->Enable() ;
+        break ;
+    }
+   //  km11StatusPanel->GetParent()->Layout() ;
+	Pdp11Adapter40::updateGui(state); // base
+}
+
+

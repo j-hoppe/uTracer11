@@ -20,3 +20,25 @@ void Pdp11Adapter34Physical::setupGui(wxFileName _resourceDir) {
 }
 
 
+// Set State of control, visibility and functions
+void Pdp11Adapter34Physical::updateGui(State state) {
+    switch(state) {
+    case State::init:
+        return;
+        break ;
+    case State::uMachineRunning:
+        ky11StatusPanel->Disable() ;
+        break ;
+    case State::uMachineManualStepping:
+        ky11StatusPanel->Enable() ;
+        break ;
+    case State::uMachineAutoStepping:
+        ky11StatusPanel->Enable() ;
+        break ;
+    }
+    //ky11StatusPanel->GetParent()->Layout() ;
+	Pdp11Adapter34::updateGui(state); // base
+}
+
+
+

@@ -283,7 +283,7 @@ bool Application::OnInit()
 
 	// query internal state panel, if PDP11 exposes any	
 	messageInterface->xmtRequest(new RequestStateDef());
-		
+
     }
     catch (const std::exception& e) {
         wxLogFatalError("Unexpected exception in initialization: %s", e.what());
@@ -381,8 +381,9 @@ void Application::setPdp11Type(Pdp11Adapter::Type pdp11Type, wxFileName _resourc
         return;
 
     //wxLogInfo("Resource dir %s valid", _resourceDir.GetFullPath());
+    pdp11Adapter->updateGui(Pdp11Adapter::State::init) ;
     pdp11Adapter->onInit();
-
+    pdp11Adapter->updateGui(Pdp11Adapter::State::init) ;
 }
 
 

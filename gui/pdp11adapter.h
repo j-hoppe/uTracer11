@@ -25,7 +25,15 @@ Abstract base class
 #include "mainframe.h"
 
 class Pdp11Adapter {
-private:
+public:
+		// State controls function of GUI elements
+	enum class State {
+		init, // while starting
+		uMachineRunning, // PDP11 executing under own control
+		uMachineManualStepping, // micro steps by manual button press
+		uMachineAutoStepping // multiple steps until breakpoint
+	} ;
+	State state ;
 
 protected:
     unsigned timerUnprocessedMs; // helper to reduce onTimer() frequency
@@ -83,6 +91,8 @@ public:
     InternalStatePanelFB* internalStatePanel = nullptr;
 
     virtual void setupGui(wxFileName _resourceDir);
+	// Set State of control, visibility and functions
+	virtual void updateGui(enum State state) ;
 
     virtual void onInit();
 
@@ -130,15 +140,8 @@ public:
 
     void uStepComplete(unsigned mpc);
 
-
-    virtual void uStepUntilStop(uint32_t stopUpc, int stopUnibusCycle, uint32_t stopUnibusAddress, int stopRepeatCount) {
-        UNREFERENCED_PARAMETER(stopUpc) ;
-        UNREFERENCED_PARAMETER(stopUnibusCycle) ;
-        UNREFERENCED_PARAMETER(stopUnibusAddress) ;
-        UNREFERENCED_PARAMETER(stopRepeatCount) ;
-        wxLogFatalError("Abstract Pdp11Adapter::uStepUntilStop() called");
-    }
-
+	volatile bool abortAutoStepping;
+    void uStepAutoUntilStop(uint32_t stopUpc, int stopUnibusCycle, uint32_t stopUnibusAddress, int stopRepeatCount) ;
 
     virtual void onResponseKM11Signals(ResponseKM11Signals* km11Signals) {
         UNREFERENCED_PARAMETER(km11Signals) ;

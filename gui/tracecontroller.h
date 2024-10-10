@@ -13,6 +13,7 @@
 class Pdp11Adapter; // include-circle with pdp11adapter.h
 
 class TraceController {
+	
 private:
     // UNIBUS cycles generated in current opcode
     std::vector<pdp11bus_cycle_t> disasBusCycles;
@@ -40,6 +41,9 @@ public:
     void clear();
     int newRow();
 
+	// false if micro engine not in "Manual Clock", and
+	// not set opcode fetch detected on switch to Manual CLock.
+	bool syncronizedWithMicroMachine ;
     void evalUStep(unsigned mpc);
     void evalUnibusCycle(ResponseUnibusCycle* unibusCycle);
 

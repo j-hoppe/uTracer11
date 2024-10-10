@@ -358,9 +358,6 @@ class MainFrameFB : public wxFrame
 	private:
 
 	protected:
-		wxButton* powerCycleButton;
-		wxButton* microStepButton;
-		wxButton* microRunUntilButton;
 		wxStaticText* m_staticText2;
 		wxTextCtrl* stopUpcTextCtrl;
 		wxStaticText* m_staticText21;
@@ -384,7 +381,11 @@ class MainFrameFB : public wxFrame
 		wxNotebook* toolsNotebook;
 		wxPanel* runPanel;
 		wxStaticText* uMachineStateText;
+		wxStaticText* uMachineStateText2;
+		wxButton* powerCycleButton;
 		wxToggleButton* manClockEnableButton;
+		wxButton* microStepButton;
+		wxButton* microRunUntilButton;
 		wxNotebook* documentsNotebookFB;
 		wxPanel* EventPanelFB;
 		wxTextCtrl* eventsTextCtrl;

@@ -20,6 +20,7 @@ public:
 
     // attach/arrange panels, set directories
     virtual void setupGui(wxFileName _resourceDir) override;
+	virtual void updateGui(State state) override;
 
 };
 

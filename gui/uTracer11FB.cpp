@@ -1013,6 +1013,12 @@ MainFrameFB::MainFrameFB( wxWindow* parent, wxWindowID id, const wxString& title
 
 	executePanelSizer->Add( uMachineStateText, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5 );
 
+	uMachineStateText2 = new wxStaticText( runPanel, wxID_ANY, wxT("...tbd..."), wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER_HORIZONTAL );
+	uMachineStateText2->Wrap( -1 );
+	uMachineStateText2->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxEmptyString ) );
+
+	executePanelSizer->Add( uMachineStateText2, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5 );
+
 	powerCycleButton = new wxButton( runPanel, wxID_ANY, wxT("Power Cycle"), wxDefaultPosition, wxDefaultSize, 0 );
 	executePanelSizer->Add( powerCycleButton, 0, wxALL|wxEXPAND, 5 );
 

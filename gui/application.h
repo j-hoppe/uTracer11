@@ -22,7 +22,7 @@ class MessageInterface;
 // containing a statusbar with the text "Hello World"
 class Application : public wxApp
 {
-public:
+	public:
     MessageInterface* messageInterface = nullptr;
     MainFrame* mainFrame = nullptr;
     // no notebook pages yet, document noteboks are empty
