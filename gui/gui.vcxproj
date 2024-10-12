@@ -147,6 +147,7 @@
     <ClInclude Include="..\common\messages.h" />
     <ClInclude Include="..\common\pdp1140km11state.h" />
     <ClInclude Include="..\common\utils.h" />
+    <ClInclude Include="autostepcontroller.h" />
     <ClInclude Include="documentpageannotations.h" />
     <ClInclude Include="application.h" />
     <ClInclude Include="keywords.h" />
@@ -181,6 +182,7 @@
     <ClCompile Include="..\CSerialPort\src\SerialPortInfoWinBase.cpp" />
     <ClCompile Include="..\CSerialPort\src\SerialPortWinBase.cpp" />
     <ClCompile Include="application.cpp" />
+    <ClCompile Include="autostepcontroller.cpp" />
     <ClCompile Include="documentpageannotations.cpp" />
     <ClCompile Include="keywords.cpp" />
     <ClCompile Include="mainframe.cpp" />

@@ -182,8 +182,8 @@ void Pdp11Adapter::onResponseVersion(ResponseVersion* responseVersion) {
 // !! Expected to be called only ONCE in lifetime !!
 void Pdp11Adapter::evalInternalStateDefinition(ResponseStateDef* responseStateDef) {
     //    wxGetApp().pdp11Adapter->evalInternalStateDefinition(this);
-    stateVars = responseStateDef->stateVars; // save new variable list
-    if (stateVars.size() == 0)
+    cpuStateVars = responseStateDef->stateVars; // save new variable list
+    if (cpuStateVars.size() == 0)
         return; // empty answer?
 
     // preallocated hierachry like Pdp1134CpuKY11LBStatusPanelFB
@@ -197,7 +197,7 @@ void Pdp11Adapter::evalInternalStateDefinition(ResponseStateDef* responseStateDe
     // the
     auto parentPanel = internalStatePanel->internalStateFlexGridSizerPanelFB;
     auto parentSizer = internalStatePanel->internalStateFlexGridSizerFB;
-    for (auto it = stateVars.begin(); it != stateVars.end(); it++) {
+    for (auto it = cpuStateVars.begin(); it != cpuStateVars.end(); it++) {
         // do not save the allocated wxStaticText for the variable names.
         wxStaticText* tmpVarNameStaticText = new wxStaticText(parentPanel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0);
         wxString varLabel = wxString::Format("%s:", it->name);
@@ -225,9 +225,9 @@ void Pdp11Adapter::evalInternalStateDefinition(ResponseStateDef* responseStateDe
 // display list of values
 void Pdp11Adapter::evalInternalStateValues(ResponseStateVals* responseStateVals) {
     // value list must fit previously received variable list
-    assert(stateVars.size() == responseStateVals->stateVars.size());
-    for (unsigned i = 0; i < stateVars.size(); i++) {
-        auto stateVar = &stateVars[i];
+    assert(cpuStateVars.size() == responseStateVals->stateVars.size());
+    for (unsigned i = 0; i < cpuStateVars.size(); i++) {
+        auto stateVar = &cpuStateVars[i];
         auto value = responseStateVals->stateVars[i].value;
         stateVar->value = value;
         // make display dependend on # of bits
@@ -296,9 +296,10 @@ void Pdp11Adapter::uStepStart() {
     receivedUnibusCycleAfterUstep = false;
 }
 
-// CPU completed a ustep
+// CPU completed a ustep, feed to sub modules
 void Pdp11Adapter::uStepComplete(unsigned mpc) {
     traceController.evalUStep(mpc);
+	autoStepController.evalUStep(mpc) ;
 }
 
 
@@ -311,19 +312,40 @@ void Pdp11Adapter::uStepAutoUntilStop(uint32_t stopUpc, int stopUnibusCycle, uin
     UNREFERENCED_PARAMETER(stopRepeatCount);
     //	wxLogFatalError("Abstract Pdp11Adapter::uStepAutoUntilStop() called");
     abortAutoStepping = false;
+
+    // stopUnibusAddress is opcode fetch address
+	autoStepController.init(this, stopUpc, stopUnibusAddress) ;
+	// todo: repeat count?
+
     updateGui(State::uMachineAutoStepping);
 
     // check for "ABORT" button press
-    while (!abortAutoStepping) {
-        wxMilliSleep(100);  // Simulate some work
+    while (!abortAutoStepping && !autoStepController.hasStopped()) {
+        //wxMilliSleep(100);  // Simulate some work
         wxYield(); // process pending GUI messages
         // or wxApp::ProcessPendingEvents() ?
+        // also calls onTimer()
+
+		autoStepController.loop() ; // 
     }
     updateGui(State::uMachineManualStepping);
+
+	// refresh displays which may have been disabled in autostepMode)
+	doEvalMpc(microProgramCounter) ;
+	doEvalUnibusCycle(lastUnibusCycle);
 
 }
 
 
+// called when a new Mpc is received from pdp11
+// MPC changed => new value, => event + display update
+void Pdp11Adapter::doEvalMpc(uint16_t newMpc) {
+        microProgramCounter = newMpc ;
+        doLogEvent("mpc = %0.3o", microProgramCounter);
+        // repaint document pages only on change
+        paintDocumentAnnotations();
+        uStepComplete(microProgramCounter);
+}		
 
 
 // Fill in fields on the Unibus Signal form, which is identical for all PDP-11 models.
@@ -391,6 +413,9 @@ void Pdp11Adapter::doLogEvent(const char* format, ...) {
 // msg deleted by framework
 void Pdp11Adapter::doEvalUnibusCycle(ResponseUnibusCycle* unibusCycle)
 {
+	// save for disaply regresh
+	lastUnibusCycle = unibusCycle ;
+
     // discard highspeed stream of captured bus cycles to prevent overflow of grids
     if (state == State::init || state == State::uMachineRunning)
         return;
@@ -437,6 +462,7 @@ void Pdp11Adapter::doEvalUnibusCycle(ResponseUnibusCycle* unibusCycle)
         }
         unibusCycle->requested = true; // anyhow
         traceController.evalUnibusCycle(unibusCycle);
+		autoStepController.evalUnibusCycle(unibusCycle);
         receivedUnibusCycleAfterUstep = true;  // ignore following user EXAM/DEPOSITs
     }
 }

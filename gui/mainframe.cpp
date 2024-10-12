@@ -38,12 +38,14 @@ void MainFrame::microRunUntilButtonOnButtonClick(wxCommandEvent& event)
     }
     else {
         // Not running? then start!
-// gather stop upc, repeat, unibus cycle, unibus addr
+		// gather stop upc, repeat, unibus cycle, unibus addr
         int stopUpc;
-        stopUpcTextCtrl->GetValue().ToInt(&stopUpc, 8);
+        if (!stopUpcTextCtrl->GetValue().ToInt(&stopUpc, 8))
+			stopUpc = Pdp11Adapter::InvalidMpc ;
         int stopUnibusCycle = stopUnibusCycleComboBox->GetSelection(); // 01=DATI,1=DATO, 2=any
         int stopUnibusAddress;
-        stopUnibusAddrTextCtrl->GetValue().ToInt(&stopUnibusAddress, 8);
+        if (!stopUnibusAddrTextCtrl->GetValue().ToInt(&stopUnibusAddress, 8))
+			stopUnibusAddress = Pdp11Adapter::InvalidUnibusAddress ;
         int stopRepeatCount;
         stopRepeatCountTextCtrl->GetValue().ToInt(&stopRepeatCount, 10);
         pdp11Adapter->uStepAutoUntilStop(stopUpc, stopUnibusCycle, stopUnibusAddress, stopRepeatCount);

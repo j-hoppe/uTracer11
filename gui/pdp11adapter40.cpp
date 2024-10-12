@@ -101,15 +101,15 @@ void Pdp11Adapter40::onTimer(unsigned periodMs) {
     //
     // request update every 0.5secs
     timerUnprocessedMs += periodMs;
-    bool poll = (timerUnprocessedMs > 500) ;
-    if (poll)
+    bool pollSlow = (timerUnprocessedMs > 500) ;
+    if (pollSlow)
         timerUnprocessedMs -= 500;
 
-    // do not poll data when pdp11 is running at own speed
+    // do not pollSlow data when pdp11 is running at own speed
     if (state == State::init || state == State::uMachineRunning)
-        poll = false ;
+        pollSlow = false ;
 	
-    if (poll) {
+    if (pollSlow) {
         // request KM11 & unibussignals
         // response from M93X2probe is ResponseKM11Signals,ResponseUnibusSignals
         auto reqKm11A = new RequestKM11SignalsRead('A');
@@ -220,13 +220,8 @@ void Pdp11Adapter40::onResponseKM11Signals(ResponseKM11Signals* km11Signals) {
         // process MPC events only for change
         if (microProgramCounter != km11State.pupp) {
             // MPC changed => new value, => event + display update
-            microProgramCounter = km11State.pupp;
-            doLogEvent("mpc = %0.3o", microProgramCounter);
-            // repaint document pages only on change
-            paintDocumentAnnotations();
-            uStepComplete(microProgramCounter);
+            doEvalMpc(km11State.pupp) ;
         }
-
 
         if (km11StatusPanel) { // not for simulation ?
             // display

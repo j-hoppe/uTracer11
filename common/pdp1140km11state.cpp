@@ -60,7 +60,7 @@ void Pdp1140KM11State::inputsFromKM11AResponse(ResponseKM11Signals* respKm11A)
 
 
     // get bits from GPIO, same for all KM11s
-    //TODO: in** into nbase class KM11State
+    //TODO: in** into base class KM11State
     // new methods:  gpios2bits(), bits2gpios()
 
     auto in00 = getbit(respKm11A->gpio0a, 0);
@@ -219,7 +219,7 @@ void Pdp1140KM11State::inputsFromKM11BResponse(ResponseKM11Signals* respKm11B)
 
 void Pdp1140KM11State::inputsToKM11BResponse(ResponseKM11Signals* respKm11B) {
 	UNREFERENCED_PARAMETER(respKm11B) ;
-    LOGERROR("Pdp1140KM11State::inputsToKM11BResponse NOT YET IMPLEMENTED %s!", ""); 
+    LOGERROR("Pdp1140KM11State::inputsToKM11BResponse NOT YET IMPLEMENTED %s!", "");
 }
 
 

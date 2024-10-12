@@ -33,11 +33,11 @@ private:
     pdp11bus_cycle_t getFillupCycle();
 
 public:
+    Pdp11Adapter* pdp11Adapter;
     wxGrid* grid;
     unsigned disasPdp11Type; // type for cycle disassembler
-    unsigned mpcFetch; // mpc which fetched an opcode
 
-    void init(wxGrid* _grid, Pdp11Adapter* pdp11Adapter, wxFileName symbolFilePath);
+    void init(wxGrid* _grid, Pdp11Adapter* _pdp11Adapter, wxFileName symbolFilePath);
     void clear();
     int newRow();
 

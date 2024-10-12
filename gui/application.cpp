@@ -71,7 +71,7 @@ There are many GUI panels.
 #include "pdp11adapter40phys.h"
 #include "pdp11adapter40sim.h"
 
-#include "tracecontroller.h"
+//#include "tracecontroller.h"
 
 IMPLEMENT_APP(Application)
 

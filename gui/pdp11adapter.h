@@ -22,6 +22,7 @@ Abstract base class
 #include "memoryimage.h" // UNIBUS memory, clone from QUniBone
 #include "memorygridcontroller.h"
 #include "tracecontroller.h"
+#include "autostepcontroller.h"
 #include "mainframe.h"
 
 class Pdp11Adapter {
@@ -34,6 +35,10 @@ public:
 		uMachineAutoStepping // multiple steps until breakpoint
 	} ;
 	State state ;
+
+	static const uint16_t InvalidMpc = 0xffff ;
+	static const uint32_t InvalidUnibusAddress = 0x7fffffff ;
+		
 
 protected:
     unsigned timerUnprocessedMs; // helper to reduce onTimer() frequency
@@ -78,7 +83,7 @@ public:
     memoryimage_c   memoryimage; // buffer for 256KB
     codelabel_map_c codelabels;
 
-    std::vector<MessagesStateVar> stateVars; // internal simualtor vars, if any
+    std::vector<MessagesStateVar> cpuStateVars; // internal simualtor vars, if any
 
 
     Pdp11Adapter(); // directory parsed by application
@@ -152,6 +157,8 @@ public:
         wxLogFatalError("Abstract Pdp11::onResponseKY11LBSignals() called");
     }
 
+	void doEvalMpc(uint16_t newMpc) ;
+
     // all UNIBUS update send to same base Form
     void doEvalUnibusSignals(ResponseUnibusSignals* unibusSignals);
 
@@ -161,6 +168,7 @@ public:
     }
 
     void doLogEvent(const char* format, ...);
+	ResponseUnibusCycle* lastUnibusCycle;
     void doEvalUnibusCycle(ResponseUnibusCycle* unibusCycle);
 
     virtual void evalUnibusCycle(ResponseUnibusCycle* unibusCycle) {
@@ -174,6 +182,8 @@ public:
 
 
     TraceController traceController;
+
+	AutoStepController autoStepController ;
 
     void loadMemoryFile(wxFileName path, memory_fileformat_t fileFormat);
     void depositMemoryImage();

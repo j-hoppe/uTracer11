@@ -47,8 +47,11 @@ void Pdp11Simulator34::onRequestKY11LBSignalWrite(RequestKY11LBSignalWrite* requ
     }
     else if (!strcasecmp(requestKY11LBSignalWrite->signalName, "MC")) {
         // GUI wants micro step via KY11 header, raising sigal edge or pulse
-        if (requestKY11LBSignalWrite->val > 0)
+        if (requestKY11LBSignalWrite->val > 0) {
+			console->printf("KY11 MC, mpc before = %0.3o\n", mpc) ;
             microStep();
+			console->printf("KY11 MC, mpc after = %0.3o\n", mpc) ;
+		}
     }
 
     respond(new ResponseKY11LBSignals(mpc, 0, 0, 0, 0));
@@ -158,6 +161,14 @@ void Pdp11Simulator34::onRequestUnibusSignalWrite(RequestUnibusSignalWrite* requ
     respond(response);
 }
 
+// override for locking
+void Pdp11Simulator34::onCpuUnibusCycle(uint8_t c1c0, uint32_t addr, uint16_t data, bool nxm) 
+{
+	if (!microClockEnabled)	
+		console->printf("UNIBUS cycle C1C0=%d addr=%0.6o, data=%0.6o\n", c1c0, addr, data) ;
+	// call base
+	Pdp11Simulator::onCpuUnibusCycle(c1c0, addr, data, nxm) ;
+}
 
 
 
@@ -211,7 +222,7 @@ upc 523
 void Pdp11Simulator34::setMicroClockEnable(bool state)
 {
     microClockEnabled = state;
-    console->printf("%s\n", getStateText()) ;
+    console->printf("State change to: %s\n", getStateText()) ;
 }
 
 void Pdp11Simulator34::microStep()
@@ -365,9 +376,3 @@ void Pdp11Simulator34::loop() {
         processPendingRequests() ;
     }
 }
-
-
-
-
-
-

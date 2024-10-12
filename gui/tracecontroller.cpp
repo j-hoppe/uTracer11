@@ -56,10 +56,10 @@ With an symbol-entry "777733 = ??????" we get the final "mov @#??????,@#??????"
 
 
 // setup grid
-void TraceController::init(wxGrid* _grid, Pdp11Adapter* pdp11Adapter, wxFileName symbolFilePath)
+void TraceController::init(wxGrid* _grid, Pdp11Adapter* _pdp11Adapter, wxFileName symbolFilePath)
 {
     grid = _grid;
-    mpcFetch = pdp11Adapter->getMpcFetch();
+	pdp11Adapter = _pdp11Adapter ;
 
     switch (pdp11Adapter->getType()) {
     case Pdp11Adapter::Type::pdp1134phys:
@@ -140,7 +140,7 @@ void TraceController::startOfMacroInstruction() {
 
 // display a micro step
 void TraceController::evalUStep(unsigned mpc) {
-    if (mpc == mpcFetch) {
+    if (mpc == pdp11Adapter->getMpcFetch()) {
         // resync disassembly, new opcode
         startOfMacroInstruction();
     }

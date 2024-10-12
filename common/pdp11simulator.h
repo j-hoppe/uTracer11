@@ -120,8 +120,6 @@ public:
 
     // called if simulator executes DATI or DATO
     virtual void onCpuUnibusCycle(uint8_t c1c0, uint32_t addr, uint16_t data, bool nxm) ;
-
-    // a simulator repsonds
 };
 
 #endif // __PDP11SIMULATOR_H__

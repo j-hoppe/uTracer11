@@ -83,21 +83,20 @@ void Pdp11Adapter34::onInit() {
 
 // called periodically
 void Pdp11Adapter34::onTimer(unsigned periodMs) {
-    // update ever 500ms new UNIBUS line status and mpc
-    //
-    // request update every 0.5secs
     timerUnprocessedMs += periodMs;
-    bool poll = (timerUnprocessedMs > 500) ;
-    if (poll)
+    bool pollSlow = (timerUnprocessedMs > 500) ;
+    if (pollSlow)
         timerUnprocessedMs -= 500;
 
-    // do not poll data when pdp11 is running at own speed
+    // do not pollSlow data when pdp11 is running at own speed
     if (state == State::init || state == State::uMachineRunning)
-        poll = false ;
+        pollSlow = false ;
 
-    if (poll) {
-        /// TODO: which signals are suppressed if not in single ustep mode?
-        /// which do you want to see "dancing" while CPU is running in real time?
+    if (pollSlow) {
+		// update ever 500ms new UNIBUS line status and mpc
+		//
+        // TODO: which signals are suppressed if not in single ustep mode?
+        // which do you want to see "dancing" while CPU is running in real time?
         // request KY11 & unibussignals
         // response from M93X2probe is ResponseKY11LBSignals,ResponseUnibusSingals
         auto reqKy11 = new RequestKY11LBSignalsRead();
@@ -105,8 +104,9 @@ void Pdp11Adapter34::onTimer(unsigned periodMs) {
         auto reqUnibus = new RequestUnibusSignalsRead();
         wxGetApp().messageInterface->xmtRequest(reqUnibus); // send+delete
 
-        if (manClkEnable && stateVars.size() > 0) {
-            // singelstepping: the pdp11 publishes its internal state, update it
+		bool updateCpuStateVars = (state == State::uMachineManualStepping) || (state == State::uMachineAutoStepping) ;
+        if (updateCpuStateVars  && cpuStateVars.size() > 0) {
+            // singlestepping: the pdp11 publishes its internal state, update it
             auto reqState = new RequestStateVal();
             wxGetApp().messageInterface->xmtRequest(reqState); // send+delete
         }
@@ -203,12 +203,7 @@ void Pdp11Adapter34::onResponseKY11LBSignals(ResponseKY11LBSignals* ky11Signals)
     ky11Signals->mpc &= 0x1ff; // strip off bit 10, to 0..511
     if (microProgramCounter != ky11Signals->mpc) {
         // MPC changed => new value, => event + display update
-        microProgramCounter = ky11Signals->mpc;
-        doLogEvent("mpc = %0.3o", microProgramCounter);
-        // repaint document pages only on change
-        paintDocumentAnnotations();
-
-        uStepComplete(microProgramCounter);
+        doEvalMpc(ky11Signals->mpc) ;
     }
 }
 
