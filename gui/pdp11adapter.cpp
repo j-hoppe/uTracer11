@@ -88,9 +88,9 @@ void Pdp11Adapter::setupGui(wxFileName _resourceDir)
 }
 
 // Set State of common controls, visibility and functions
-void Pdp11Adapter::updateGui(State _state) {
-    doLogEvent("State change from %d to %d", state, _state); // same for all pdp11's
-    state = _state;
+void Pdp11Adapter::updateGui(State newState) {
+    doLogEvent("State change from %d to %d", state, newState); // same for all pdp11's
+    state = newState;
     Application* app = &wxGetApp();
     auto infoLabel = app->mainFrame->uMachineStateText; // fat state
     auto infoLabel2 = app->mainFrame->uMachineStateText2; //additional info

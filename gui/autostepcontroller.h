@@ -36,6 +36,7 @@ public:
     };
 
     State state;
+	void changeState(State newState) ;
 
     unsigned curMpc;
     ResponseUnibusCycle lastFetchUnibusCycle;

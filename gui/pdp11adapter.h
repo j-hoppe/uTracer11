@@ -97,7 +97,7 @@ public:
 
     virtual void setupGui(wxFileName _resourceDir);
 	// Set State of control, visibility and functions
-	virtual void updateGui(enum State state) ;
+	virtual void updateGui(enum State newState) ;
 
     virtual void onInit();
 

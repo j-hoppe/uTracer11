@@ -14,6 +14,15 @@
 #include "autostepcontroller.h"
 
 
+void AutoStepController::changeState(State newState) {
+	if (state == newState)
+		return ;
+	state = newState ;
+	wxLogInfo("AutoStepController state changesfrom %d to %d", state, newState);
+    //pdp11Adapter->doLogEvent("State change from %d to %d", state, newState);
+}
+
+
 // eval logic terms here
 // currently MPC or OPcodeAddress,
 // each of these may be invalid (not set by user) and is ignored then.
@@ -34,7 +43,7 @@ void AutoStepController::init(Pdp11Adapter *_pdp11Adapter, unsigned _stopMpc, ui
     pdp11Adapter = _pdp11Adapter ;
     stopMpc = _stopMpc ;
     stopOpcodeAddress = _stopOpcodeAddress ;
-    state = State::stepMpc ; // loop() start condition
+    changeState(State::stepMpc) ; // loop() start condition
 }
 
 
@@ -47,10 +56,10 @@ void AutoStepController::evalUStep(unsigned mpc) {
         if (mpc == pdp11Adapter->getMpcFetch()
                 && stopOpcodeAddress != Pdp11Adapter::InvalidUnibusAddress) {
             // wait for opcode fetch address before chekcing break condition
-            state = State::waitForFetchUnibusCycle ;
+            changeState(State::waitForFetchUnibusCycle) ;
         } else if (breakConditionHit())
-            state = State::conditionMatch ; // single hit. todo: repeat count
-        else state = State::stepMpc ; // next mpc pulse
+            changeState(State::conditionMatch) ; // single hit. todo: repeat count
+        else changeState(State::stepMpc) ; // next mpc pulse
     }
 }
 
@@ -61,7 +70,7 @@ void AutoStepController::evalUnibusCycle(ResponseUnibusCycle *cycle) {
     if (state == State::waitForFetchUnibusCycle) {
 		lastFetchUnibusCycle = *cycle;
         if (breakConditionHit())
-            state = State::conditionMatch ; // single hit. todo: repeat count
+            changeState(State::conditionMatch) ; // single hit. todo: repeat count
     }
 }
 
@@ -79,7 +88,7 @@ void AutoStepController::loop() {
         pdp11Adapter->uStep() ; // generate the KY11/KM11 pulse
         curMpc = Pdp11Adapter::InvalidMpc ;
         lastFetchUnibusCycle.addr = Pdp11Adapter::InvalidUnibusAddress ;
-        state = State::waitForMpc ;
+        changeState(State::waitForMpc) ;
         break ;
     case State::waitForMpc:
         // mpc pulse issued, for MPC and perhaps DATI/DATO to receive
