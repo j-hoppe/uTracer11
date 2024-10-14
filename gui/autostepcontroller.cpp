@@ -17,9 +17,9 @@
 void AutoStepController::changeState(State newState) {
 	if (state == newState)
 		return ;
-	state = newState ;
-	wxLogInfo("AutoStepController state changesfrom %d to %d", state, newState);
+	wxLogInfo("AutoStepController state change from %d to %d", state, newState);
     //pdp11Adapter->doLogEvent("State change from %d to %d", state, newState);
+	state = newState ;
 }
 
 
@@ -27,13 +27,17 @@ void AutoStepController::changeState(State newState) {
 // currently MPC or OPcodeAddress,
 // each of these may be invalid (not set by user) and is ignored then.
 bool AutoStepController::breakConditionHit() {
-    bool result = false ;
-    if (stopMpc != Pdp11Adapter::InvalidMpc && curMpc == stopMpc)
-        result = true ;
+    bool result = false;
+    if (stopMpc != Pdp11Adapter::InvalidMpc && curMpc == stopMpc) {
+        stopConditionText = wxString::Format("Micro PC match at %0.3o", stopMpc);
+    result = true;
+}
     if (stopOpcodeAddress != Pdp11Adapter::InvalidUnibusAddress
-            && lastFetchUnibusCycle.c1c0 == 0 /*DATI*/
-            && lastFetchUnibusCycle.addr == stopOpcodeAddress)
-        result = true ;
+        && lastFetchUnibusCycle.c1c0 == 0 /*DATI*/
+        && lastFetchUnibusCycle.addr == stopOpcodeAddress) {
+        stopConditionText = wxString::Format("Opcode fetch match at %0.6o", stopOpcodeAddress);
+        result = true;
+    }
     return result ;
 }
 
@@ -43,6 +47,7 @@ void AutoStepController::init(Pdp11Adapter *_pdp11Adapter, unsigned _stopMpc, ui
     pdp11Adapter = _pdp11Adapter ;
     stopMpc = _stopMpc ;
     stopOpcodeAddress = _stopOpcodeAddress ;
+    stopConditionText = "Stepping ...";
     changeState(State::stepMpc) ; // loop() start condition
 }
 
@@ -55,7 +60,7 @@ void AutoStepController::evalUStep(unsigned mpc) {
         // have to wait for opcode fetch
         if (mpc == pdp11Adapter->getMpcFetch()
                 && stopOpcodeAddress != Pdp11Adapter::InvalidUnibusAddress) {
-            // wait for opcode fetch address before chekcing break condition
+            // wait for opcode fetch address before checking break condition
             changeState(State::waitForFetchUnibusCycle) ;
         } else if (breakConditionHit())
             changeState(State::conditionMatch) ; // single hit. todo: repeat count
@@ -81,7 +86,7 @@ void AutoStepController::evalUnibusCycle(ResponseUnibusCycle *cycle) {
 // physical/simulated CPU arrived
 // for example: after a fetch wait for the generated DATI cycle,
 // which may cause an stop condition
-void AutoStepController::loop() {
+void AutoStepController::service() {
     switch (state) {
     case State::stepMpc: // ready to pulse next MAN CLK
         // arm detection logic for next micro step

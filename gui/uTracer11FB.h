@@ -358,11 +358,13 @@ class MainFrameFB : public wxFrame
 	private:
 
 	protected:
+		wxPanel* m_panel19;
 		wxStaticText* m_staticText2;
-		wxTextCtrl* stopUpcTextCtrl;
+		wxStaticText* m_staticText106;
+		wxPanel* m_panel20;
 		wxStaticText* m_staticText21;
 		wxComboBox* stopUnibusCycleComboBox;
-		wxTextCtrl* stopUnibusAddrTextCtrl;
+		wxPanel* m_panel21;
 		wxStaticText* m_staticText211;
 		wxTextCtrl* stopRepeatCountTextCtrl;
 		wxStatusBar* statusBar;
@@ -385,7 +387,10 @@ class MainFrameFB : public wxFrame
 		wxButton* powerCycleButton;
 		wxToggleButton* manClockEnableButton;
 		wxButton* microStepButton;
-		wxButton* microRunUntilButton;
+		wxButton* autoStepButton;
+		wxTextCtrl* stopUpcTextCtrl;
+		wxTextCtrl* stopUnibusAddrTextCtrl;
+		wxStaticText* autoStepStatusText;
 		wxNotebook* documentsNotebookFB;
 		wxPanel* EventPanelFB;
 		wxTextCtrl* eventsTextCtrl;
@@ -393,7 +398,7 @@ class MainFrameFB : public wxFrame
 		wxBoxSizer* pdp11StatusSizerFB;
 		wxTimer updateTimer;
 
-		MainFrameFB( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("uTracer11"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 591,368 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
+		MainFrameFB( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("uTracer11"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 604,498 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 
 		~MainFrameFB();
 

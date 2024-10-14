@@ -12,6 +12,7 @@ checks these against stop conditions.
 #ifndef __AUTOSTEPCONTROLLER_H__
 #define __AUTOSTEPCONTROLLER_H__
 
+#include <wx/string.h>
 #include "messages.h"
 
 
@@ -67,11 +68,14 @@ public:
     // eval a received DATI or DATO cycle
     void evalUnibusCycle(ResponseUnibusCycle *cycle);
 
-    void loop();
+    void service();
 
     // stop due to condition hit.
     // also emergency timeout?
     bool hasStopped();
+
+    wxString stopConditionText;
+
 };
 
 #endif // __AUTOSTEPCONTROLLER_H__
