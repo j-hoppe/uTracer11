@@ -374,7 +374,7 @@ class MainFrameFB : public wxFrame
 		virtual void powerCycleButtonOnButtonClick( wxCommandEvent& event ) { event.Skip(); }
 		virtual void manClockEnableButtonOnToggleButton( wxCommandEvent& event ) { event.Skip(); }
 		virtual void microStepButtonOnButtonClick( wxCommandEvent& event ) { event.Skip(); }
-		virtual void microRunUntilButtonOnButtonClick( wxCommandEvent& event ) { event.Skip(); }
+		virtual void autoStepButtonOnButtonClick( wxCommandEvent& event ) { event.Skip(); }
 		virtual void updateTimerOnTimer( wxTimerEvent& event ) { event.Skip(); }
 
 
@@ -387,6 +387,7 @@ class MainFrameFB : public wxFrame
 		wxButton* powerCycleButton;
 		wxToggleButton* manClockEnableButton;
 		wxButton* microStepButton;
+		wxPanel* autoStepPanel;
 		wxButton* autoStepButton;
 		wxTextCtrl* stopUpcTextCtrl;
 		wxTextCtrl* stopUnibusAddrTextCtrl;

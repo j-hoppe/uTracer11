@@ -29,12 +29,12 @@ void MainFrame::microStepButtonOnButtonClick(wxCommandEvent& event)
     wxGetApp().pdp11Adapter->uStep();
 }
 
-void MainFrame::microRunUntilButtonOnButtonClick(wxCommandEvent& event)
+void MainFrame::autoStepButtonOnButtonClick(wxCommandEvent& event)
 {
     UNREFERENCED_PARAMETER(event);
     auto pdp11Adapter = wxGetApp().pdp11Adapter;
     if (pdp11Adapter->state == Pdp11Adapter::State::uMachineAutoStepping) {
-        pdp11Adapter->abortAutoStepping = true; // atomic signal to execution loop
+        pdp11Adapter->stopAutoStepping = true; // atomic signal to execution loop
     }
     else {
         // Not running? then start!
@@ -48,7 +48,7 @@ void MainFrame::microRunUntilButtonOnButtonClick(wxCommandEvent& event)
 			stopUnibusAddress = Pdp11Adapter::InvalidUnibusAddress ;
         int stopRepeatCount;
         stopRepeatCountTextCtrl->GetValue().ToInt(&stopRepeatCount, 10);
-        pdp11Adapter->uStepAutoUntilStop(stopUpc, stopUnibusCycle, stopUnibusAddress, stopRepeatCount);
+        pdp11Adapter->doAutoStepping(stopUpc, stopUnibusCycle, stopUnibusAddress, stopRepeatCount);
         // Start command loop ... optimal in parallel thread
         // but we must update GUI controls .
     }

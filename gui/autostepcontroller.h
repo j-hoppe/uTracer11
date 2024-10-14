@@ -27,9 +27,6 @@ public:
         // mpc pulse issued, wait for MPC response message and perhaps DATI/DATO to receive
         waitForMpc,
 
-        // opcode fetch MPC detected, wait for Unibus access message response
-        waitForFetchUnibusCycle,
-
         //	break conditions hit
         conditionMatch
 
@@ -51,10 +48,12 @@ private:
     unsigned stopMpc; // disable by impossible value
     uint32_t stopOpcodeAddress; // dsisable by impoissible (odd) address
 
+    // next unibuscycle must be checked for opocde address stop
+    bool nextUnibusCycleIsFetch; 
 
     // eval logic terms here
     // currently MPC or OPcodeAddress
-    bool breakConditionHit();
+    bool stopConditionHit();
 
 public:
     // setup

@@ -101,6 +101,11 @@ public:
     virtual void* process() {
         return nullptr;
     }
+
+	// data consistency check
+	virtual bool isValid() {
+		return true ;
+	}
 };
 
 // just "OK", or optional OK <msg>
@@ -502,6 +507,7 @@ public:
         return txtBuffer;
     }
     void* process() override; // to be defined differently in M93X2 PCB and PC host
+    bool isValid() override ;
 };
 
 // D <addr> <data>  DEPOSIT octal val to UNIBUS octal address with DATO (only even addr)

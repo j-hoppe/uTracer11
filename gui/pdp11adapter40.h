@@ -33,7 +33,7 @@ public:
 
     virtual void setManClkEnable(bool manClkEnable) override;
     virtual void uStep() override;
-    //virtual void uStepAutoUntilStop(uint32_t stopUpc, int stopUnibusCycle, uint32_t stopUnibusAddress, int stopRepeatCount) override;
+    //virtual void doAutoStepping(uint32_t stopUpc, int stopUnibusCycle, uint32_t stopUnibusAddress, int stopRepeatCount) override;
 
     virtual void paintDocumentAnnotations() override;
 

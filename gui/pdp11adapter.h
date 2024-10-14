@@ -145,8 +145,8 @@ public:
 
     void uStepComplete(unsigned mpc);
 
-	volatile bool abortAutoStepping;
-    void uStepAutoUntilStop(uint32_t stopUpc, int stopUnibusCycle, uint32_t stopUnibusAddress, int stopRepeatCount) ;
+	volatile bool stopAutoStepping;
+    void doAutoStepping(uint32_t stopUpc, int stopUnibusCycle, uint32_t stopUnibusAddress, int stopRepeatCount) ;
 
     virtual void onResponseKM11Signals(ResponseKM11Signals* km11Signals) {
         UNREFERENCED_PARAMETER(km11Signals) ;
@@ -168,7 +168,7 @@ public:
     }
 
     void doLogEvent(const char* format, ...);
-	ResponseUnibusCycle* lastUnibusCycle;
+	ResponseUnibusCycle lastUnibusCycle;
     void doEvalUnibusCycle(ResponseUnibusCycle* unibusCycle);
 
     virtual void evalUnibusCycle(ResponseUnibusCycle* unibusCycle) {

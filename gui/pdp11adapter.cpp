@@ -100,14 +100,16 @@ void Pdp11Adapter::updateGui(State newState) {
         infoLabel->SetLabel("Initializing");
         infoLabel2->SetLabel("");
         infoLabel->GetParent()->Layout();
+        app->mainFrame->manClockEnableButton->Enable();
         return;
         break;
     case State::uMachineRunning:
         // hide all CPU state panels, data update meaningless
         infoLabel->SetLabel("uMachine FULL SPEED");
         infoLabel2->SetLabel("No MPC/signal update");
+        app->mainFrame->manClockEnableButton->Enable();
         app->mainFrame->microStepButton->Disable();
-        app->mainFrame->autoStepButton->Disable();
+        app->mainFrame->autoStepPanel->Disable();
         app->mainFrame->autoStepButton->SetLabel("Start Auto Stepping");
         app->mainFrame->autoStepStatusText->SetLabel("");
         memoryPanel->Disable();
@@ -117,8 +119,9 @@ void Pdp11Adapter::updateGui(State newState) {
     case State::uMachineManualStepping:
         infoLabel->SetLabel("uMachine MAN CLOCK");
         infoLabel2->SetLabel("Single step via button");
+        app->mainFrame->manClockEnableButton->Enable();
         app->mainFrame->microStepButton->Enable();
-        app->mainFrame->autoStepButton->Enable();
+        app->mainFrame->autoStepPanel->Enable();
         app->mainFrame->autoStepButton->SetLabel("Start Auto Stepping");
         //app->mainFrame->autoStepStatusText->SetLabel(""); // result of last auto step run
         tracePanel->Enable();
@@ -129,10 +132,11 @@ void Pdp11Adapter::updateGui(State newState) {
     case State::uMachineAutoStepping:
         infoLabel->SetLabel("uMachine AUTO CLOCK");
         infoLabel2->SetLabel("Steps until condition");
+        app->mainFrame->manClockEnableButton->Disable(); 
         app->mainFrame->microStepButton->Disable();
         // when auto stepping, the "Auto Step" button is used to stop
+        app->mainFrame->autoStepPanel->Enable();
         app->mainFrame->autoStepButton->SetLabel("Stop Auto Stepping");
-        app->mainFrame->autoStepButton->Enable();
         app->mainFrame->autoStepStatusText->SetLabel(".... stepping ...");
         tracePanel->Enable();
         memoryPanel->Enable();
@@ -150,6 +154,8 @@ void Pdp11Adapter::updateGui(State newState) {
 
 // all Pdp11 models must init their GUI
 void Pdp11Adapter::onInit() {
+    lastUnibusCycle.c1c0 = 0xff; // invalidate
+
     updateGui(State::init); // first state change
 
     timerUnprocessedMs = 99999; // force immediate call to onTimer()
@@ -308,22 +314,24 @@ void Pdp11Adapter::uStepComplete(unsigned mpc) {
 
 // this a blocking loop, which keeps the Gui alive 
 // take care of reentrancy for message events!
-void Pdp11Adapter::uStepAutoUntilStop(uint32_t stopUpc, int stopUnibusCycle, uint32_t stopUnibusAddress, int stopRepeatCount) {
+void Pdp11Adapter::doAutoStepping(uint32_t stopUpc, int stopUnibusCycle, uint32_t stopUnibusAddress, int stopRepeatCount) {
     UNREFERENCED_PARAMETER(stopUpc);
     UNREFERENCED_PARAMETER(stopUnibusCycle);
     UNREFERENCED_PARAMETER(stopUnibusAddress);
     UNREFERENCED_PARAMETER(stopRepeatCount);
-    //	wxLogFatalError("Abstract Pdp11Adapter::uStepAutoUntilStop() called");
-    abortAutoStepping = false;
+	wxStaticText *statusText = wxGetApp().mainFrame->autoStepStatusText ;
+    //	wxLogFatalError("Abstract Pdp11Adapter::doAutoStepping() called");
+    stopAutoStepping = false; // user button signal
 
     // stopUnibusAddress is opcode fetch address
 	autoStepController.init(this, stopUpc, stopUnibusAddress) ;
 	// todo: repeat count?
 
     updateGui(State::uMachineAutoStepping);
+	statusText->SetLabel("Stepping ...");
 
     // check for "ABORT" button press
-    while (!abortAutoStepping && !autoStepController.hasStopped()) {
+    while (!stopAutoStepping && !autoStepController.hasStopped()) {
         //wxMilliSleep(100);  // Simulate some work
         wxYield(); // process pending GUI messages
         // or wxApp::ProcessPendingEvents() ?
@@ -332,12 +340,18 @@ void Pdp11Adapter::uStepAutoUntilStop(uint32_t stopUpc, int stopUnibusCycle, uin
 		autoStepController.service() ;
     }
     updateGui(State::uMachineManualStepping);
-	wxGetApp().mainFrame->autoStepStatusText->SetLabel(autoStepController.stopConditionText);
+	if (stopAutoStepping)
+		statusText->SetLabel("Manually stopped");
+	else
+		statusText->SetLabel(autoStepController.stopConditionText);
 			
 	// refresh displays which may have been disabled in autostepMode)
 	doEvalMpc(microProgramCounter) ;
-	doEvalUnibusCycle(lastUnibusCycle);
+	if (lastUnibusCycle.isValid())
+		doEvalUnibusCycle(&lastUnibusCycle);
 }
+
+
 
 
 // called when a new Mpc is received from pdp11
@@ -416,11 +430,11 @@ void Pdp11Adapter::doLogEvent(const char* format, ...) {
 // msg deleted by framework
 void Pdp11Adapter::doEvalUnibusCycle(ResponseUnibusCycle* unibusCycle)
 {
-	if (unibusCycle == nullptr) // refresh call  in pure 
+	if (unibusCycle == nullptr || !unibusCycle->isValid()) // refresh call  in pure 
 		return ; // doEvalUnibusCycle(lastUnibusCycle) on start
 	
 	// save for display refresh
-	lastUnibusCycle = unibusCycle ;
+	lastUnibusCycle = *unibusCycle ;
 
     // discard highspeed stream of captured bus cycles to prevent overflow of grids
     if (state == State::init || state == State::uMachineRunning)

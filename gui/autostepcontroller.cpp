@@ -17,7 +17,7 @@
 void AutoStepController::changeState(State newState) {
 	if (state == newState)
 		return ;
-	wxLogInfo("AutoStepController state change from %d to %d", state, newState);
+	//wxLogInfo("AutoStepController state change from %d to %d", state, newState);
     //pdp11Adapter->doLogEvent("State change from %d to %d", state, newState);
 	state = newState ;
 }
@@ -26,7 +26,7 @@ void AutoStepController::changeState(State newState) {
 // eval logic terms here
 // currently MPC or OPcodeAddress,
 // each of these may be invalid (not set by user) and is ignored then.
-bool AutoStepController::breakConditionHit() {
+bool AutoStepController::stopConditionHit() {
     bool result = false;
     if (stopMpc != Pdp11Adapter::InvalidMpc && curMpc == stopMpc) {
         stopConditionText = wxString::Format("Micro PC match at %0.3o", stopMpc);
@@ -48,6 +48,7 @@ void AutoStepController::init(Pdp11Adapter *_pdp11Adapter, unsigned _stopMpc, ui
     stopMpc = _stopMpc ;
     stopOpcodeAddress = _stopOpcodeAddress ;
     stopConditionText = "Stepping ...";
+    nextUnibusCycleIsFetch = false;
     changeState(State::stepMpc) ; // loop() start condition
 }
 
@@ -57,12 +58,11 @@ void AutoStepController::init(Pdp11Adapter *_pdp11Adapter, unsigned _stopMpc, ui
 void AutoStepController::evalUStep(unsigned mpc) {
     if (state == State::waitForMpc) {
         curMpc = mpc;
-        // have to wait for opcode fetch
-        if (mpc == pdp11Adapter->getMpcFetch()
-                && stopOpcodeAddress != Pdp11Adapter::InvalidUnibusAddress) {
-            // wait for opcode fetch address before checking break condition
-            changeState(State::waitForFetchUnibusCycle) ;
-        } else if (breakConditionHit())
+        if (mpc == pdp11Adapter->getMpcFetch()) {
+            // prepare to extract opcode fetch from UNIBUS data traffic
+            nextUnibusCycleIsFetch = true;
+        } 
+        if (stopConditionHit())
             changeState(State::conditionMatch) ; // single hit. todo: repeat count
         else changeState(State::stepMpc) ; // next mpc pulse
     }
@@ -72,9 +72,10 @@ void AutoStepController::evalUStep(unsigned mpc) {
 // Interface to message stream:
 // eval a received DATI or DATO cycle
 void AutoStepController::evalUnibusCycle(ResponseUnibusCycle *cycle) {
-    if (state == State::waitForFetchUnibusCycle) {
+    if (nextUnibusCycleIsFetch) {
 		lastFetchUnibusCycle = *cycle;
-        if (breakConditionHit())
+        nextUnibusCycleIsFetch = false; // got it
+        if (stopConditionHit())
             changeState(State::conditionMatch) ; // single hit. todo: repeat count
     }
 }
@@ -98,11 +99,6 @@ void AutoStepController::service() {
     case State::waitForMpc:
         // mpc pulse issued, for MPC and perhaps DATI/DATO to receive
         // exit only by evalUStep()
-		wxMilliSleep(1); // save CPU time
-        break ;
-    case State::waitForFetchUnibusCycle:
-        // opcode fetch MPC detected and address needed for condition check.
-        // exit only by evalUnibusCycle()
 		wxMilliSleep(1); // save CPU time
         break ;
     case State::conditionMatch:

@@ -92,6 +92,7 @@ char Message::txtBuffer[txtBufferSize];
 //const int Message::errorBufferSize ;
 char Message::errorBuffer[errorBufferSize];
 
+// access only if isValid()
 const char* const ResponseUnibusCycle::cycleText[4] = { "DATI", "DATIP", "DATO", "DATOB" };
 
 
@@ -621,6 +622,16 @@ const char *ResponseUnibusCycle::initFromArgToken(int startTokenIdx) {
 
     return nullptr ; // ok
 }
+
+// GUI needs a mean to mark cycles as "invalid"
+bool ResponseUnibusCycle::isValid() {
+	if (c1c0 > 3)
+		return false ;
+	else if (addr > 0x3ffff) // 18 bit
+		return false ;
+	else return true ;
+}
+
 
 const char *RequestUnibusDeposit::initFromArgToken(int startTokenIdx) {
     int argTokenCount = tokenCount - startTokenIdx ; // argument tokens

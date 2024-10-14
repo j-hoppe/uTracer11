@@ -1032,10 +1032,14 @@ MainFrameFB::MainFrameFB( wxWindow* parent, wxWindowID id, const wxString& title
 
 	executePanelSizer->Add( microStepButton, 0, wxALL|wxEXPAND, 5 );
 
-	autoStepButton = new wxButton( runPanel, wxID_ANY, wxT("Step until stop condition"), wxDefaultPosition, wxDefaultSize, 0 );
-	executePanelSizer->Add( autoStepButton, 0, wxALL|wxEXPAND, 5 );
+	autoStepPanel = new wxPanel( runPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxStaticBoxSizer* sbSizer13;
+	sbSizer13 = new wxStaticBoxSizer( new wxStaticBox( autoStepPanel, wxID_ANY, wxT("Auto Stepping") ), wxVERTICAL );
 
-	m_panel19 = new wxPanel( runPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	autoStepButton = new wxButton( sbSizer13->GetStaticBox(), wxID_ANY, wxT("Step until stop condition"), wxDefaultPosition, wxDefaultSize, 0 );
+	sbSizer13->Add( autoStepButton, 0, wxALL|wxEXPAND, 5 );
+
+	m_panel19 = new wxPanel( sbSizer13->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer11;
 	bSizer11 = new wxBoxSizer( wxHORIZONTAL );
 
@@ -1060,13 +1064,13 @@ MainFrameFB::MainFrameFB( wxWindow* parent, wxWindowID id, const wxString& title
 	m_panel19->SetSizer( bSizer11 );
 	m_panel19->Layout();
 	bSizer11->Fit( m_panel19 );
-	executePanelSizer->Add( m_panel19, 0, wxALL, 0 );
+	sbSizer13->Add( m_panel19, 0, wxALL, 0 );
 
-	m_staticText106 = new wxStaticText( runPanel, wxID_ANY, wxT("or UNIBUS opcode fetch from"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText106 = new wxStaticText( sbSizer13->GetStaticBox(), wxID_ANY, wxT("or UNIBUS opcode fetch from"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText106->Wrap( -1 );
-	executePanelSizer->Add( m_staticText106, 0, wxALL, 5 );
+	sbSizer13->Add( m_staticText106, 0, wxALL, 5 );
 
-	m_panel20 = new wxPanel( runPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	m_panel20 = new wxPanel( sbSizer13->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer13;
 	bSizer13 = new wxBoxSizer( wxHORIZONTAL );
 
@@ -1097,9 +1101,9 @@ MainFrameFB::MainFrameFB( wxWindow* parent, wxWindowID id, const wxString& title
 	m_panel20->SetSizer( bSizer13 );
 	m_panel20->Layout();
 	bSizer13->Fit( m_panel20 );
-	executePanelSizer->Add( m_panel20, 0, wxALL, 5 );
+	sbSizer13->Add( m_panel20, 0, wxALL, 5 );
 
-	m_panel21 = new wxPanel( runPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	m_panel21 = new wxPanel( sbSizer13->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer14;
 	bSizer14 = new wxBoxSizer( wxHORIZONTAL );
 
@@ -1116,11 +1120,17 @@ MainFrameFB::MainFrameFB( wxWindow* parent, wxWindowID id, const wxString& title
 	m_panel21->SetSizer( bSizer14 );
 	m_panel21->Layout();
 	bSizer14->Fit( m_panel21 );
-	executePanelSizer->Add( m_panel21, 0, wxALL, 0 );
+	sbSizer13->Add( m_panel21, 0, wxALL, 0 );
 
-	autoStepStatusText = new wxStaticText( runPanel, wxID_ANY, wxT("auto Step Status Text"), wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER_HORIZONTAL );
+	autoStepStatusText = new wxStaticText( sbSizer13->GetStaticBox(), wxID_ANY, wxT("auto Step Status Text"), wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER_HORIZONTAL );
 	autoStepStatusText->Wrap( -1 );
-	executePanelSizer->Add( autoStepStatusText, 0, wxALL|wxEXPAND, 5 );
+	sbSizer13->Add( autoStepStatusText, 0, wxALL|wxEXPAND, 5 );
+
+
+	autoStepPanel->SetSizer( sbSizer13 );
+	autoStepPanel->Layout();
+	sbSizer13->Fit( autoStepPanel );
+	executePanelSizer->Add( autoStepPanel, 0, wxEXPAND | wxALL, 0 );
 
 
 	runPanel->SetSizer( executePanelSizer );
@@ -1169,7 +1179,7 @@ MainFrameFB::MainFrameFB( wxWindow* parent, wxWindowID id, const wxString& title
 	powerCycleButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrameFB::powerCycleButtonOnButtonClick ), NULL, this );
 	manClockEnableButton->Connect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( MainFrameFB::manClockEnableButtonOnToggleButton ), NULL, this );
 	microStepButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrameFB::microStepButtonOnButtonClick ), NULL, this );
-	autoStepButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrameFB::microRunUntilButtonOnButtonClick ), NULL, this );
+	autoStepButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrameFB::autoStepButtonOnButtonClick ), NULL, this );
 	this->Connect( updateTimer.GetId(), wxEVT_TIMER, wxTimerEventHandler( MainFrameFB::updateTimerOnTimer ) );
 }
 
@@ -1180,7 +1190,7 @@ MainFrameFB::~MainFrameFB()
 	powerCycleButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrameFB::powerCycleButtonOnButtonClick ), NULL, this );
 	manClockEnableButton->Disconnect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( MainFrameFB::manClockEnableButtonOnToggleButton ), NULL, this );
 	microStepButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrameFB::microStepButtonOnButtonClick ), NULL, this );
-	autoStepButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrameFB::microRunUntilButtonOnButtonClick ), NULL, this );
+	autoStepButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrameFB::autoStepButtonOnButtonClick ), NULL, this );
 	this->Disconnect( updateTimer.GetId(), wxEVT_TIMER, wxTimerEventHandler( MainFrameFB::updateTimerOnTimer ) );
 
 }
