@@ -19,10 +19,13 @@ private:
 
 	void receiveRequests() ; // receiver thread
 	void transmitResponses() ; // transmitter thread
+	
+public:
 	std::thread *receiverThread = nullptr;
 	std::thread *transmitterThread= nullptr;
+	bool receiverThreadRunning ;
+	bool transmitterThreadRunning ;
 
-public:
 	int tcpPort ; // TCP/IP port number
 	int tcpSocket; // file handle for TCP/IP socket
 	TcpMessageInterface() ;

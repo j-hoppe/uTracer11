@@ -24,12 +24,12 @@
 Application app;
 
 void Application::help() {
-    printf("pdp1140sim - PDP11/40 simulator with utracer11 interface\n");
-    printf("   Implements utracer11 message interface as TCP/IP server.\n");
-    printf("call:\n");
-    printf("./pdp1140sim <port>\n");
-    printf("<port> = decimal TCP/IP port number to listen\n");
-    printf("         Recommended <port> is 65392, the decimal UART base 177560.\n");
+    console.printf("pdp1140sim - PDP11/40 simulator with utracer11 interface\n");
+    console.printf("   Implements utracer11 message interface as TCP/IP server.\n");
+    console.printf("call:\n");
+    console.printf("./pdp1140sim <port>\n");
+    console.printf("<port> = decimal TCP/IP port number to listen\n");
+    console.printf("         Recommended <port> is 65392, the decimal UART base 177560.\n");
     exit(1);
 }
 
@@ -58,5 +58,20 @@ int main(int argc, char *argv[]) {
     // start simulator in main thread
     simulator.setup() ;
 
-    simulator.loop() ;
+	// stop on user console menu input or connection loss
+	bool connectionsGood = true ;
+	while(connectionsGood) {
+
+	    simulator.service() ;
+
+		// interface still working?
+		connectionsGood &= app.messageInterface.receiverThreadRunning ;
+		connectionsGood &= app.messageInterface.transmitterThreadRunning ;
+	}
+	if (app.messageInterface.receiverThread->joinable())
+		app.messageInterface.receiverThread->join() ;
+	if (app.messageInterface.transmitterThread->joinable())
+		app.messageInterface.transmitterThread->join() ;
+
+	app.console.printf("Simulator terminated.\n") ;
 }

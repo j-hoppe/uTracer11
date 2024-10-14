@@ -51,6 +51,9 @@ public:
         console->simulator = this ; // link to onConsoleInputLine()
     }
 
+	// main state: running, stopped	
+    bool microClockEnabled = false; // true = micro machine running, start stopped
+
     // state of simulated UNIBUS
     UnibusSignals unibusSignals;
 
@@ -96,7 +99,7 @@ public:
 
 
     virtual void setup(); // initalization, once
-    virtual void loop(); // contains the while(true) main loop
+    virtual void service(); // called repeatedly for non-preemptive multitasking
 
     virtual const char* getVersionText() ;
 

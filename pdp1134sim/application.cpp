@@ -60,5 +60,20 @@ int main(int argc, char *argv[]) {
     // start simulator in main thread
     simulator.setup() ;
 
-    simulator.loop() ;
+	// stop on user console menu input or connection loss
+	bool connectionsGood = true ;
+	while(connectionsGood) {
+
+	    simulator.service() ;
+
+		// interface still working?
+		connectionsGood &= app.messageInterface.receiverThreadRunning ;
+		connectionsGood &= app.messageInterface.transmitterThreadRunning ;
+	}
+	if (app.messageInterface.receiverThread->joinable())
+		app.messageInterface.receiverThread->join() ;
+	if (app.messageInterface.transmitterThread->joinable())
+		app.messageInterface.transmitterThread->join() ;
+
+	app.console.printf("Simulator terminated.\n") ;
 }

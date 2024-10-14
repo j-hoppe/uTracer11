@@ -121,11 +121,11 @@ void Pdp11Simulator40::onRequestKM11SignalsWrite(RequestKM11SignalsWrite* reques
 void Pdp11Simulator40::onRequestKM11SignalsRead(RequestKM11SignalsRead* requestKM11SignalsRead) {
 	Pdp1140KM11State km11State ;
 	if (toupper(requestKM11SignalsRead->channel) == 'A') {
-		// not clear what 
+		// not clear what
 		km11State.pupp =  mpc ;
 		// bupp is the next step to execute
 		km11State.bupp = mpc ;
-		km11State.pupp = nextMpc ; 
+		km11State.pupp = nextMpc ;
 		// a real simulator must set all the other km11State signals here!!
 
 		// convert state to message and send
@@ -355,7 +355,7 @@ void Pdp11Simulator40::microStep() {
 void Pdp11Simulator40::setup() {
     Pdp11Simulator::setup();
     mpc = nextMpc = 0;
-	
+
     opcodecount = 0;
     mcyclecount = 0 ;
     state = 0;
@@ -387,17 +387,15 @@ void Pdp11Simulator40::setup() {
     consolePrompt(true) ; // first user menu
 }
 
-void Pdp11Simulator40::loop() {
-    while(true) {
+// called repeatedly for non-preemptive multitasking
+void Pdp11Simulator40::service() {
         // if micro machine is running: execute steps in high speed,
         // ignore "singleStep command" in messages->process()
         if (microClockEnabled) {
 			mpc = nextMpc ;
-            microStep() ; 
+            microStep() ;
         }
-
         processPendingRequests() ;
-    }
 }
 
 

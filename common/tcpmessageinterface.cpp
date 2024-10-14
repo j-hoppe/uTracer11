@@ -74,15 +74,18 @@ void TcpMessageInterface::connectToClient() {
 
 // poll char stream over socket,
 // split into text lines, parse and queue
+// terminates only on connection loss
 void TcpMessageInterface::receiveRequests() {
     char buffer[1024] = { 0 };
+	receiverThreadRunning = true ;
     while (true) {
         memset(buffer, 0, sizeof(buffer));
         int bytesRead = read(tcpSocket, buffer, 1024);
         if (bytesRead <= 0) {
             fprintf(stderr, "Read() error, client disconnected or error occurred\n");
             close(tcpSocket);
-            break;
+			receiverThreadRunning = false ; // signal
+			return ;
         }
         receiveRingBuffer.append(buffer);
         const std::string separators = "\n\r;" ; // cr, lf or ;
@@ -113,11 +116,13 @@ void TcpMessageInterface::receiveRequests() {
 
 // wait for queue to fill, then render and send over socket
 // independed threads
+// terminates only on connection loss
 void TcpMessageInterface::transmitResponses() {
     struct timespec waitTimespec10ms;
     waitTimespec10ms.tv_sec = 0; 		  // 0 seconds
     waitTimespec10ms.tv_nsec = 10 * 1000000; // 10 milliseconds in nanoseconds
 
+	transmitterThreadRunning = true ;
     // unprocessed message to send?
     while (true) {
         Message *msg = transmitQueue.pop(true) ; // wait blocking until filled
@@ -129,7 +134,8 @@ void TcpMessageInterface::transmitResponses() {
         if (bytesSend <= 0) {
             fprintf(stderr, "Send() error, client disconnected or error occurred\n");
             close(tcpSocket);
-            break;
+			transmitterThreadRunning = false ; // signal
+			return ;
         }
 		// do not flood console
 		// fprintf(stderr, "Message to client: %s\n", msgTxt.c_str());

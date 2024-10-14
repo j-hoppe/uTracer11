@@ -265,14 +265,18 @@ void Pdp11Simulator::setup() {
     // clear pending responses?
 }
 
-void Pdp11Simulator::loop() {
+void Pdp11Simulator::service() {
 }
 
 
 // CPU executed a memory access by micro code, respond this to GUI.
 // Always asynchronical, never a response to a previous request
 void Pdp11Simulator::onCpuUnibusCycle(uint8_t c1c0, uint32_t addr, uint16_t data, bool nxm) {
-    respond(new ResponseUnibusCycle(c1c0, addr, data, nxm, /*expected*/false));
+	// When micro machine is running at own speed,
+	// do not flood socket with Gigabytes of messages, which are disposed in the GUI anyhow.
+	if (!microClockEnabled) {
+	    respond(new ResponseUnibusCycle(c1c0, addr, data, nxm, /*expected*/false));
+		}
 }
 
 void Pdp11Simulator::setMicroClockEnable(bool state) {

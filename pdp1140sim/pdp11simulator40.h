@@ -18,7 +18,6 @@
 class Pdp11Simulator40 : public Pdp11Simulator {
     // emulated CPU
     unsigned state; // position in predefined faked activity sequence
-    bool microClockEnabled = false; // true = micro machine running, start stopped
     bool currentMicroClockLevel ; // to detect edges
     uint16_t mpc; // current micro program counter
     uint16_t nextMpc; // next micro program counter, as result of BUTs
@@ -50,7 +49,7 @@ public:
     Pdp11Simulator40(Console *_console, TcpMessageInterface * messageInterface):
         Pdp11Simulator(_console, messageInterface) {}
     void setup() override;
-    void loop() override;
+    void service() override;
 
 
 };

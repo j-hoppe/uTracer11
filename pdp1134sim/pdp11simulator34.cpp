@@ -229,7 +229,7 @@ void Pdp11Simulator34::microStep()
 {
     unsigned nextMpc = 0;
     mcyclecount++ ;
-    // execute the M9312 terminal loop:
+    // execute the M9312 terminal service:
     // 1$: tstb	@#177560
     //	   bpl 1$
     // when macro CPU halted: cycle 000-015-000-....
@@ -238,7 +238,7 @@ void Pdp11Simulator34::microStep()
     case 0: // mpc 000 service trap
         if (halt) {
             nextMpc = 0015;
-            state = 1 ; // HALT loop
+            state = 1 ; // HALT service
         } else {
             nextMpc = 0016; // code execution
             state = 2 ;
@@ -246,7 +246,7 @@ void Pdp11Simulator34::microStep()
         break;
     case 1: // execute 015 on HALT
         nextMpc = 0000;
-        state = 0 ; // loop
+        state = 0 ; // service
         break;
 
         // execute tstb	@#dl11.rcsr
@@ -321,9 +321,9 @@ void Pdp11Simulator34::microStep()
         break;
     case 13: // mpc = 523
         // add branch displacement to pc
-        r[7] = 0165524 ; // PC set to "loop" jump label
+        r[7] = 0165524 ; // PC set to "service" jump label
         nextMpc = 0000;
-        state = 0; // loop
+        state = 0; // service
         break;
     }
     mpc = nextMpc;
@@ -366,13 +366,12 @@ void Pdp11Simulator34::setup() {
 }
 
 
-void Pdp11Simulator34::loop() {
-    while(true) {
+// called repeatedly for non-preemptive multitasking
+void Pdp11Simulator34::service() {
         // if micro machine is running: execute steps in high speed,
         // ignore "singleStep command" in messages->process()
         if (microClockEnabled)
             microStep() ;
 
         processPendingRequests() ;
-    }
 }

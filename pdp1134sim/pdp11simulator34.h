@@ -14,7 +14,6 @@ class Pdp11Simulator34 : public Pdp11Simulator {
 private:
     // emulated CPU
     unsigned state; // position in predefined faked activity sequence
-    bool microClockEnabled = false; // true = micro machine running, start stopped
     uint16_t mpc; // current micro program counter
     uint16_t	memory[0x20000]; // 18 bit addresses = 128kwords
     uint32_t	opcodecount ; // processed opcodes
@@ -48,7 +47,7 @@ public:
         Pdp11Simulator(_console, messageInterface) {}
 
     void setup() override;
-    void loop() override;
+    void service() override;
 
 
 };
