@@ -42,6 +42,8 @@ public:
 	bool isRowEmpty(int row) ;
     int newDataRow();
 
+	void gridToClipboard() ;
+
 	// false if micro engine not in "Manual Clock", and
 	// not set opcode fetch detected on switch to Manual CLock.
 	bool syncronizedWithMicroMachine ;

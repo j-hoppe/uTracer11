@@ -218,6 +218,8 @@ void TracePanel::traceClearButtonOnButtonClick(wxCommandEvent& event)
 void TracePanel::traceToClipboardButtonOnButtonClick(wxCommandEvent& event)
 {
     UNREFERENCED_PARAMETER(event);
+    Pdp11Adapter *pdp11Adapter = wxGetApp().pdp11Adapter;
+    pdp11Adapter->traceController.gridToClipboard();
 }
 
 // trace grid to max width
