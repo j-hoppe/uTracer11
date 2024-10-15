@@ -39,7 +39,8 @@ public:
 
     void init(wxGrid* _grid, Pdp11Adapter* _pdp11Adapter, wxFileName symbolFilePath);
     void clear();
-    int newRow();
+	bool isRowEmpty(int row) ;
+    int newDataRow();
 
 	// false if micro engine not in "Manual Clock", and
 	// not set opcode fetch detected on switch to Manual CLock.

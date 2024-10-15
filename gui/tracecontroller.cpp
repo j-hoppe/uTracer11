@@ -59,7 +59,7 @@ With an symbol-entry "777733 = ??????" we get the final "mov @#??????,@#??????"
 void TraceController::init(wxGrid* _grid, Pdp11Adapter* _pdp11Adapter, wxFileName symbolFilePath)
 {
     grid = _grid;
-	pdp11Adapter = _pdp11Adapter ;
+    pdp11Adapter = _pdp11Adapter;
 
     switch (pdp11Adapter->getType()) {
     case Pdp11Adapter::Type::pdp1134phys:
@@ -90,11 +90,34 @@ void TraceController::clear() {
     grid->DeleteRows(0, grid->GetNumberRows());
 }
 
+
+// Function to check if a row in the grid is empty
+bool TraceController::isRowEmpty(int row) {
+    int cols = grid->GetNumberCols();
+    for (int col = 0; col < cols; ++col) {
+        wxString value = grid->GetCellValue(row, col);
+        if (!value.IsEmpty()) {
+            return false; // Row is not empty
+        }
+    }
+    return true; // Row is empty
+}
+
+
+
 // returns row index of new empty row
-int TraceController::newRow() {
+// make sure a single empty dummy row is located BELOW,
+// as scrolling may partial hide the last row
+int TraceController::newDataRow() {
     grid->AppendRows(1);
-    auto row = grid->GetNumberRows() - 1;
-    return row;
+    int newRow = grid->GetNumberRows() - 1;
+    if (newRow == 0 || !isRowEmpty(newRow - 1))
+        // no emtpy predecessor: add a 2nd empty row
+        grid->AppendRows(1);
+
+    int newDataRow = grid->GetNumberRows() - 2; // this is the row before the dummy row
+    assert(newDataRow >= 0);
+    return newDataRow;
 }
 
 // produce the buscycle which is used to fillup incomplete instruction UNIBUS activity
@@ -104,8 +127,8 @@ pdp11bus_cycle_t TraceController::getFillupCycle() {
     fillupCycle.bus_address.val = cycleListFillupAddress;
     fillupCycle.bus_address.iopage = false;
     fillupCycle.bus_timeout = 0;
-	// 16bit address, data2addr makes it 18bit IOpage
-	 // symbol 777733 set to "?????"", display like "mov @????,..." instead of "mov @17733,..."
+    // 16bit address, data2addr makes it 18bit IOpage
+     // symbol 777733 set to "?????"", display like "mov @????,..." instead of "mov @17733,..."
     fillupCycle.bus_data = cycleListFillupAddress & 0xffff; // 177733
     fillupCycle.bus_cycle = BUSCYCLE_FILLUP;
     fillupCycle.bus_cycle_physical = BUSCYCLE_FILLUP;
@@ -126,7 +149,7 @@ void TraceController::startOfMacroInstruction() {
     disasBusCyclesCount = 0;
     disasBusCycles.clear();
     nextUnibusCycleIsOpcodeFetch = true;
-	syncronizedWithMicroMachine = true;
+    syncronizedWithMicroMachine = true;
     opcodeDisplayGridRow = -1; // invalid until opcode fetched
 
     // fill the whole list with dummy cycles for the disassembler
@@ -145,7 +168,7 @@ void TraceController::evalUStep(unsigned mpc) {
         startOfMacroInstruction();
     }
     // col 0 MPC, 3 digits octal
-    int row = newRow();
+    int row = newDataRow();
     grid->SetCellValue(row, 0, wxString::Format("%03o", mpc));
 
     //grid->MakeCellVisible(row, 0);
@@ -195,7 +218,7 @@ void TraceController::evalUnibusCycle(ResponseUnibusCycle* unibusCycle) {
         disasSymbols.data(), disasSymbols.size());
 
     // 3. display
-    int row = newRow();
+    int row = newDataRow();
     if (nextUnibusCycleIsOpcodeFetch) {
         opcodeDisplayGridRow = row; // this is the row where disas shows the full instruction
         // updated every following cycle

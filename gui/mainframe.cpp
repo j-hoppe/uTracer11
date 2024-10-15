@@ -32,7 +32,7 @@ void MainFrame::microStepButtonOnButtonClick(wxCommandEvent& event)
 void MainFrame::autoStepButtonOnButtonClick(wxCommandEvent& event)
 {
     UNREFERENCED_PARAMETER(event);
-    auto pdp11Adapter = wxGetApp().pdp11Adapter;
+    Pdp11Adapter *pdp11Adapter = wxGetApp().pdp11Adapter;
     if (pdp11Adapter->state == Pdp11Adapter::State::uMachineAutoStepping) {
         pdp11Adapter->stopAutoStepping = true; // atomic signal to execution loop
     }
@@ -78,11 +78,11 @@ void MainFrame::saveToClipboardButtonOnButtonClick(wxCommandEvent& event) {
 void Pdp11uFlowPanel::Pdp11uFlowPanelOnPaint(wxPaintEvent& event)
 {
     UNREFERENCED_PARAMETER(event);
-    auto pdp11 = wxGetApp().pdp11Adapter;
-    if (pdp11 == nullptr)
+    Pdp11Adapter *pdp11Adapter = wxGetApp().pdp11Adapter;
+    if (pdp11Adapter == nullptr)
         return;
     // reload image and scale
-    pdp11->paintDocumentAnnotations();
+    pdp11Adapter->paintDocumentAnnotations();
 }
 
 
@@ -93,18 +93,18 @@ void Pdp11uFlowPanel::Pdp11uFlowPanelOnPaint(wxPaintEvent& event)
 void Pdp11uFlowPanel::Pdp11uFlowPanelOnSize(wxSizeEvent& event)
 {
     UNREFERENCED_PARAMETER(event);
-    auto pdp11 = wxGetApp().pdp11Adapter;
-    if (pdp11 == nullptr)
+    Pdp11Adapter *pdp11Adapter = wxGetApp().pdp11Adapter;
+    if (pdp11Adapter == nullptr)
         return;
     // reload image and scale
-    pdp11->paintDocumentAnnotations();
+    pdp11Adapter->paintDocumentAnnotations();
 }
 
 
 void MemoryPanel::memoryLoadFilePickerOnFileChanged(wxFileDirPickerEvent& event)
 {
     UNREFERENCED_PARAMETER(event);
-    auto pdp11 = wxGetApp().pdp11Adapter;
+    Pdp11Adapter *pdp11Adapter = wxGetApp().pdp11Adapter;
     // decode combo
     memory_fileformat_t fileFormat = fileformat_none;
 
@@ -116,33 +116,33 @@ void MemoryPanel::memoryLoadFilePickerOnFileChanged(wxFileDirPickerEvent& event)
     if (fileFormat == fileformat_none)
         wxLogError("Invalid File format selected?");
     else
-        pdp11->loadMemoryFile(event.GetPath(), fileFormat);
+        pdp11Adapter->loadMemoryFile(event.GetPath(), fileFormat);
 }
 
 void MemoryPanel::depositMemoryButtonOnButtonClick(wxCommandEvent& event)
 {
     UNREFERENCED_PARAMETER(event);
-    auto pdp11 = wxGetApp().pdp11Adapter;
-    pdp11->depositMemoryImage();
+    Pdp11Adapter *pdp11Adapter = wxGetApp().pdp11Adapter;
+    pdp11Adapter->depositMemoryImage();
 }
 
 void MemoryPanel::manualExamButtonOnButtonClick(wxCommandEvent& event)
 {
     UNREFERENCED_PARAMETER(event);
-    auto pdp11 = wxGetApp().pdp11Adapter;
+    Pdp11Adapter *pdp11Adapter = wxGetApp().pdp11Adapter;
     uint32_t addr;
     if (!manualExamDepositAddrTextCtrl->GetValue().ToUInt(&addr, 8)) {
         manualExamDepositAddrTextCtrl->SetValue("000000"); // do nothing else
         return;
     }
     addr &= 0x3ffff; // make 18 bit
-    pdp11->singleExam(addr);
+    pdp11Adapter->singleExam(addr);
 }
 
 void MemoryPanel::manualDepositButtonOnButtonClick(wxCommandEvent& event)
 {
     UNREFERENCED_PARAMETER(event);
-    auto pdp11 = wxGetApp().pdp11Adapter;
+    Pdp11Adapter *pdp11Adapter = wxGetApp().pdp11Adapter;
     uint32_t addr;
     if (!manualExamDepositAddrTextCtrl->GetValue().ToUInt(&addr, 8)) {
         manualExamDepositAddrTextCtrl->SetValue("000000"); // do nothing else
@@ -154,62 +154,65 @@ void MemoryPanel::manualDepositButtonOnButtonClick(wxCommandEvent& event)
         manualDepositDataTextCtrl->SetValue("000000"); // do nothing else
         return;
     }
-    pdp11->singleDeposit(addr, (uint16_t)data);
+    pdp11Adapter->singleDeposit(addr, (uint16_t)data);
 }
 
 // click into memroy grid: copy addr&data to manual exam/deposit addr&data
 void MemoryPanel::memoryGridFBOnGridCellLeftClick(wxGridEvent& event)
 {
     UNREFERENCED_PARAMETER(event);
-    auto pdp11 = wxGetApp().pdp11Adapter;
-    pdp11->onMemoryGridClick(&pdp11->memoryGridController, event.GetRow(), event.GetCol());
+    Pdp11Adapter *pdp11Adapter = wxGetApp().pdp11Adapter;
+    pdp11Adapter->onMemoryGridClick(&pdp11Adapter->memoryGridController, event.GetRow(), event.GetCol());
 }
 
 void MemoryPanel::ioPageGridFBOnGridCellLeftClick(wxGridEvent& event)
 {
     UNREFERENCED_PARAMETER(event);
-    auto pdp11 = wxGetApp().pdp11Adapter;
-    pdp11->onMemoryGridClick(&pdp11->ioPageGridController, event.GetRow(), event.GetCol());
+    Pdp11Adapter *pdp11Adapter = wxGetApp().pdp11Adapter;
+    pdp11Adapter->onMemoryGridClick(&pdp11Adapter->ioPageGridController, event.GetRow(), event.GetCol());
 }
 
 void MemoryPanel::memoryGridClearButtonFBOnButtonClick(wxCommandEvent& event)
 {
     UNREFERENCED_PARAMETER(event);
-    auto pdp11 = wxGetApp().pdp11Adapter;
-    pdp11->clearMemoryImage(&pdp11->memoryGridController);
+    Pdp11Adapter *pdp11Adapter = wxGetApp().pdp11Adapter;
+    pdp11Adapter->clearMemoryImage(&pdp11Adapter->memoryGridController);
 }
 
 void MemoryPanel::ioPageGridClearButtonFBOnButtonClick(wxCommandEvent& event)
 {
     UNREFERENCED_PARAMETER(event);
-    auto pdp11 = wxGetApp().pdp11Adapter;
-    pdp11->clearMemoryImage(&pdp11->ioPageGridController);
+    Pdp11Adapter *pdp11Adapter = wxGetApp().pdp11Adapter;
+    pdp11Adapter->clearMemoryImage(&pdp11Adapter->ioPageGridController);
 }
 
 void Pdp1134DataPathPanel::Pdp11DataPathPanelOnPaint(wxPaintEvent& event)
 {
     UNREFERENCED_PARAMETER(event);
-    auto pdp11 = wxGetApp().pdp11Adapter;
-    if (pdp11 == nullptr)
+    Pdp11Adapter *pdp11Adapter = wxGetApp().pdp11Adapter;
+    if (pdp11Adapter == nullptr)
         return;
     // reload image and scale
-    pdp11->paintDocumentAnnotations();
+    pdp11Adapter->paintDocumentAnnotations();
 }
 
 void Pdp1134DataPathPanel::Pdp11DataPathPanelOnSize(wxSizeEvent& event)
 {
     UNREFERENCED_PARAMETER(event);
-    auto pdp11 = wxGetApp().pdp11Adapter;
-    if (pdp11 == nullptr)
+    Pdp11Adapter *pdp11Adapter = wxGetApp().pdp11Adapter;
+    if (pdp11Adapter == nullptr)
         return;
     // reload image and scale
-    pdp11->paintDocumentAnnotations();
+    pdp11Adapter->paintDocumentAnnotations();
 }
 
 
 void TracePanel::traceClearButtonOnButtonClick(wxCommandEvent& event)
 {
     UNREFERENCED_PARAMETER(event);
+    Pdp11Adapter *pdp11Adapter = wxGetApp().pdp11Adapter;
+    pdp11Adapter->traceController.clear();
+//    pdp11Adapter->clearTraceMemoryImage(&pdp11Adapter->ioPageGridController);
 }
 
 void TracePanel::traceToClipboardButtonOnButtonClick(wxCommandEvent& event)

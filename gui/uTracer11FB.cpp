@@ -362,7 +362,7 @@ TracePanelFB::TracePanelFB( wxWindow* parent, wxWindowID id, const wxPoint& pos,
 	traceClearButtonFB = new wxButton( m_panel14, wxID_ANY, wxT("Clear"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer9->Add( traceClearButtonFB, 0, wxALL, 5 );
 
-	traceToClipboardButtonFB = new wxButton( m_panel14, wxID_ANY, wxT("MyButton"), wxDefaultPosition, wxDefaultSize, 0 );
+	traceToClipboardButtonFB = new wxButton( m_panel14, wxID_ANY, wxT("To clipboard"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer9->Add( traceToClipboardButtonFB, 0, wxALL, 5 );
 
 
