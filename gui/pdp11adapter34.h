@@ -18,7 +18,7 @@ public:
 
     // attach/arrange panels generic to all 1134, set directories
     Pdp11uFlowPanel* uFlowPanel = nullptr; // just an empty panel to draw onto
-    //Pdp1134uWordPanel* uWordPanel = nullptr;
+    Pdp1134uWordPanel* uWordPanel = nullptr;
     Pdp1134DataPathPanel* dataPathPanel = nullptr;
     Pdp1134CpuKY11LBStatusPanelFB* ky11StatusPanel = nullptr; 
     virtual void setupGui(wxFileName _resourceDir) override;
@@ -42,6 +42,8 @@ public:
     virtual void evalUnibusCycle(ResponseUnibusCycle* unibusCycle) override;
 
     DocumentPageAnnotations uflowPageAnnotations;
+
+    DocumentPageAnnotations uwordPageAnnotations;
 
     DocumentPageAnnotations datapathPageAnnotations;
 

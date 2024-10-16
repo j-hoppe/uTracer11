@@ -186,6 +186,28 @@ void MemoryPanel::ioPageGridClearButtonFBOnButtonClick(wxCommandEvent& event)
     pdp11Adapter->clearMemoryImage(&pdp11Adapter->ioPageGridController);
 }
 
+
+void Pdp1134uWordPanel::Pdp11uWordPanelOnPaint(wxPaintEvent& event)
+{
+    UNREFERENCED_PARAMETER(event);
+    Pdp11Adapter *pdp11Adapter = wxGetApp().pdp11Adapter;
+    if (pdp11Adapter == nullptr)
+        return;
+    // reload image and scale
+    pdp11Adapter->paintDocumentAnnotations();
+}
+
+void Pdp1134uWordPanel::Pdp11uWordPanelOnSize(wxSizeEvent& event)
+{
+    UNREFERENCED_PARAMETER(event);
+    Pdp11Adapter *pdp11Adapter = wxGetApp().pdp11Adapter;
+    if (pdp11Adapter == nullptr)
+        return;
+    // reload image and scale
+    pdp11Adapter->paintDocumentAnnotations();
+}
+
+
 void Pdp1134DataPathPanel::Pdp11DataPathPanelOnPaint(wxPaintEvent& event)
 {
     UNREFERENCED_PARAMETER(event);

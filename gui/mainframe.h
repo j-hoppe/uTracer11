@@ -53,12 +53,20 @@ public:
     virtual void Pdp11uFlowPanelOnSize(wxSizeEvent& event) override;
 };
 
+class Pdp1134uWordPanel : public Pdp11uWordPanelFB {
+    using Pdp11uWordPanelFB::Pdp11uWordPanelFB;
+public:
+    virtual void Pdp11uWordPanelOnPaint(wxPaintEvent& event) override;
+    virtual void Pdp11uWordPanelOnSize(wxSizeEvent& event) override;
+};
+
 class Pdp1134DataPathPanel : public Pdp11DataPathPanelFB {
     using Pdp11DataPathPanelFB::Pdp11DataPathPanelFB;
 public:
     virtual void Pdp11DataPathPanelOnPaint(wxPaintEvent& event) override;
     virtual void Pdp11DataPathPanelOnSize(wxSizeEvent& event) override;
 };
+
 
 
 #endif // __MAINFRAME_H__

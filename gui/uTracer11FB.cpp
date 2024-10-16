@@ -462,10 +462,18 @@ Pdp11uFlowPanelFB::~Pdp11uFlowPanelFB()
 
 Pdp11uWordPanelFB::Pdp11uWordPanelFB( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style, const wxString& name ) : wxPanel( parent, id, pos, size, style, name )
 {
+
+	// Connect Events
+	this->Connect( wxEVT_PAINT, wxPaintEventHandler( Pdp11uWordPanelFB::Pdp11uWordPanelOnPaint ) );
+	this->Connect( wxEVT_SIZE, wxSizeEventHandler( Pdp11uWordPanelFB::Pdp11uWordPanelOnSize ) );
 }
 
 Pdp11uWordPanelFB::~Pdp11uWordPanelFB()
 {
+	// Disconnect Events
+	this->Disconnect( wxEVT_PAINT, wxPaintEventHandler( Pdp11uWordPanelFB::Pdp11uWordPanelOnPaint ) );
+	this->Disconnect( wxEVT_SIZE, wxSizeEventHandler( Pdp11uWordPanelFB::Pdp11uWordPanelOnSize ) );
+
 }
 
 Pdp1140CpuKM11StatusPanelFB::Pdp1140CpuKM11StatusPanelFB( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style, const wxString& name ) : wxPanel( parent, id, pos, size, style, name )

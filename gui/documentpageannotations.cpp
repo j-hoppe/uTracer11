@@ -441,6 +441,8 @@ wxGraphicsContext* DocumentPageAnnotations::paintScaledImage(wxWindow* window, w
 
 // paint the document page onto a wxPanel, mark with a single annotation
 // error window if not found
+// default page if key not found
+// if per-annotation filename empty: use global default
 void DocumentPageAnnotations::paintScaled(std::string key, wxWindow* window) {
     if (!window->IsShownOnScreen())
         return; // do not paint on hidden panels
@@ -451,9 +453,12 @@ void DocumentPageAnnotations::paintScaled(std::string key, wxWindow* window) {
         paintEmptyPageScaled(window); // no page found for this key
     else {
         double scaleX, scaleY;
-        if (!dpa->imageFileName.IsOk())
+        wxFileName imageFileName = dpa->imageFileName; // try per annotation first
+        if (!imageFileName.IsOk())
+            imageFileName = defaultImageFileName;
+        if (!imageFileName.IsOk())
             wxLogFatalError("paintScaled(keylist): annotation image not defined in XML");
-        wxGraphicsContext* gc = paintScaledImage(window, dpa->imageFileName, &scaleX, &scaleY);
+        wxGraphicsContext* gc = paintScaledImage(window, imageFileName, &scaleX, &scaleY);
         if (gc != nullptr) {
             dpa->paintScaledGeometries(gc, annotationPen, annotationPenAlign, scaleX, scaleY);
             delete gc;

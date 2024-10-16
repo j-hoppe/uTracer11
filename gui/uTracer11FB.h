@@ -217,6 +217,11 @@ class Pdp11uWordPanelFB : public wxPanel
 
 	protected:
 
+		// Virtual event handlers, override them in your derived class
+		virtual void Pdp11uWordPanelOnPaint( wxPaintEvent& event ) { event.Skip(); }
+		virtual void Pdp11uWordPanelOnSize( wxSizeEvent& event ) { event.Skip(); }
+
+
 	public:
 
 		Pdp11uWordPanelFB( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxTAB_TRAVERSAL, const wxString& name = wxEmptyString );

@@ -15,11 +15,12 @@ void Pdp11Adapter34::setupGui(wxFileName _resourceDir) {
     uFlowPanel = new Pdp11uFlowPanel(app->mainFrame->documentsNotebookFB);
     app->mainFrame->documentsNotebookFB->AddPage(uFlowPanel, "11/34 Micro program flow", false);
 
+    uWordPanel = new Pdp1134uWordPanel(app->mainFrame->documentsNotebookFB);
+    app->mainFrame->documentsNotebookFB->AddPage(uWordPanel, "Current micro word", false);
+
     dataPathPanel = new Pdp1134DataPathPanel(app->mainFrame->documentsNotebookFB);
     app->mainFrame->documentsNotebookFB->AddPage(dataPathPanel, "11/34 Data path", false);
 
-    //pdp1134uWordPanel = new Pdp1134uWordPanel(app->mainFrame->documentsNotebookFxWB);
-    //mainFrame->documentsNotebookFxWB->AddPage(pdp1134uWordPanel, "Current micro word", false);
 }
 
 // Set State of control, visibility and functions
@@ -30,14 +31,17 @@ void Pdp11Adapter34::updateGui(State state) {
         break ;
     case State::uMachineRunning:
         uFlowPanel->Disable() ;
+        uWordPanel->Disable() ;
         dataPathPanel->Disable() ;
         break ;
     case State::uMachineManualStepping:
        uFlowPanel->Enable() ;
+        uWordPanel->Enable() ;
         dataPathPanel->Enable() ;
         break ;
     case State::uMachineAutoStepping:
         uFlowPanel->Enable() ;
+        uWordPanel->Enable() ;
         dataPathPanel->Enable() ;
         break ;
     }
@@ -63,6 +67,8 @@ void Pdp11Adapter34::onInit() {
         if (pos != 3)
             wxLogError("Illegal octal key in 11/34 uflow.xml");
     }
+
+	uwordPageAnnotations.loadXml(resourceDir, "mp00082-uword", "mp00082-uword.xml");
 
     datapathPageAnnotations.loadXml(resourceDir, "mp00082-datapath", "mp00082-datapath.xml");
 
@@ -121,10 +127,24 @@ void Pdp11Adapter34::paintDocumentAnnotations() {
 
     // key in the uFlow XML are 3-digit octal values
     std::string key = wxString::Format("%03o", microProgramCounter).ToStdString();
-    uflowPageAnnotations.paintScaled(key, uFlowPanel);
+
+	// uflow: a single geometry for the mpc
+	if (uFlowPanel != nullptr) // startup passed?
+		uflowPageAnnotations.paintScaled(key, uFlowPanel);
+
+	// uword: for each mpc a list of 0s and 1s (48 bit field)
+	// 1. paint "0" or "1" onto certain positions
+	// 2. extract certain bit subfields (eg: 28..31 = SSMUX control)
+	// 		this is the key for a geometry (box around SSMUX table entry)
+	//uwordPageAnnotations.paintScaled(key, uwordPanel);
+
+	// for the moment static image, no geometries
+	if (uWordPanel != nullptr) // startup passed?
+		uwordPageAnnotations.paintScaled("NONE", uWordPanel);
+	
 
     // paint datapath image. Several objects marked
-    // wich are mentioned in current uflow annotaion datafield
+    // which are mentioned in current uflow annotation datafield
     // get datafields for current upc
     auto dpa = uflowPageAnnotations.find(key);
     if (dpa == nullptr)
@@ -135,7 +155,8 @@ void Pdp11Adapter34::paintDocumentAnnotations() {
     //uflowTodataPathKeyPatterns.getKeyListByMatch(upcTextDescription, dataPathKeyList);
     uflowTodataPathKeyPatterns.getKeyListByMatch(dpa->dataFields, dataPathKeyList);
 
-    datapathPageAnnotations.paintScaled(dataPathKeyList, dataPathPanel);
+	if (dataPathPanel != nullptr) // startup passed?
+	    datapathPageAnnotations.paintScaled(dataPathKeyList, dataPathPanel);
 
 }
 

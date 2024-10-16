@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Marks several number positions and table entries in the
+    "PDP-11/34 control word" overview page in FPMS MP00082.
+    All <annotation> are painted onto the same global <imagefile>
+    <key> MUST exist, must be unique
+        is a C-like identifier: "IR",
+        upper/lower case not significant
+        used for referencing by software
+    <label> is the name of an object as printed: "I. R."
+        if <label> not given, label := key
+
+    DUMMY VERSION, NO ANNOTAION DATA SO FAR. USE KEY "NONE"
+-->
+<document>
+   <documenttype>uword</documenttype>
+   <pdp11type>pdp1134</pdp11type>
+   <pen>
+       <align>inside</align> <!--  not much text inside, but arrows on the outside -->
+       <color>#ff0000</color> hide
+       <width>30</width>
+       <alphapercent>25</alphapercent>
+    </pen>
+   <imagefile>
+       MP00082-25.jpg
+    </imagefile>
+    <annotation>
+      <key>NONE</key>
+   </annotation>
+</document>
+

@@ -140,15 +140,16 @@ private:
 
 
 public:
-
+	/*
     // what kind of DEC document is registered here?
     // corresponds to GUI notebook pages
     enum class Type { uflow, uword, datapath };
-    Type type; // not used?
+//    Type type; // not used?
 
     // pdp11 this docu is meant for
     Pdp11Adapter::Type pdp11Type; // not used ?
-
+	*/
+		
     // full path to jpg image,
     // use when all annotations are paintend onto the same image
     wxFileName defaultImageFileName;
@@ -162,8 +163,8 @@ public:
     wxPen annotationPen = wxPen(annotationPenColor, 30, wxPENSTYLE_SOLID);
     enum PenAlign annotationPenAlign = PenAlign::inside;
 
-    // key is a string. numerics must be formated i na standard way to the key
-    // eg: MPC as 3digit octal
+    // key is a string. numerics must be formatted in a standard way to the key
+    // eg: MPC as 3-digit octal
     std::map<std::string, DocumentPageAnnotation> pageAnnotations;
 
     DocumentPageAnnotations();
