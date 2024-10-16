@@ -10,7 +10,7 @@
     <label> is the name of an object as printed: "I. R."
         if <label> not given, label := key
 
-    DUMMY VERSION, NO ANNOTAION DATA SO FAR. USE KEY "NONE"
+    DUMMY VERSION, NO ANNOTATION DATA SO FAR. USE KEY "NONE"
 -->
 <document>
    <documenttype>uword</documenttype>
