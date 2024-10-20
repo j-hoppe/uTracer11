@@ -229,7 +229,7 @@ void Pdp11Simulator34::microStep()
 {
     unsigned nextMpc = 0;
     mcyclecount++ ;
-    // execute the M9312 terminal service:
+    // execute the M9312 terminal loop:
     // 1$: tstb	@#177560
     //	   bpl 1$
     // when macro CPU halted: cycle 000-015-000-....

@@ -190,6 +190,15 @@ void Pdp11Simulator40::onRequestUnibusSignalWrite(RequestUnibusSignalWrite* requ
     respond(response);
 }
 
+// override for locking
+void Pdp11Simulator40::onCpuUnibusCycle(uint8_t c1c0, uint32_t addr, uint16_t data, bool nxm) 
+{
+	if (!microClockEnabled)	
+		console->printf("UNIBUS cycle C1C0=%d addr=%0.6o, data=%0.6o\n", c1c0, addr, data) ;
+	// call base
+	Pdp11Simulator::onCpuUnibusCycle(c1c0, addr, data, nxm) ;
+}
+
 
 
 
@@ -248,7 +257,6 @@ void Pdp11Simulator40::setMicroClockEnable(bool state)
 
 // sets nextMpc
 void Pdp11Simulator40::microStep() {
-
     mcyclecount++ ;
     // execute the M9312 terminal loop:
     // 1$: tstb	@#177560

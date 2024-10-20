@@ -8,7 +8,7 @@
  The actual simulator runs in an main thread.
  Messages to Simulator are created by receiver,
  delivered in a thread-save fifo
- and deleted by caller Simualtor
+ and deleted by caller Simulator
  Messages from simulator
 
  */
