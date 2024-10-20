@@ -144,7 +144,14 @@ void Pdp11Adapter::updateGui(State newState) {
         internalStatePanel->Enable();
         break;
     }
-    wxGetApp().mainFrame->GetSizer()->Layout();
+
+	/* no chance
+	// specific file picker messages
+	auto fileFormatInfo = memoryPanel->memoryFileFormatComboBox->GetStringSelection() ;
+        memoryPanel->memoryLoadFilePickerWxFB->SetMessage("Load memory content from " + fileFormatInfo);
+	*/
+	
+    app->mainFrame->GetSizer()->Layout();
     //infoLabel->GetParent()->Layout() ;
             //tracePanel->GetParent()->Layout() ;
 //			memoryPanel->GetParent()->Layout() ;
@@ -166,6 +173,7 @@ void Pdp11Adapter::onInit() {
     receivedUnibusCycleAfterUstep = false; // wait for UNIBUS capture after ustep
 
     // show empty memory content
+    updateManualMemoryExamData = false ;
     memoryimage.init();
     memoryGridController.rebuild();
     ioPageGridController.rebuild();
@@ -450,6 +458,10 @@ void Pdp11Adapter::doEvalUnibusCycle(ResponseUnibusCycle* unibusCycle)
 
 
     // to memory windows
+	if (updateManualMemoryExamData) {
+		memoryPanel->manualExamDepositDataTextCtrl->SetValue(wxString::Format("%0.6o",  unibusCycle->data));
+		updateManualMemoryExamData = false ;
+		}
     uint32_t wordAddr = unibusCycle->addr & ~1; // dati of odd address is also word acccess
     // update memory state
     if (unibusCycle->nxm)
@@ -498,7 +510,7 @@ void Pdp11Adapter::onMemoryGridClick(MemoryGridController* gridController, unsig
     else addr = gridController->getAddrFromCellCoord(rowIdx, colIdx);
     auto dataText = gridController->grid->GetCellValue(rowIdx, colIdx);
     memoryPanel->manualExamDepositAddrTextCtrl->SetValue(wxString::Format("%06o", addr));
-    memoryPanel->manualDepositDataTextCtrl->SetValue(dataText);
+    memoryPanel->manualExamDepositDataTextCtrl->SetValue(dataText);
 }
 
 // load a MACRO11 .mac or absolute papertape .ptap file into

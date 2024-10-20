@@ -179,8 +179,9 @@ public:
     // 2 grid for memory and iopage
     MemoryGridController memoryGridController;
     MemoryGridController ioPageGridController;
+	bool updateManualMemoryExamData ;// show next UNIBUS data as "EXAM" button response
 
-
+	
     TraceController traceController;
 
 	AutoStepController autoStepController ;

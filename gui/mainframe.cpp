@@ -137,6 +137,7 @@ void MemoryPanel::manualExamButtonOnButtonClick(wxCommandEvent& event)
     }
     addr &= 0x3ffff; // make 18 bit
     pdp11Adapter->singleExam(addr);
+    pdp11Adapter->updateManualMemoryExamData = true ; // next exam data into edit field
 }
 
 void MemoryPanel::manualDepositButtonOnButtonClick(wxCommandEvent& event)
@@ -150,8 +151,8 @@ void MemoryPanel::manualDepositButtonOnButtonClick(wxCommandEvent& event)
     }
     addr &= 0x3ffff; // make 18 bit
     uint32_t data;
-    if (!manualDepositDataTextCtrl->GetValue().ToUInt(&data, 8)) {
-        manualDepositDataTextCtrl->SetValue("000000"); // do nothing else
+    if (!manualExamDepositDataTextCtrl->GetValue().ToUInt(&data, 8)) {
+        manualExamDepositDataTextCtrl->SetValue("000000"); // do nothing else
         return;
     }
     pdp11Adapter->singleDeposit(addr, (uint16_t)data);

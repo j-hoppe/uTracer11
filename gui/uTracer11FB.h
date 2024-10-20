@@ -344,7 +344,7 @@ class MemoryPanelFB : public wxPanel
 		wxButton* depositMemoryButton;
 		wxTextCtrl* manualExamDepositAddrTextCtrl;
 		wxButton* manualExamButton;
-		wxTextCtrl* manualDepositDataTextCtrl;
+		wxTextCtrl* manualExamDepositDataTextCtrl;
 		wxButton* manualDepositButton;
 		wxGrid* memoryGridFB;
 		wxGrid* ioPageGridFB;

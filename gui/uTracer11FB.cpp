@@ -826,11 +826,11 @@ MemoryPanelFB::MemoryPanelFB( wxWindow* parent, wxWindowID id, const wxPoint& po
 	memoryFileFormatComboBox->SetSelection( 1 );
 	bSizer5->Add( memoryFileFormatComboBox, 0, wxALL, 5 );
 
-	m_staticText44 = new wxStaticText( m_panel16, wxID_ANY, wxT("Filename (.mac or .ptap):"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText44 = new wxStaticText( m_panel16, wxID_ANY, wxT("Filename:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText44->Wrap( -1 );
 	bSizer5->Add( m_staticText44, 1, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 
-	memoryLoadFilePickerWxFB = new wxFilePickerCtrl( m_panel16, wxID_ANY, wxEmptyString, wxT("Select a file"), wxT("*.*"), wxDefaultPosition, wxDefaultSize, wxFLP_DEFAULT_STYLE );
+	memoryLoadFilePickerWxFB = new wxFilePickerCtrl( m_panel16, wxID_ANY, wxEmptyString, wxT("Choose file with memory content in selected format"), wxT("*.*"), wxDefaultPosition, wxDefaultSize, wxFLP_DEFAULT_STYLE );
 	bSizer5->Add( memoryLoadFilePickerWxFB, 999, wxALL|wxEXPAND, 5 );
 
 	depositMemoryButton = new wxButton( m_panel16, wxID_ANY, wxT("DEPOSIT"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -878,10 +878,10 @@ MemoryPanelFB::MemoryPanelFB( wxWindow* parent, wxWindowID id, const wxPoint& po
 	m_staticText50->Wrap( -1 );
 	sbSizer9->Add( m_staticText50, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 
-	manualDepositDataTextCtrl = new wxTextCtrl( sbSizer9->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	manualDepositDataTextCtrl->SetToolTip( wxT("16bit octal value only") );
+	manualExamDepositDataTextCtrl = new wxTextCtrl( sbSizer9->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	manualExamDepositDataTextCtrl->SetToolTip( wxT("16bit octal value only") );
 
-	sbSizer9->Add( manualDepositDataTextCtrl, 0, wxALL, 5 );
+	sbSizer9->Add( manualExamDepositDataTextCtrl, 0, wxALL, 5 );
 
 	manualDepositButton = new wxButton( sbSizer9->GetStaticBox(), wxID_ANY, wxT("DEPOSIT"), wxDefaultPosition, wxDefaultSize, 0 );
 	sbSizer9->Add( manualDepositButton, 0, wxALL, 5 );
