@@ -40,13 +40,13 @@ public:
     // member string is converted to a value, member value untouched
     uint64_t getValueFromString() {
         uint64_t result = 0 ;
-        int iDst = 0 ;
+        unsigned i = 0 ; // indexes bits in value
         for (char& c : text) {
             if (c != '0')
                 if (msbFirst)
-                    result |= ( (uint64_t)1 << (bitCount-iDst-1)) ;
-                else result |= ( (uint64_t)1 << iDst) ;
-            iDst++ ;
+                    result |= ( (uint64_t)1 << (bitCount-i-1)) ;
+                else result |= ( (uint64_t)1 << i) ;
+            i++ ;
         }
         return result ;
     }
@@ -55,14 +55,15 @@ public:
     // length of string = bitCount
     std::string getStringFromValue() {
         std::string result(bitCount, '0') ; // enough 0s, now set onyl '1's'
-        for (unsigned i = 0 ; i < bitCount ; i++)
-            if (value & ( (uint64_t)1 << i)) // bit set
+        unsigned i ; // indexes bits in value
+        for (i = 0; i < bitCount; i++) {
+            if (value & ((uint64_t)1 << i)) // bit set?
                 // set '1's 'from left or right
                 if (msbFirst)
-                    result.at(bitCount-i-1) = '1' ;
+                    result.at(bitCount - i - 1) = '1'; // for lower bits set right most '1's
                 else
-                    result.at(i) = '1' ;
-
+                    result.at(i) = '1'; // low bit, low string position
+        }
         return result ;
     }
 } ;
