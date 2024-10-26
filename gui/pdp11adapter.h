@@ -17,6 +17,8 @@ Abstract base class
 
 #include "wx/wx.h"
 #include <vector> // std headers after wx.h, else tons of C4996 strcpy()
+#include <map>
+#include <stdint.h>
 #include "utils.h" // linux/vs macros
 #include "messages.h" // from M93X2 probe project
 #include "memoryimage.h" // UNIBUS memory, clone from QUniBone
@@ -89,11 +91,15 @@ public:
     Pdp11Adapter(); // directory parsed by application
     virtual ~Pdp11Adapter() {}
 
-    // GUI panels, genric for all UNIBUS CPUs
+    // GUI panels, generic for all UNIBUS CPUs
     MemoryPanel* memoryPanel = nullptr;
     TracePanel* tracePanel = nullptr;
     UnibusSignalsPanelFB* unibusSignalsPanel = nullptr;
     InternalStatePanelFB* internalStatePanel = nullptr;
+    Pdp11uFlowPanel* uFlowPanel = nullptr;
+
+	// all have a microword store. long microword upto 64 bits index by mpc.
+	std::map<unsigned, uint64_t>	uControlStore ;
 
     virtual void setupGui(wxFileName _resourceDir);
 	// Set State of control, visibility and functions
@@ -185,6 +191,8 @@ public:
     TraceController traceController;
 
 	AutoStepController autoStepController ;
+
+	void loadControlStore(wxFileName resourcePath, std::string subDir, std::string xmlFileName) ;
 
     void loadMemoryFile(wxFileName path, memory_fileformat_t fileFormat);
     void depositMemoryImage();

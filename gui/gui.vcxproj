@@ -143,6 +143,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\common\binary.h" />
     <ClInclude Include="..\common\memoryimage.h" />
     <ClInclude Include="..\common\messages.h" />
     <ClInclude Include="..\common\pdp1140km11state.h" />

@@ -14,10 +14,12 @@ Abstract base class
 */
 
 
-#include "pdp11adapter.h"
-#include "application.h"
 #include <map> // std headers after wx.h, else tons of C4996 strcpy()
 #include <vector>
+
+#include "binary.h"
+#include "pdp11adapter.h"
+#include "application.h"
 
 #include "pdp11adapter34phys.h"
 #include "pdp11adapter40phys.h"
@@ -26,7 +28,7 @@ Abstract base class
 
 
 // class factory, generate Pdp11 instance by class name via type enum
-static std::map<std::string, enum Pdp11Adapter::Type> typeNames{
+static std::map<std::string, enum Pdp11Adapter::Type> typeNames {
 {"none", Pdp11Adapter::Type::none},
 {"pdp1134phys", Pdp11Adapter::Type::pdp1134phys},
 {"pdp1134sim", Pdp11Adapter::Type::pdp1134sim},
@@ -132,7 +134,7 @@ void Pdp11Adapter::updateGui(State newState) {
     case State::uMachineAutoStepping:
         infoLabel->SetLabel("uMachine AUTO CLOCK");
         infoLabel2->SetLabel("Steps until condition");
-        app->mainFrame->manClockEnableButton->Disable(); 
+        app->mainFrame->manClockEnableButton->Disable();
         app->mainFrame->microStepButton->Disable();
         // when auto stepping, the "Auto Step" button is used to stop
         app->mainFrame->autoStepPanel->Enable();
@@ -145,15 +147,15 @@ void Pdp11Adapter::updateGui(State newState) {
         break;
     }
 
-	/* no chance
-	// specific file picker messages
-	auto fileFormatInfo = memoryPanel->memoryFileFormatComboBox->GetStringSelection() ;
+    /* no chance
+    // specific file picker messages
+    auto fileFormatInfo = memoryPanel->memoryFileFormatComboBox->GetStringSelection() ;
         memoryPanel->memoryLoadFilePickerWxFB->SetMessage("Load memory content from " + fileFormatInfo);
-	*/
-	
+    */
+
     app->mainFrame->GetSizer()->Layout();
     //infoLabel->GetParent()->Layout() ;
-            //tracePanel->GetParent()->Layout() ;
+    //tracePanel->GetParent()->Layout() ;
 //			memoryPanel->GetParent()->Layout() ;
 //	unibusSignalsPanel->GetParent()->Layout() ;
 }
@@ -173,7 +175,7 @@ void Pdp11Adapter::onInit() {
     receivedUnibusCycleAfterUstep = false; // wait for UNIBUS capture after ustep
 
     // show empty memory content
-    updateManualMemoryExamData = false ;
+    updateManualMemoryExamData = false;
     memoryimage.init();
     memoryGridController.rebuild();
     ioPageGridController.rebuild();
@@ -184,8 +186,8 @@ void Pdp11Adapter::onInit() {
 void Pdp11Adapter::onResponseVersion(ResponseVersion* responseVersion) {
     //wxString title = wxString::Format("uTracer11 - %s, connected to %s", pdp11Adapter->getTypeLabel(), messageInterface->name);
     wxString title = wxString::Format("uTracer11 - %s, connected to \"%s\" via %s", getTypeLabel(),
-        responseVersion->version,
-        wxGetApp().messageInterface->name);
+                                      responseVersion->version,
+                                      wxGetApp().messageInterface->name);
     wxGetApp().mainFrame->SetLabel(title);
 }
 
@@ -316,27 +318,27 @@ void Pdp11Adapter::uStepStart() {
 void Pdp11Adapter::uStepComplete(unsigned mpc) {
     traceController.evalUStep(mpc);
     if (state == State::uMachineAutoStepping)
-	    autoStepController.evalUStep(mpc) ;
+        autoStepController.evalUStep(mpc);
 }
 
 
-// this a blocking loop, which keeps the Gui alive 
+// this a blocking loop, which keeps the Gui alive
 // take care of reentrancy for message events!
 void Pdp11Adapter::doAutoStepping(uint32_t stopUpc, int stopUnibusCycle, uint32_t stopUnibusAddress, int stopRepeatCount) {
     UNREFERENCED_PARAMETER(stopUpc);
     UNREFERENCED_PARAMETER(stopUnibusCycle);
     UNREFERENCED_PARAMETER(stopUnibusAddress);
     UNREFERENCED_PARAMETER(stopRepeatCount);
-	wxStaticText *statusText = wxGetApp().mainFrame->autoStepStatusText ;
+    wxStaticText* statusText = wxGetApp().mainFrame->autoStepStatusText;
     //	wxLogFatalError("Abstract Pdp11Adapter::doAutoStepping() called");
     stopAutoStepping = false; // user button signal
 
     // stopUnibusAddress is opcode fetch address
-	autoStepController.init(this, stopUpc, stopUnibusAddress) ;
-	// todo: repeat count?
+    autoStepController.init(this, stopUpc, stopUnibusAddress);
+    // todo: repeat count?
 
     updateGui(State::uMachineAutoStepping);
-	statusText->SetLabel("Stepping ...");
+    statusText->SetLabel("Stepping ...");
 
     // check for "ABORT" button press
     while (!stopAutoStepping && !autoStepController.hasStopped()) {
@@ -345,18 +347,18 @@ void Pdp11Adapter::doAutoStepping(uint32_t stopUpc, int stopUnibusCycle, uint32_
         // or wxApp::ProcessPendingEvents() ?
         // also calls onTimer()
 
-		autoStepController.service() ;
+        autoStepController.service();
     }
     updateGui(State::uMachineManualStepping);
-	if (stopAutoStepping)
-		statusText->SetLabel("Manually stopped");
-	else
-		statusText->SetLabel(autoStepController.stopConditionText);
-			
-	// refresh displays which may have been disabled in autostepMode)
-	doEvalMpc(microProgramCounter) ;
-	if (lastUnibusCycle.isValid())
-		doEvalUnibusCycle(&lastUnibusCycle);
+    if (stopAutoStepping)
+        statusText->SetLabel("Manually stopped");
+    else
+        statusText->SetLabel(autoStepController.stopConditionText);
+
+    // refresh displays which may have been disabled in autostepMode)
+    doEvalMpc(microProgramCounter);
+    if (lastUnibusCycle.isValid())
+        doEvalUnibusCycle(&lastUnibusCycle);
 }
 
 
@@ -365,12 +367,12 @@ void Pdp11Adapter::doAutoStepping(uint32_t stopUpc, int stopUnibusCycle, uint32_
 // called when a new Mpc is received from pdp11
 // MPC changed => new value, => event + display update
 void Pdp11Adapter::doEvalMpc(uint16_t newMpc) {
-        microProgramCounter = newMpc ;
-        doLogEvent("mpc = %0.3o", microProgramCounter);
-        // repaint document pages only on change
-        paintDocumentAnnotations();
-        uStepComplete(microProgramCounter);
-}		
+    microProgramCounter = newMpc;
+    doLogEvent("mpc = %0.3o", microProgramCounter);
+    // repaint document pages only on change
+    paintDocumentAnnotations();
+    uStepComplete(microProgramCounter);
+}
 
 
 // Fill in fields on the Unibus Signal form, which is identical for all PDP-11 models.
@@ -392,14 +394,14 @@ void Pdp11Adapter::doEvalUnibusSignals(ResponseUnibusSignals* unibusSignals)
     s = wxString::Format("%d", unibusSignals->signals.intr);
     panel->unibusSignalIntrText->SetLabel(s);
     s = wxString::Format("%d,%d,%d,%d", unibusSignals->signals.br74 & 1,
-        (unibusSignals->signals.br74 >> 1) & 1,
-        (unibusSignals->signals.br74 >> 2) & 1,
-        (unibusSignals->signals.br74 >> 3) & 1);  //4,5,6,7
+                         (unibusSignals->signals.br74 >> 1) & 1,
+                         (unibusSignals->signals.br74 >> 2) & 1,
+                         (unibusSignals->signals.br74 >> 3) & 1);  //4,5,6,7
     panel->unibusSignalBr4567Text->SetLabel(s);
     s = wxString::Format("%d,%d,%d,%d", unibusSignals->signals.bg74 & 1,
-        (unibusSignals->signals.bg74 >> 1) & 1,
-        (unibusSignals->signals.bg74 >> 2) & 1,
-        (unibusSignals->signals.bg74 >> 3) & 1);  //4,5,6,7
+                         (unibusSignals->signals.bg74 >> 1) & 1,
+                         (unibusSignals->signals.bg74 >> 2) & 1,
+                         (unibusSignals->signals.bg74 >> 3) & 1);  //4,5,6,7
     panel->unibusSignalBg4567Text->SetLabel(s);
     s = wxString::Format("%d", unibusSignals->signals.npr);
     panel->unibusSignalNprText->SetLabel(s);
@@ -438,11 +440,11 @@ void Pdp11Adapter::doLogEvent(const char* format, ...) {
 // msg deleted by framework
 void Pdp11Adapter::doEvalUnibusCycle(ResponseUnibusCycle* unibusCycle)
 {
-	if (unibusCycle == nullptr || !unibusCycle->isValid()) // refresh call  in pure 
-		return ; // doEvalUnibusCycle(lastUnibusCycle) on start
-	
-	// save for display refresh
-	lastUnibusCycle = *unibusCycle ;
+    if (unibusCycle == nullptr || !unibusCycle->isValid()) // refresh call  in pure
+        return; // doEvalUnibusCycle(lastUnibusCycle) on start
+
+    // save for display refresh
+    lastUnibusCycle = *unibusCycle;
 
     // discard highspeed stream of captured bus cycles to prevent overflow of grids
     if (state == State::init || state == State::uMachineRunning)
@@ -458,10 +460,10 @@ void Pdp11Adapter::doEvalUnibusCycle(ResponseUnibusCycle* unibusCycle)
 
 
     // to memory windows
-	if (updateManualMemoryExamData) {
-		memoryPanel->manualExamDepositDataTextCtrl->SetValue(wxString::Format("%0.6o",  unibusCycle->data));
-		updateManualMemoryExamData = false ;
-		}
+    if (updateManualMemoryExamData) {
+        memoryPanel->manualExamDepositDataTextCtrl->SetValue(wxString::Format("%0.6o", unibusCycle->data));
+        updateManualMemoryExamData = false;
+    }
     uint32_t wordAddr = unibusCycle->addr & ~1; // dati of odd address is also word acccess
     // update memory state
     if (unibusCycle->nxm)
@@ -494,8 +496,8 @@ void Pdp11Adapter::doEvalUnibusCycle(ResponseUnibusCycle* unibusCycle)
         }
         unibusCycle->requested = true; // anyhow
         traceController.evalUnibusCycle(unibusCycle);
-		if (state == State::uMachineAutoStepping)
-			autoStepController.evalUnibusCycle(unibusCycle);
+        if (state == State::uMachineAutoStepping)
+            autoStepController.evalUnibusCycle(unibusCycle);
         receivedUnibusCycleAfterUstep = true;  // ignore following user EXAM/DEPOSITs
     }
 }
@@ -512,6 +514,56 @@ void Pdp11Adapter::onMemoryGridClick(MemoryGridController* gridController, unsig
     memoryPanel->manualExamDepositAddrTextCtrl->SetValue(wxString::Format("%06o", addr));
     memoryPanel->manualExamDepositDataTextCtrl->SetValue(dataText);
 }
+
+/* load XML into uControlstore
+   mpc octal, bits bianry MSB first
+<microword>
+  <mpc>777</mpc>
+ <bits>000000111100101110000000101000010000000000000000</bits> // msb first
+</microword>
+*/
+void Pdp11Adapter::loadControlStore(wxFileName resourcePath, std::string subDir, std::string xmlFileName) {
+	wxFileName path = resourcePath ;
+    path.SetFullName(xmlFileName);
+    path.AppendDir(subDir);
+
+    wxXmlDocument doc;
+    if (!doc.Load(path.GetAbsolutePath())) {
+        auto errormsg = wxString::Format(" XML file %s could not be opened", path.GetAbsolutePath());
+        wxMessageBox(errormsg, "File error", wxICON_ERROR);
+        wxLogError(errormsg);// gui not yet open
+        abort();
+        return;
+    }
+    wxLogInfo("%s opened", path.GetAbsolutePath());
+    uControlStore.clear();
+
+    // iterate all <microword>
+    wxXmlNode* rootChild = doc.GetRoot()->GetChildren();
+    while (rootChild) {
+        if (rootChild->GetName().IsSameAs("microword", false)) {
+            wxXmlNode* microwordChild = rootChild->GetChildren();
+
+            std::string mpcText, bitsText; // init empty
+            while (microwordChild) {
+                // now inside <microword>
+                auto val = microwordChild->GetNodeContent().Trim(false).Trim(true);
+                if (microwordChild->GetName().IsSameAs("mpc", false))
+                    mpcText = val;
+                else if (microwordChild->GetName().IsSameAs("bits", false))
+                    bitsText = val;
+                microwordChild = microwordChild->GetNext();
+            }
+            // now have mpc and bits text
+            unsigned mpc = std::stoi(mpcText, nullptr, 8);
+			// controlword string -> value
+			BinaryString bs(bitsText,/*msb first */true);
+            uControlStore.insert(std::pair<unsigned, uint64_t>(mpc, bs.value));
+        }
+        rootChild = rootChild->GetNext();
+    }
+}
+
 
 // load a MACRO11 .mac or absolute papertape .ptap file into
 // memory buffer, then deposit to PDP11 via messages

@@ -3,6 +3,8 @@
 
 #include "pdp11adapter34.h"
 
+#include "binary.h"
+
 #include "application.h" // to reach pdp11 via wxGetApp().pdp11
 #include "messages.h" // to reach pdp11 via wxGetApp().pdp11
 
@@ -57,6 +59,8 @@ void Pdp11Adapter34::onInit() {
     // generate messages to init gui, until first status updates comes in
     auto cpuSignals = ResponseKY11LBSignals(0, 0, 0, 0, 0);
     cpuSignals.process(); // calls virtual onRcvMessageFromPdp11() and updates GUI
+
+	loadControlStore(resourceDir, ".", "m8266-ucontrolstore.xml");
 
     uflowPageAnnotations.loadXml(resourceDir, "mp00082-uflow", "mp00082-uflow.xml");
     // Check xml: key is 3 digit octal value

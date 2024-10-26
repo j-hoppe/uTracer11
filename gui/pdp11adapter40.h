@@ -19,7 +19,6 @@ public:
 	virtual ~Pdp11Adapter40() override {}
 
     // attach/arrange panels, set directories
-    Pdp11uFlowPanel* uFlowPanel = nullptr;
     Pdp1140CpuKM11StatusPanelFB* km11StatusPanel = nullptr;
     virtual void setupGui(wxFileName _resourceDir) override;
 	virtual void updateGui(State state) override;
