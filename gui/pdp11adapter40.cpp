@@ -20,7 +20,7 @@ void Pdp11Adapter40::setupGui(wxFileName _resourceDir) {
     //dataPathPanel = new Pdp1134DataPathPanel(app->mainFrame->documentsNotebookFB);
     //app->mainFrame->documentsNotebookFB->AddPage(dataPathPanel, "11/34 Data path", false);
 
-    //pdp1134uWordPanel = new Pdp1134uWordPanel(app->mainFrame->documentsNotebookFxWB);
+    //pdp1134uWordPanel = new Pdp1134ControlwordPanel(app->mainFrame->documentsNotebookFxWB);
     //mainFrame->documentsNotebookFxWB->AddPage(pdp1134uWordPanel, "Current micro word", false);
 }
 

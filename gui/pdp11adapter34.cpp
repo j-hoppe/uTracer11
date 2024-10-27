@@ -17,8 +17,8 @@ void Pdp11Adapter34::setupGui(wxFileName _resourceDir) {
     uFlowPanel = new Pdp11uFlowPanel(app->mainFrame->documentsNotebookFB);
     app->mainFrame->documentsNotebookFB->AddPage(uFlowPanel, "11/34 Micro program flow", false);
 
-    uWordPanel = new Pdp1134uWordPanel(app->mainFrame->documentsNotebookFB);
-    app->mainFrame->documentsNotebookFB->AddPage(uWordPanel, "Current micro word", false);
+    controlwordPanel = new Pdp1134ControlwordPanel(app->mainFrame->documentsNotebookFB);
+    app->mainFrame->documentsNotebookFB->AddPage(controlwordPanel, "Current micro word", false);
 
     dataPathPanel = new Pdp1134DataPathPanel(app->mainFrame->documentsNotebookFB);
     app->mainFrame->documentsNotebookFB->AddPage(dataPathPanel, "11/34 Data path", false);
@@ -27,28 +27,28 @@ void Pdp11Adapter34::setupGui(wxFileName _resourceDir) {
 
 // Set State of control, visibility and functions
 void Pdp11Adapter34::updateGui(State state) {
-    switch(state) {
+    switch (state) {
     case State::init:
         return;
-        break ;
+        break;
     case State::uMachineRunning:
-        uFlowPanel->Disable() ;
-        uWordPanel->Disable() ;
-        dataPathPanel->Disable() ;
-        break ;
+        uFlowPanel->Disable();
+        controlwordPanel->Disable();
+        dataPathPanel->Disable();
+        break;
     case State::uMachineManualStepping:
-       uFlowPanel->Enable() ;
-        uWordPanel->Enable() ;
-        dataPathPanel->Enable() ;
-        break ;
+        uFlowPanel->Enable();
+        controlwordPanel->Enable();
+        dataPathPanel->Enable();
+        break;
     case State::uMachineAutoStepping:
-        uFlowPanel->Enable() ;
-        uWordPanel->Enable() ;
-        dataPathPanel->Enable() ;
-        break ;
+        uFlowPanel->Enable();
+        controlwordPanel->Enable();
+        dataPathPanel->Enable();
+        break;
     }
- //   uFlowPanel->GetParent()->Layout() ;
-//    dataPathPanel->GetParent()->Layout() ;
+    //   uFlowPanel->GetParent()->Layout() ;
+   //    dataPathPanel->GetParent()->Layout() ;
     Pdp11Adapter::updateGui(state); // base
 }
 
@@ -60,7 +60,31 @@ void Pdp11Adapter34::onInit() {
     auto cpuSignals = ResponseKY11LBSignals(0, 0, 0, 0, 0);
     cpuSignals.process(); // calls virtual onRcvMessageFromPdp11() and updates GUI
 
-	loadControlStore(resourceDir, ".", "m8266-ucontrolstore.xml");
+    // setup bit fields. fieldnames like markers in XML! 
+    controlWordFields = {
+    ControlWordField(0,8,"0","NEXT_MPC_ADDRESS"),
+    ControlWordField(9,11,"0","MISCELLANEOUS_CONTROL"),
+    ControlWordField(12,12,"0","DATA_TRAN"),
+    ControlWordField(13,14,"0","BUS_CONTROL"),
+    ControlWordField(15,15,"0","ENAB_MAINT"),
+    ControlWordField(16,16,"0","LOAD_BAR"),
+    ControlWordField(17,17,"1","LONG_CYCLE_L"),
+    ControlWordField(18,18,"0","AUX_CONTROL"),
+    ControlWordField(19,23,"00101","ALU,BLEG_CONTROL"),
+    ControlWordField(24,27,"0000","B,BX,OVX,DBE_CONTROL"),
+    ControlWordField(28,29,"00","SSMUX_CONTROL"),
+    ControlWordField(30,31,"01","AMUX_CONTROL"),
+    ControlWordField(32,35,"0000","BUT_BITS"),
+    ControlWordField(36,37,"00","SPA_SRC_SEL"),
+    ControlWordField(38,39,"11","SPA_DST_SEL"),
+    ControlWordField(40,40,"1","FORCE_RS_V_1_L"),
+    ControlWordField(41,41,"1","PREVIOUS_MODE_L"),
+    ControlWordField(42,42,"0","BUT_SERVICE"),
+    ControlWordField(43,43,"0","FORCE_KERNEL"),
+    ControlWordField(44,47,"0000","ROM_SPA")
+    };
+
+    loadControlStore(resourceDir, ".", "m8266-controlstore.xml");
 
     uflowPageAnnotations.loadXml(resourceDir, "mp00082-uflow", "mp00082-uflow.xml");
     // Check xml: key is 3 digit octal value
@@ -72,7 +96,7 @@ void Pdp11Adapter34::onInit() {
             wxLogError("Illegal octal key in 11/34 uflow.xml");
     }
 
-	uwordPageAnnotations.loadXml(resourceDir, "mp00082-uword", "mp00082-uword.xml");
+    controlwordPageAnnotations.loadXml(resourceDir, "mp00082-controlword", "mp00082-controlword.xml");
 
     datapathPageAnnotations.loadXml(resourceDir, "mp00082-datapath", "mp00082-datapath.xml");
 
@@ -94,17 +118,17 @@ void Pdp11Adapter34::onInit() {
 // called periodically
 void Pdp11Adapter34::onTimer(unsigned periodMs) {
     timerUnprocessedMs += periodMs;
-    bool pollSlow = (timerUnprocessedMs > 500) ;
+    bool pollSlow = (timerUnprocessedMs > 500);
     if (pollSlow)
         timerUnprocessedMs -= 500;
 
     // do not pollSlow data when pdp11 is running at own speed
     if (state == State::init || state == State::uMachineRunning)
-        pollSlow = false ;
+        pollSlow = false;
 
     if (pollSlow) {
-		// update ever 500ms new UNIBUS line status and mpc
-		//
+        // update ever 500ms new UNIBUS line status and mpc
+        //
         // TODO: which signals are suppressed if not in single ustep mode?
         // which do you want to see "dancing" while CPU is running in real time?
         // request KY11 & unibussignals
@@ -114,8 +138,8 @@ void Pdp11Adapter34::onTimer(unsigned periodMs) {
         auto reqUnibus = new RequestUnibusSignalsRead();
         wxGetApp().messageInterface->xmtRequest(reqUnibus); // send+delete
 
-		bool updateCpuStateVars = (state == State::uMachineManualStepping) || (state == State::uMachineAutoStepping) ;
-        if (updateCpuStateVars  && cpuStateVars.size() > 0) {
+        bool updateCpuStateVars = (state == State::uMachineManualStepping) || (state == State::uMachineAutoStepping);
+        if (updateCpuStateVars && cpuStateVars.size() > 0) {
             // singlestepping: the pdp11 publishes its internal state, update it
             auto reqState = new RequestStateVal();
             wxGetApp().messageInterface->xmtRequest(reqState); // send+delete
@@ -123,6 +147,48 @@ void Pdp11Adapter34::onTimer(unsigned periodMs) {
     }
 }
 
+
+// annotate the control word page. 
+// key = 3 digit mpc
+void Pdp11Adapter34::paintMicroStoreDocumentAnnotations(std::string key) {
+    // skip before startup and if not visible
+    if (controlwordPanel == nullptr || !controlwordPanel->IsShownOnScreen())
+        return;
+
+    // uword: for each mpc a list of 0s and 1s (48 bit field)
+    // 1. paint "0" or "1" onto certain positions
+    // 2. extract certain bit subfields (eg: 28..31 = SSMUX control)
+    // 		this is the key for a geometry (box around SSMUX table entry)
+    //controlwordPageAnnotations.paintScaled(key, uwordPanel);
+
+    // for the moment static image, no geometries
+
+    std::vector<std::string> keyList =
+    { "BIT.00", "BIT.24", "BIT.47", "FIELDLABEL.NEXT_MPC_ADDRESS", "FIELDVALUE.ROM_SPA.0000" };
+
+    controlwordPageAnnotations.paintScaled(keyList, controlwordPanel);
+}
+
+// paint datapath image. Several objects marked
+// which are mentioned in current uflow annotation datafield
+// get datafields for current upc
+// key = 3 digit mpc
+void Pdp11Adapter34::paintDatapathDocumentAnnotations(std::string key) {
+    // skip before startup and if not visible
+    if (dataPathPanel == nullptr || !dataPathPanel->IsShownOnScreen())
+        return;
+
+    auto dpa = uflowPageAnnotations.find(key);
+    if (dpa == nullptr)
+        return; // "file not found" display, no data for upc
+    // get objects to mark
+    //std::string upcTextDescription = dpa->dataFields[uflowMicroInstructionDataFieldIndex]; // 3rd field on upc box drawing
+    std::vector<std::string> keyList;
+    //uflowTodataPathKeyPatterns.getKeyListByMatch(upcTextDescription, keyList);
+    uflowTodataPathKeyPatterns.getKeyListByMatch(dpa->dataFields, keyList);
+
+    datapathPageAnnotations.paintScaled(keyList, dataPathPanel);
+}
 
 // called on microProgramCounter change or by mainframe on resize, notebook page flip
 // paint all of the uflow, uword or datapath images
@@ -132,41 +198,13 @@ void Pdp11Adapter34::paintDocumentAnnotations() {
     // key in the uFlow XML are 3-digit octal values
     std::string key = wxString::Format("%03o", microProgramCounter).ToStdString();
 
-	// uflow: a single geometry for the mpc
-	if (uFlowPanel != nullptr) // startup passed?
-		uflowPageAnnotations.paintScaled(key, uFlowPanel);
+    // uflow: a single geometry for the mpc
+    if (uFlowPanel != nullptr) // startup passed?
+        uflowPageAnnotations.paintScaled(key, uFlowPanel);
 
-	// uword: for each mpc a list of 0s and 1s (48 bit field)
-	// 1. paint "0" or "1" onto certain positions
-	// 2. extract certain bit subfields (eg: 28..31 = SSMUX control)
-	// 		this is the key for a geometry (box around SSMUX table entry)
-	//uwordPageAnnotations.paintScaled(key, uwordPanel);
+    paintMicroStoreDocumentAnnotations(key);
 
-	// for the moment static image, no geometries
-	
-    std::vector<std::string> uWordKeyList = 
-    { "BIT.00", "BIT.24", "BIT.47", "FIELDLABEL.NEXT_MPC_ADDRESS", "FIELDVALUE.ROM_SPA.0000"} ;
-	if (uWordPanel != nullptr  && uWordPanel->IsShownOnScreen()) // startup passed?
-		uwordPageAnnotations.paintScaled(uWordKeyList, uWordPanel);
-	
-//		uwordPageAnnotations.paintScaled("000", uWordPanel);
-	
-
-    // paint datapath image. Several objects marked
-    // which are mentioned in current uflow annotation datafield
-    // get datafields for current upc
-    auto dpa = uflowPageAnnotations.find(key);
-    if (dpa == nullptr)
-        return; // "file not found" display, no data for upc
-    // get objects to mark
-    //std::string upcTextDescription = dpa->dataFields[uflowMicroInstructionDataFieldIndex]; // 3rd field on upc box drawing
-    std::vector<std::string> dataPathKeyList;
-    //uflowTodataPathKeyPatterns.getKeyListByMatch(upcTextDescription, dataPathKeyList);
-    uflowTodataPathKeyPatterns.getKeyListByMatch(dpa->dataFields, dataPathKeyList);
-
-	if (dataPathPanel != nullptr) // startup passed?
-	    datapathPageAnnotations.paintScaled(dataPathKeyList, dataPathPanel);
-
+    paintDatapathDocumentAnnotations(key);
 }
 
 void Pdp11Adapter34::setManClkEnable(bool _manClkEnable)
@@ -233,7 +271,7 @@ void Pdp11Adapter34::onResponseKY11LBSignals(ResponseKY11LBSignals* ky11Signals)
     ky11Signals->mpc &= 0x1ff; // strip off bit 10, to 0..511
     if (microProgramCounter != ky11Signals->mpc) {
         // MPC changed => new value, => event + display update
-        doEvalMpc(ky11Signals->mpc) ;
+        doEvalMpc(ky11Signals->mpc);
     }
 }
 

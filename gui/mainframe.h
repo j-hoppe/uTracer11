@@ -53,7 +53,7 @@ public:
     virtual void Pdp11uFlowPanelOnSize(wxSizeEvent& event) override;
 };
 
-class Pdp1134uWordPanel : public Pdp11uWordPanelFB {
+class Pdp1134ControlwordPanel : public Pdp11uWordPanelFB {
     using Pdp11uWordPanelFB::Pdp11uWordPanelFB;
 public:
     virtual void Pdp11uWordPanelOnPaint(wxPaintEvent& event) override;

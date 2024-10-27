@@ -27,20 +27,43 @@ Abstract base class
 #include "autostepcontroller.h"
 #include "mainframe.h"
 
+
+// describes one bit sub field in the micro code control word bit array
+// example: pdp11/34 has a 48 bit width field
+class ControlWordField {
+public:
+    unsigned bitFrom ; //
+    unsigned bitTo ;
+    wxString normalValueText ; // unprocessed string from DEC doc for "normal" values
+    wxString fieldLabel ; // like in XMLs, used for optical annotation 
+
+	ControlWordField(unsigned _bitFrom, unsigned _bitTo, wxString _normalValueText, wxString _fieldLabel):
+			bitFrom(_bitFrom), bitTo(_bitTo), normalValueText(_normalValueText), fieldLabel(_fieldLabel) {}
+
+    unsigned extract(uint64_t controlword) {
+        unsigned result=0;
+        unsigned iDst, iSrc ;
+        for (iDst=0, iSrc=bitFrom ; iSrc <= bitTo ; iDst++, iSrc++)
+            if ( (controlword & ((uint64_t)1  << iSrc)) )
+                result |= 1 << iDst ;
+        return result ;
+    }
+} ;
+
 class Pdp11Adapter {
 public:
-		// State controls function of GUI elements
-	enum class State {
-		init, // while starting
-		uMachineRunning, // PDP11 executing under own control
-		uMachineManualStepping, // micro steps by manual button press
-		uMachineAutoStepping // multiple steps until breakpoint
-	} ;
-	State state ;
+    // State controls function of GUI elements
+    enum class State {
+        init, // while starting
+        uMachineRunning, // PDP11 executing under own control
+        uMachineManualStepping, // micro steps by manual button press
+        uMachineAutoStepping // multiple steps until breakpoint
+    } ;
+    State state ;
 
-	static const uint16_t InvalidMpc = 0xffff ;
-	static const uint32_t InvalidUnibusAddress = 0x7fffffff ;
-		
+    static const uint16_t InvalidMpc = 0xffff ;
+    static const uint32_t InvalidUnibusAddress = 0x7fffffff ;
+
 
 protected:
     unsigned timerUnprocessedMs; // helper to reduce onTimer() frequency
@@ -77,13 +100,15 @@ public:
         return 0;
     }
 
-	// mirrored state of PDP-11 under test
+    std::string version ;
+
     wxFileName resourceDir; // absolute root path for images and OCRed data
 
-	std::string version ;
+    // bit segments in the control word
+    std::vector<ControlWordField> controlWordFields ;
 
-    memoryimage_c   memoryimage; // buffer for 256KB
-    codelabel_map_c codelabels;
+    memoryimage_c   memoryimage; // buffer for 256KB RAM
+    codelabel_map_c codelabels; // for disas
 
     std::vector<MessagesStateVar> cpuStateVars; // internal simualtor vars, if any
 
@@ -98,19 +123,19 @@ public:
     InternalStatePanelFB* internalStatePanel = nullptr;
     Pdp11uFlowPanel* uFlowPanel = nullptr;
 
-	// all have a microword store. long microword upto 64 bits index by mpc.
-	std::map<unsigned, uint64_t>	uControlStore ;
+    // all have a micro code control store. long controlword upto 64 bits index by mpc.
+    std::map<unsigned, uint64_t>	uControlStore ;
 
     virtual void setupGui(wxFileName _resourceDir);
-	// Set State of control, visibility and functions
-	virtual void updateGui(enum State newState) ;
+    // Set State of control, visibility and functions
+    virtual void updateGui(enum State newState) ;
 
     virtual void onInit();
 
     void onResponseVersion(ResponseVersion* responseVersion);
 
-	void evalInternalStateDefinition(ResponseStateDef *responseStateDef) ;
-	void evalInternalStateValues(ResponseStateVals *responseStateVals) ;
+    void evalInternalStateDefinition(ResponseStateDef *responseStateDef) ;
+    void evalInternalStateValues(ResponseStateVals *responseStateVals) ;
 
     virtual void onTimer(unsigned periodMs) {
         UNREFERENCED_PARAMETER(periodMs) ;
@@ -151,7 +176,7 @@ public:
 
     void uStepComplete(unsigned mpc);
 
-	volatile bool stopAutoStepping;
+    volatile bool stopAutoStepping;
     void doAutoStepping(uint32_t stopUpc, int stopUnibusCycle, uint32_t stopUnibusAddress, int stopRepeatCount) ;
 
     virtual void onResponseKM11Signals(ResponseKM11Signals* km11Signals) {
@@ -163,7 +188,7 @@ public:
         wxLogFatalError("Abstract Pdp11::onResponseKY11LBSignals() called");
     }
 
-	void doEvalMpc(uint16_t newMpc) ;
+    void doEvalMpc(uint16_t newMpc) ;
 
     // all UNIBUS update send to same base Form
     void doEvalUnibusSignals(ResponseUnibusSignals* unibusSignals);
@@ -174,7 +199,7 @@ public:
     }
 
     void doLogEvent(const char* format, ...);
-	ResponseUnibusCycle lastUnibusCycle;
+    ResponseUnibusCycle lastUnibusCycle;
     void doEvalUnibusCycle(ResponseUnibusCycle* unibusCycle);
 
     virtual void evalUnibusCycle(ResponseUnibusCycle* unibusCycle) {
@@ -185,14 +210,14 @@ public:
     // 2 grid for memory and iopage
     MemoryGridController memoryGridController;
     MemoryGridController ioPageGridController;
-	bool updateManualMemoryExamData ;// show next UNIBUS data as "EXAM" button response
+    bool updateManualMemoryExamData ;// show next UNIBUS data as "EXAM" button response
 
-	
+
     TraceController traceController;
 
-	AutoStepController autoStepController ;
+    AutoStepController autoStepController ;
 
-	void loadControlStore(wxFileName resourcePath, std::string subDir, std::string xmlFileName) ;
+    void loadControlStore(wxFileName resourcePath, std::string subDir, std::string xmlFileName) ;
 
     void loadMemoryFile(wxFileName path, memory_fileformat_t fileFormat);
     void depositMemoryImage();

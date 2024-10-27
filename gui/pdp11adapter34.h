@@ -17,7 +17,7 @@ public:
     virtual ~Pdp11Adapter34() override {}
 
     // attach/arrange panels generic to all 1134, set directories
-    Pdp1134uWordPanel* uWordPanel = nullptr;
+    Pdp1134ControlwordPanel* controlwordPanel = nullptr;
     Pdp1134DataPathPanel* dataPathPanel = nullptr;
     Pdp1134CpuKY11LBStatusPanelFB* ky11StatusPanel = nullptr; 
     virtual void setupGui(wxFileName _resourceDir) override;
@@ -32,6 +32,8 @@ public:
     virtual void uStep() override;
     //virtual void doAutoStepping(uint32_t stopUpc, int stopUnibusCycle, uint32_t stopUnibusAddress, int stopRepeatCount) override;
 
+	void paintMicroStoreDocumentAnnotations(std::string key) ;
+	void paintDatapathDocumentAnnotations(std::string key) ;
     virtual void paintDocumentAnnotations() override;
 
     virtual void onResponseKM11Signals(ResponseKM11Signals* km11Signals) override;
@@ -42,7 +44,7 @@ public:
 
     DocumentPageAnnotations uflowPageAnnotations;
 
-    DocumentPageAnnotations uwordPageAnnotations;
+    DocumentPageAnnotations controlwordPageAnnotations;
 
     DocumentPageAnnotations datapathPageAnnotations;
 

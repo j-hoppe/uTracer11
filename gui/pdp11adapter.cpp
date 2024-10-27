@@ -516,11 +516,11 @@ void Pdp11Adapter::onMemoryGridClick(MemoryGridController* gridController, unsig
 }
 
 /* load XML into uControlstore
-   mpc octal, bits bianry MSB first
-<microword>
-  <mpc>777</mpc>
- <bits>000000111100101110000000101000010000000000000000</bits> // msb first
-</microword>
+   mpc octal, bits binary MSB first
+   <controlword>
+     <mpc>777</mpc>
+     <bits>000000111100101110000000101000010000000000000000</bits> // msb first
+   </controlword>
 */
 void Pdp11Adapter::loadControlStore(wxFileName resourcePath, std::string subDir, std::string xmlFileName) {
 	wxFileName path = resourcePath ;
@@ -538,21 +538,21 @@ void Pdp11Adapter::loadControlStore(wxFileName resourcePath, std::string subDir,
     wxLogInfo("%s opened", path.GetAbsolutePath());
     uControlStore.clear();
 
-    // iterate all <microword>
+    // iterate all <controlword>
     wxXmlNode* rootChild = doc.GetRoot()->GetChildren();
     while (rootChild) {
-        if (rootChild->GetName().IsSameAs("microword", false)) {
-            wxXmlNode* microwordChild = rootChild->GetChildren();
+        if (rootChild->GetName().IsSameAs("controlword", false)) {
+            wxXmlNode* controlwordChild = rootChild->GetChildren();
 
             std::string mpcText, bitsText; // init empty
-            while (microwordChild) {
-                // now inside <microword>
-                auto val = microwordChild->GetNodeContent().Trim(false).Trim(true);
-                if (microwordChild->GetName().IsSameAs("mpc", false))
+            while (controlwordChild) {
+                // now inside <controlword>
+                auto val = controlwordChild->GetNodeContent().Trim(false).Trim(true);
+                if (controlwordChild->GetName().IsSameAs("mpc", false))
                     mpcText = val;
-                else if (microwordChild->GetName().IsSameAs("bits", false))
+                else if (controlwordChild->GetName().IsSameAs("bits", false))
                     bitsText = val;
-                microwordChild = microwordChild->GetNext();
+                controlwordChild = controlwordChild->GetNext();
             }
             // now have mpc and bits text
             unsigned mpc = std::stoi(mpcText, nullptr, 8);

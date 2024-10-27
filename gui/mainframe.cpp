@@ -188,7 +188,7 @@ void MemoryPanel::ioPageGridClearButtonFBOnButtonClick(wxCommandEvent& event)
 }
 
 
-void Pdp1134uWordPanel::Pdp11uWordPanelOnPaint(wxPaintEvent& event)
+void Pdp1134ControlwordPanel::Pdp11uWordPanelOnPaint(wxPaintEvent& event)
 {
     UNREFERENCED_PARAMETER(event);
     Pdp11Adapter* pdp11Adapter = wxGetApp().pdp11Adapter;
@@ -198,7 +198,7 @@ void Pdp1134uWordPanel::Pdp11uWordPanelOnPaint(wxPaintEvent& event)
     pdp11Adapter->paintDocumentAnnotations();
 }
 
-void Pdp1134uWordPanel::Pdp11uWordPanelOnSize(wxSizeEvent& event)
+void Pdp1134ControlwordPanel::Pdp11uWordPanelOnSize(wxSizeEvent& event)
 {
     UNREFERENCED_PARAMETER(event);
     Pdp11Adapter* pdp11Adapter = wxGetApp().pdp11Adapter;
