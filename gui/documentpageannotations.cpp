@@ -131,6 +131,74 @@ void DocumentPageAnnotationPolyLine::dump()
 }
 
 
+// parse bounding box. "x0,y0, x1,y1, ..."
+void DocumentPageAnnotationText::parse(std::string text)
+{
+    // comma list to string vector
+    std::stringstream ss(text);
+    std::vector<std::string> list;
+    while (ss.good()) {
+        std::string substr;
+        getline(ss, substr, ',');
+        list.push_back(substr);
+    }
+    // val is x0,y0,x1,y1
+    x0 = std::stoi(list[0]);
+    y0 = std::stoi(list[1]);
+    x1 = std::stoi(list[2]);
+    y1 = std::stoi(list[3]);
+}
+
+std::string DocumentPageAnnotationText::render() {
+    std::stringstream ss;
+    ss << x0 << "," << y0 << "," << x1 << "," << y1;
+    return ss.str();
+}
+
+
+// paint the "text" scaled into the bounding box, with borders
+void DocumentPageAnnotationText::paintScaled(double scaleX, double scaleY, wxGraphicsContext* gc, wxFont font, wxColour color) {
+    wxCoord boxScaledX0 = round(scaleX * x0); // wxCoord is int
+    wxCoord boxScaledY0 = round(scaleY * y0);
+    wxCoord boxScaledWidth = round(scaleX * (x1 - x0));
+    wxCoord boxScaledHeight = round(scaleY * (y1 - y0));
+
+    // adapt font size. 1 pixel border, even if scaled down
+    int border = 1;
+    int requiredTextHeight = boxScaledHeight - 2 * border;
+    if (requiredTextHeight < 2)
+        requiredTextHeight = 2; // no negatives
+    wxSize pixelSize = { 0, requiredTextHeight };
+    font.SetPixelSize(pixelSize);
+    gc->SetFont(font, color);
+    // measure space required
+    wxDouble textWidth, textHeight, textDescend, textExternalLeading;
+    gc->GetTextExtent(text, &textWidth, &textHeight, &textDescend, &textExternalLeading);
+    // horizontal alignment... how long would the text be?
+    wxDouble textHorizontalOffset = 0;
+    switch (wxALIGN_CENTRE) {
+    case wxALIGN_LEFT:
+        textHorizontalOffset = border;
+        break;
+    case wxALIGN_CENTRE:
+        textHorizontalOffset = ((boxScaledWidth - 2 * border) - textWidth) / 2;
+        break;
+    case wxALIGN_RIGHT:
+        textHorizontalOffset = (boxScaledWidth - 2 * border) - textWidth;
+        break;
+    }
+    wxDouble textX0 = boxScaledX0 + textHorizontalOffset;
+    wxDouble textY0 = boxScaledY0;
+    gc->DrawText(text, textX0, textY0);
+}
+
+
+void DocumentPageAnnotationText::dump() {
+    wxLogInfo("rectangle(%s)", render());
+}
+
+
+
 DocumentPageAnnotation::DocumentPageAnnotation() {
 }
 
