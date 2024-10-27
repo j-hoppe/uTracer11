@@ -143,8 +143,13 @@ void Pdp11Adapter34::paintDocumentAnnotations() {
 	//uwordPageAnnotations.paintScaled(key, uwordPanel);
 
 	// for the moment static image, no geometries
-	if (uWordPanel != nullptr) // startup passed?
-		uwordPageAnnotations.paintScaled("NONE", uWordPanel);
+	
+    std::vector<std::string> uWordKeyList = { "BIT.00", "BIT.24", "BIT.47", 
+    	"FIELDLABEL.NEXT_MPC_ADDRESS", "FIELDVALUE.ROM_SPA.0000"} ;
+	if (uWordPanel != nullptr  && uWordPanel->IsShownOnScreen()) // startup passed?
+		uwordPageAnnotations.paintScaled(uWordKeyList, uWordPanel);
+	
+//		uwordPageAnnotations.paintScaled("000", uWordPanel);
 	
 
     // paint datapath image. Several objects marked

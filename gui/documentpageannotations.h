@@ -58,12 +58,10 @@ public:
         return "";
     }
 
-    virtual void paintScaled(double scaleX, double scaleY, wxGraphicsContext* gc, wxPen* pen, enum PenAlign penAlign) {
+    virtual void paintScaled(double scaleX, double scaleY, wxGraphicsContext* gc) {
         UNREFERENCED_PARAMETER(scaleX);
         UNREFERENCED_PARAMETER(scaleY);
         UNREFERENCED_PARAMETER(gc);
-        UNREFERENCED_PARAMETER(pen);
-        UNREFERENCED_PARAMETER(penAlign);
         wxLogError("paintScaled() called for base class");
     }
     virtual void dump() {
@@ -74,16 +72,21 @@ public:
 // draw a rectangle (line width and color by global wxDC::pen)
 class DocumentPageAnnotationRectangle : public DocumentPageAnnotationGeometry {
 public:
+    wxPen pen;
+    enum PenAlign penAlign;
     int x0 = 0, y0 = 0, x1 = 0, y1 = 0; // 2 corners
     void parse(std::string text) override;
     std::string render() override;
-    void paintScaled(double scaleX, double scaleY, wxGraphicsContext* gc, wxPen* pen, enum PenAlign penAlign) override;
+    void paintScaled(double scaleX, double scaleY, wxGraphicsContext* gc) override;
     void dump() override;
 };
 
 // global pen
 class DocumentPageAnnotationPolyLine : public DocumentPageAnnotationGeometry {
 public:
+    wxPen pen;
+    enum PenAlign penAlign;
+
     wxPoint2DDouble* points;
     unsigned pointCount;
 
@@ -93,23 +96,29 @@ public:
     }
     void parse(std::string text) override;
     std::string render() override;
-    void paintScaled(double scaleX, double scaleY, wxGraphicsContext* gc, wxPen* pen, enum PenAlign penAlign) override;
+    void paintScaled(double scaleX, double scaleY, wxGraphicsContext* gc) override;
     void dump() override;
 };
 
-// global font
+// a text field is also geometry, an annotation can have multiple
 class DocumentPageAnnotationText : public DocumentPageAnnotationGeometry {
 public:
+    wxFont font;
+    wxColour fontColor;
+
     wxString text;
     int x0 = 0, y0 = 0, x1 = 0, y1 = 0; // 2 corners of bounding box
     void parse(std::string text) override;
     std::string render() override;
-    void paintScaled(double scaleX, double scaleY, wxGraphicsContext* gc, wxFont font, wxColour color);
+    void paintScaled(double scaleX, double scaleY, wxGraphicsContext* gc);
     void dump() override;
 };
 
 // a single annotation in a single document page,
 // with all geometries to be painted over the image
+
+class DocumentPageAnnotations;
+
 class DocumentPageAnnotation {
 private:
     // persistent helper wxImage with jpeg handler, causes memory leak?!
@@ -131,13 +140,13 @@ public:
 
     DocumentPageAnnotation();
 
-    void parseGeometryFromNode(wxXmlNode* node);
+    void parseGeometryFromNode(wxXmlNode* node, DocumentPageAnnotations* parent);
     void parseDatafieldFromNode(wxXmlNode* node, unsigned idx);
 
-    void parseFromNode(wxXmlNode* node, wxString xmlFileDirectory);
+    void parseFromNode(wxXmlNode* node, DocumentPageAnnotations* parent, wxString xmlFileDirectory);
 
     // dc and size are that of a wxPanel,
-    void paintScaledGeometries(wxGraphicsContext* gc, wxPen pen, PenAlign penAlign, double scaleX, double scaleY);
+    void paintScaledGeometries(wxGraphicsContext* gc, double scaleX, double scaleY);
 };
 
 // all pages and possible annotations for a scanned DEC document
@@ -176,13 +185,13 @@ public:
     wxFileName emptyPageFileName;
 
     // red half tranparent, width 30 for big unscaled 4000*2500 scans (
-    const wxColour annotationPenColorDefault = wxColour(255, 0, 0, 127);// wxALPHA_OPAQUE);
-    wxPen annotationPen = wxPen(annotationPenColorDefault, 30, wxPENSTYLE_SOLID);
-    enum PenAlign annotationPenAlign = PenAlign::inside;
+    const wxColour geometryPenColorDefault = wxColour(255, 0, 0, 127);// wxALPHA_OPAQUE);
+    wxPen geometryPen = wxPen(geometryPenColorDefault, 30, wxPENSTYLE_SOLID);
+    enum PenAlign geometryPenAlign = PenAlign::inside;
 
-    wxFont annotationFont = wxFont(wxFontInfo(12).FaceName("Helvetica").Italic()); // to start with
-    const wxColour annotationFontColorDefault = wxColour(255, 0, 0, 127);// wxALPHA_OPAQUE);
-    wxColour annotationFontColor = annotationFontColorDefault;
+    wxFont geometryFont = wxFont(wxFontInfo(12).FaceName("Helvetica").Italic()); // to start with
+    const wxColour geometryFontColorDefault = wxColour(255, 0, 0, 127);// wxALPHA_OPAQUE);
+    wxColour geometryFontColor = geometryFontColorDefault;
 
     // key is a string. numerics must be formatted in a standard way to the key
     // eg: MPC as 3-digit octal

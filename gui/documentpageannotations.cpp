@@ -14,14 +14,18 @@
 
 // pen width already scaled
 // ! NO Error Window in OnPaint ... recursion!
-void DocumentPageAnnotationRectangle::paintScaled(double scaleX, double scaleY, wxGraphicsContext* gc, wxPen* pen, enum PenAlign penAlign)
+void DocumentPageAnnotationRectangle::paintScaled(double scaleX, double scaleY, wxGraphicsContext* gc)
 {
+    wxPen scaledPen = pen ;
+    double scaleLineWidth = std::max(scaleX, scaleY); // scale line width with image
+    scaledPen.SetWidth(pen.GetWidth() * scaleLineWidth);
+
     wxCoord scaledX0 = round(scaleX * x0); // wxCoord is int
     wxCoord scaledY0 = round(scaleY * y0);
     wxCoord scaledWidth = round(scaleX * (x1 - x0));
     wxCoord scaledHeight = round(scaleY * (y1 - y0));
 
-    int lineWidth = pen->GetWidth();
+    int lineWidth = scaledPen.GetWidth();
     switch (penAlign) {
     case PenAlign::inside:
         // draw rectangle into inner side of box
@@ -39,7 +43,7 @@ void DocumentPageAnnotationRectangle::paintScaled(double scaleX, double scaleY, 
         break;
     }
 
-    gc->SetPen(*pen);
+    gc->SetPen(scaledPen);
     gc->DrawRectangle(scaledX0, scaledY0, scaledWidth, scaledHeight);
 }
 
@@ -110,8 +114,12 @@ std::string DocumentPageAnnotationPolyLine::render()
 
 
 
-void DocumentPageAnnotationPolyLine::paintScaled(double scaleX, double scaleY, wxGraphicsContext* gc, wxPen* pen, PenAlign penAlign)
+void DocumentPageAnnotationPolyLine::paintScaled(double scaleX, double scaleY, wxGraphicsContext* gc)
 {
+    wxPen scaledPen = pen ;
+    double scaleLineWidth = std::max(scaleX, scaleY); // scale line width with image
+    scaledPen.SetWidth(pen.GetWidth() * scaleLineWidth);
+
     UNREFERENCED_PARAMETER(penAlign);
     wxPoint2DDouble* scaledPoints;
     scaledPoints = new wxPoint2DDouble[pointCount];
@@ -119,7 +127,7 @@ void DocumentPageAnnotationPolyLine::paintScaled(double scaleX, double scaleY, w
         scaledPoints[i].m_x = points[i].m_x * scaleX;
         scaledPoints[i].m_y = points[i].m_y * scaleY;
     }
-    gc->SetPen(*pen);
+    gc->SetPen(scaledPen);
     // gc->DrawLines() draws a closed polygon under Ubuntu. On Win10 it's like wxDC.drawLines() not closing.
     gc->StrokeLines(pointCount, scaledPoints);
     delete[] scaledPoints;
@@ -157,7 +165,7 @@ std::string DocumentPageAnnotationText::render() {
 
 
 // paint the "text" scaled into the bounding box, with borders
-void DocumentPageAnnotationText::paintScaled(double scaleX, double scaleY, wxGraphicsContext* gc, wxFont font, wxColour color) {
+void DocumentPageAnnotationText::paintScaled(double scaleX, double scaleY, wxGraphicsContext* gc) {
     wxCoord boxScaledX0 = round(scaleX * x0); // wxCoord is int
     wxCoord boxScaledY0 = round(scaleY * y0);
     wxCoord boxScaledWidth = round(scaleX * (x1 - x0));
@@ -170,7 +178,7 @@ void DocumentPageAnnotationText::paintScaled(double scaleX, double scaleY, wxGra
         requiredTextHeight = 2; // no negatives
     wxSize pixelSize = { 0, requiredTextHeight };
     font.SetPixelSize(pixelSize);
-    gc->SetFont(font, color);
+    gc->SetFont(font, fontColor);
     // measure space required
     wxDouble textWidth, textHeight, textDescend, textExternalLeading;
     gc->GetTextExtent(text, &textWidth, &textHeight, &textDescend, &textExternalLeading);
@@ -203,20 +211,32 @@ DocumentPageAnnotation::DocumentPageAnnotation() {
 }
 
 
-// node is the <geometry>
-void DocumentPageAnnotation::parseGeometryFromNode(wxXmlNode* node) {
+// node is the <geometry>, parent given defualt pen and font
+void DocumentPageAnnotation::parseGeometryFromNode(wxXmlNode* node, DocumentPageAnnotations* parent) {
     wxXmlNode* child = node->GetChildren();
     while (child) {
         wxString val = child->GetNodeContent().Trim(false).Trim(true);
         if (child->GetName().IsSameAs("rectangle", false)) {
-            auto geom = new DocumentPageAnnotationRectangle();// not free'd on exit .. doesn't matter
+            DocumentPageAnnotationRectangle* geom = new DocumentPageAnnotationRectangle();// not free'd on exit .. doesn't matter
+            geom->pen = parent->geometryPen;
+            geom->penAlign = parent->geometryPenAlign;
             geom->parse(val.ToStdString());
             geometries.push_back(geom);
         }
         else if (child->GetName().IsSameAs("line", false)) {
             // val is x0,y0,x1,y1,...
-            auto geom = new DocumentPageAnnotationPolyLine(); // not free'd on exit .. doesn't matter
+            DocumentPageAnnotationPolyLine* geom = new DocumentPageAnnotationPolyLine(); // not free'd on exit .. doesn't matter
+            geom->pen = parent->geometryPen;
+            geom->penAlign = parent->geometryPenAlign;
             geom->parse(val.ToStdString());
+            geometries.push_back(geom);
+        }
+        else if (child->GetName().IsSameAs("text", false)) {
+            // val is x0,y0,x1,y1,...
+            DocumentPageAnnotationText* geom = new DocumentPageAnnotationText(); // not free'd on exit .. doesn't matter
+            geom->font = parent->geometryFont;
+            geom->fontColor = parent->geometryFontColor;
+            geom->parse(val.ToStdString()); // bounding box
             geometries.push_back(geom);
         }
         else
@@ -245,8 +265,8 @@ void DocumentPageAnnotation::parseDatafieldFromNode(wxXmlNode* node, unsigned id
     dataFields.at(idx) = multiLine; // save in vector
 }
 
-// node is the <Annotation>
-void DocumentPageAnnotation::parseFromNode(wxXmlNode* node, wxString xmlFileDirectory)
+// node is the <Annotation>, parent gives global pen and font
+void DocumentPageAnnotation::parseFromNode(wxXmlNode* node, DocumentPageAnnotations* parent, wxString xmlFileDirectory)
 {
     wxXmlNode* child = node->GetChildren();
     while (child) {
@@ -266,7 +286,7 @@ void DocumentPageAnnotation::parseFromNode(wxXmlNode* node, wxString xmlFileDire
         }
         else if (child->GetName().IsSameAs("geometry", false)) {
             // auto geometry = DocumentPageAnnotation();
-            parseGeometryFromNode(child);
+            parseGeometryFromNode(child, parent);
         }
         else if (child->GetName().IsSameAs("datafield1", false))
             parseDatafieldFromNode(child, 0);
@@ -344,12 +364,9 @@ void DocumentPageAnnotation::paintScaled(wxWindow* window, wxPen pen) {
 // 2nd step: point geometries over the already painted image on an wxWindow
 // one annotation can draw its geometries over the image of anoter annotation
 // ! NO Error Window in OnPaint ... recursion!
-void DocumentPageAnnotation::paintScaledGeometries(wxGraphicsContext* gc, wxPen pen, PenAlign penAlign, double scaleX, double scaleY) {
-    double scaleLineWidth = std::max(scaleX, scaleY); // scale line width with image
-    pen.SetWidth(pen.GetWidth() * scaleLineWidth);
-
+void DocumentPageAnnotation::paintScaledGeometries(wxGraphicsContext* gc, double scaleX, double scaleY) {
     for (auto itGeom = geometries.begin(); itGeom != geometries.end(); itGeom++) {
-        (*itGeom)->paintScaled(scaleX, scaleY, gc, &pen, penAlign);
+        (*itGeom)->paintScaled(scaleX, scaleY, gc);
     }
 }
 
@@ -514,16 +531,16 @@ void DocumentPageAnnotations::loadXml(wxFileName resourcePath, std::string subDi
             defaultImageFileName = wxFileName(fullFilename);
         }
         else if (node->GetName().IsSameAs("pen", false)) {
-            parsePenFromNode(&annotationPen, &annotationPenAlign, node);
+            parsePenFromNode(&geometryPen, &geometryPenAlign, node);
             //wxLogDebug("node->GetName()=%s", node->GetName());
         }
         else if (node->GetName().IsSameAs("font", false)) {
-            parseFontFromNode(&annotationFont, &annotationFontColor, node);
+            parseFontFromNode(&geometryFont, &geometryFontColor, node);
             //wxLogDebug("node->GetName()=%s", node->GetName());
         }
         else if (node->GetName().IsSameAs("annotation", false)) {
             auto dpa = DocumentPageAnnotation();
-            dpa.parseFromNode(node, path.GetPath()); // dir of xml file
+            dpa.parseFromNode(node, this, path.GetPath()); // dir of xml file
             pageAnnotations[dpa.key] = dpa; // allocate & store
         }
         node = node->GetNext();
@@ -611,7 +628,7 @@ void DocumentPageAnnotations::paintScaled(std::string key, wxWindow* window) {
             wxLogFatalError("paintScaled(keylist): annotation image not defined in XML");
         wxGraphicsContext* gc = paintScaledImage(window, imageFileName, &scaleX, &scaleY);
         if (gc != nullptr) {
-            dpa->paintScaledGeometries(gc, annotationPen, annotationPenAlign, scaleX, scaleY);
+            dpa->paintScaledGeometries(gc, scaleX, scaleY);
             delete gc;
         }
     }
@@ -640,7 +657,7 @@ void DocumentPageAnnotations::paintScaled(std::vector<std::string>& keyList, wxW
         auto dpa = find(*itKey);
         assert(dpa != nullptr); // already checked: key points to valid annotation
         // wxLogDebug("paintScaled(keylist): painting key %s, label=%s", *itKey, dpa->displayLabel);
-        dpa->paintScaledGeometries(gc, annotationPen, annotationPenAlign, scaleX, scaleY);
+        dpa->paintScaledGeometries(gc, scaleX, scaleY);
     }
     //#endif
     delete gc;
