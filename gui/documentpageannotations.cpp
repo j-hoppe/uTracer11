@@ -112,7 +112,7 @@ std::string DocumentPageAnnotationPolyLine::render()
 
 void DocumentPageAnnotationPolyLine::paintScaled(double scaleX, double scaleY, wxGraphicsContext* gc, wxPen* pen, PenAlign penAlign)
 {
-	UNREFERENCED_PARAMETER(penAlign);
+    UNREFERENCED_PARAMETER(penAlign);
     wxPoint2DDouble* scaledPoints;
     scaledPoints = new wxPoint2DDouble[pointCount];
     for (unsigned i = 0; i < pointCount; i++) {
@@ -120,7 +120,7 @@ void DocumentPageAnnotationPolyLine::paintScaled(double scaleX, double scaleY, w
         scaledPoints[i].m_y = points[i].m_y * scaleY;
     }
     gc->SetPen(*pen);
-	// gc->DrawLines() draws a closed polygon under Ubuntu. On Win10 it's like wxDC.drawLines() not closing.
+    // gc->DrawLines() draws a closed polygon under Ubuntu. On Win10 it's like wxDC.drawLines() not closing.
     gc->StrokeLines(pointCount, scaledPoints);
     delete[] scaledPoints;
 }
@@ -297,7 +297,7 @@ DocumentPageAnnotations::DocumentPageAnnotations() {
     <alphapercent>25 </alphapercent>
   </pen>
 */
-void DocumentPageAnnotations::parseFromNode(wxPen* pen, enum PenAlign* penAlign, wxXmlNode* node) {
+void DocumentPageAnnotations::parsePenFromNode(wxPen* pen, enum PenAlign* penAlign, wxXmlNode* node) {
     wxString colorText = "#000000";
     long width = 5;
     double alpha = 128; // 0..255
@@ -328,6 +328,85 @@ void DocumentPageAnnotations::parseFromNode(wxPen* pen, enum PenAlign* penAlign,
     pen->SetColour(color);
     pen->SetWidth(width);
 }
+
+/* parse
+  <font>
+    <color>#00ff00</color>
+    <family>Courier New</family>   //
+    <weight>Courier New</weight>
+    <pixelHeight>30 </pixelHeight>
+    <alphapercent>25 </alphapercent>
+  </font>
+*/
+// calss tables
+std::map<wxString, enum wxFontFamily> DocumentPageAnnotations::fontFamilyMap = {
+    { "DEFAULT", wxFONTFAMILY_DEFAULT },
+    { "DECORATIVE", wxFONTFAMILY_DECORATIVE	},
+    { "ROMAN ", wxFONTFAMILY_ROMAN  },
+    { "SCRIPT", wxFONTFAMILY_SCRIPT	},
+    { "SWISS", wxFONTFAMILY_SWISS  },
+    { "MODERN", wxFONTFAMILY_MODERN	},
+    { "TELETYPE", wxFONTFAMILY_TELETYPE	}
+};
+
+std::map<wxString, enum wxFontWeight> DocumentPageAnnotations::fontWeightMap = {
+    { "THIN", wxFONTWEIGHT_THIN  },
+    { "EXTRALIGHT", wxFONTWEIGHT_EXTRALIGHT },
+    { "LIGHT", wxFONTWEIGHT_LIGHT },
+    { "NORMAL", wxFONTWEIGHT_NORMAL },
+    { "MEDIUM", wxFONTWEIGHT_MEDIUM },
+    { "SEMIBOLD", wxFONTWEIGHT_SEMIBOLD },
+    { "BOLD", wxFONTWEIGHT_BOLD },
+    { "EXTRABOLD", wxFONTWEIGHT_EXTRABOLD },
+    { "HEAVY", wxFONTWEIGHT_HEAVY },
+    { "EXTRAHEAVY", wxFONTWEIGHT_EXTRAHEAVY }
+};
+
+
+void DocumentPageAnnotations::parseFontFromNode(wxFont* font, wxColour* color, wxXmlNode* node) {
+    wxString colorText = "#000000";
+    // implement only some properties for now
+    wxString familyText = "SWISS"; // see enum wxFontFamily
+    wxString weightText = "NORMAL"; // see enum wxFontWeight
+    //int	pixelHeight = 11 ; // height of chars in pixel
+    double alpha = 128; // 0..255
+    wxXmlNode* child = node->GetChildren();
+    while (child) {
+        wxString val = child->GetNodeContent().Trim(false).Trim(true);
+        if (child->GetName().IsSameAs("color", false)) {
+            colorText = val;
+        }
+        else if (child->GetName().IsSameAs("family", false)) {
+            familyText = val.MakeUpper(); // map key
+        }
+        else if (child->GetName().IsSameAs("weight", false)) {
+            weightText = val.MakeUpper(); // map key
+        }
+        else if (child->GetName().IsSameAs("alphapercent", false)) {
+            val.ToDouble(&alpha);
+            alpha = alpha * 255 / 100; // 0..100 -> 0..255
+            if (alpha < 0) alpha = 0;
+            if (alpha > 255) alpha = 255;
+        }
+        child = child->GetNext();
+    }
+    *color = wxColour(colorText);
+    *color = wxColour(color->Red(), color->Green(), color->Blue(), alpha);
+
+    enum wxFontFamily family = wxFONTFAMILY_DEFAULT;
+    if (fontFamilyMap.count(familyText) == 0)
+        wxLogError("Unknown font family \"%s\"", familyText);
+    else
+        family = fontFamilyMap.at(familyText);
+    enum wxFontWeight weight = wxFONTWEIGHT_NORMAL;
+    if (fontWeightMap.count(weightText) == 0)
+        wxLogError("Unknown font weight \"%s\"", weightText);
+    else
+        weight = fontWeightMap.at(weightText);
+    font->SetFamily(family);
+    font->SetWeight(weight);
+}
+
 
 
 // call like "...resources\pdp1134", "MP00082", "filename.xml"
@@ -367,7 +446,11 @@ void DocumentPageAnnotations::loadXml(wxFileName resourcePath, std::string subDi
             defaultImageFileName = wxFileName(fullFilename);
         }
         else if (node->GetName().IsSameAs("pen", false)) {
-            parseFromNode(&annotationPen, &annotationPenAlign, node);
+            parsePenFromNode(&annotationPen, &annotationPenAlign, node);
+            //wxLogDebug("node->GetName()=%s", node->GetName());
+        }
+        else if (node->GetName().IsSameAs("font", false)) {
+            parseFontFromNode(&annotationFont, &annotationFontColor, node);
             //wxLogDebug("node->GetName()=%s", node->GetName());
         }
         else if (node->GetName().IsSameAs("annotation", false)) {
@@ -423,8 +506,8 @@ wxGraphicsContext* DocumentPageAnnotations::paintScaledImage(wxWindow* window, w
         return nullptr;
     }
     //    jpegImage.Clear();
-        //return;
-        // paint the document scan
+    //return;
+    // paint the document scan
     wxSize orgImageSize = jpegImage.GetSize();  // image size before rescale
     jpegImage.Rescale(dcSize.x, dcSize.y, wxIMAGE_QUALITY_HIGH); // BOX_AVERAGE on reduction
     auto bmp = wxBitmap(jpegImage); // wxImage->wxBitmap

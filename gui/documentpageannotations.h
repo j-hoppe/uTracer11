@@ -50,7 +50,7 @@ public:
     static DocumentPageAnnotationGeometry* load(wxXmlNode* xmlNode);
     // paint to wxDC of a scaledImage/Bitmap, and scale all coordinates by factors
     virtual void parse(std::string text) {
-        UNREFERENCED_PARAMETER(text) ;
+        UNREFERENCED_PARAMETER(text);
         wxLogError("parse() called for base class");
     }
     virtual std::string render() {
@@ -59,10 +59,10 @@ public:
     }
 
     virtual void paintScaled(double scaleX, double scaleY, wxGraphicsContext* gc, wxPen* pen, enum PenAlign penAlign) {
-        UNREFERENCED_PARAMETER(scaleX) ;
-        UNREFERENCED_PARAMETER(scaleY) ;
-        UNREFERENCED_PARAMETER(gc) ;
-        UNREFERENCED_PARAMETER(pen) ;
+        UNREFERENCED_PARAMETER(scaleX);
+        UNREFERENCED_PARAMETER(scaleY);
+        UNREFERENCED_PARAMETER(gc);
+        UNREFERENCED_PARAMETER(pen);
         UNREFERENCED_PARAMETER(penAlign);
         wxLogError("paintScaled() called for base class");
     }
@@ -71,7 +71,7 @@ public:
     }
 };
 
-// draw a rectangle (line width and color by wxDC::pen)
+// draw a rectangle (line width and color by global wxDC::pen)
 class DocumentPageAnnotationRectangle : public DocumentPageAnnotationGeometry {
 public:
     int x0 = 0, y0 = 0, x1 = 0, y1 = 0; // 2 corners
@@ -81,6 +81,7 @@ public:
     void dump() override;
 };
 
+// global pen
 class DocumentPageAnnotationPolyLine : public DocumentPageAnnotationGeometry {
 public:
     wxPoint2DDouble* points;
@@ -96,6 +97,16 @@ public:
     void dump() override;
 };
 
+// global font
+class DocumentPageAnnotationText : public DocumentPageAnnotationGeometry {
+public:
+    wxString text;
+    int x0 = 0, y0 = 0, x1 = 0, y1 = 0; // 2 corners of bounding box
+    void parse(std::string text) override;
+    std::string render() override;
+    void paintScaled(double scaleX, double scaleY, wxGraphicsContext* gc, wxFont* font) override;
+    void dump() override;
+};
 
 // a single annotation in a single document page,
 // with all geometries to be painted over the image
@@ -132,15 +143,21 @@ public:
 // all pages and possible annotations for a scanned DEC document
 class DocumentPageAnnotations {
 
+    // class tables for parsing
+    static std::map<wxString, enum wxFontFamily> fontFamilyMap;
+    static std::map<wxString, enum wxFontWeight> fontWeightMap;
+
+
 private:
     // persistent helper wxImage, memory leak?
     //wxImage jpegImage;
 
-    void parseFromNode(wxPen* pen, enum PenAlign* penAlign, wxXmlNode* node);
+    void parsePenFromNode(wxPen* pen, enum PenAlign* penAlign, wxXmlNode* node);
+    void parseFontFromNode(wxFont* font, wxColour* color, wxXmlNode* node);
 
 
 public:
-	/*
+    /*
     // what kind of DEC document is registered here?
     // corresponds to GUI notebook pages
     enum class Type { uflow, uword, datapath };
@@ -148,8 +165,8 @@ public:
 
     // pdp11 this docu is meant for
     Pdp11Adapter::Type pdp11Type; // not used ?
-	*/
-		
+    */
+
     // full path to jpg image,
     // use when all annotations are paintend onto the same image
     wxFileName defaultImageFileName;
@@ -159,9 +176,13 @@ public:
     wxFileName emptyPageFileName;
 
     // red half tranparent, width 30 for big unscaled 4000*2500 scans (
-    wxColour annotationPenColor = wxColour(255, 0, 0, 127);// wxALPHA_OPAQUE);
-    wxPen annotationPen = wxPen(annotationPenColor, 30, wxPENSTYLE_SOLID);
+    const wxColour annotationPenColorDefault = wxColour(255, 0, 0, 127);// wxALPHA_OPAQUE);
+    wxPen annotationPen = wxPen(annotationPenColorDefault, 30, wxPENSTYLE_SOLID);
     enum PenAlign annotationPenAlign = PenAlign::inside;
+
+    wxFont annotationFont = wxFont(wxFontInfo(12).FaceName("Helvetica").Italic()); // to start with
+    const wxColour annotationFontColorDefault = wxColour(255, 0, 0, 127);// wxALPHA_OPAQUE);
+    wxColour annotationFontColor = annotationFontColorDefault;
 
     // key is a string. numerics must be formatted in a standard way to the key
     // eg: MPC as 3-digit octal
