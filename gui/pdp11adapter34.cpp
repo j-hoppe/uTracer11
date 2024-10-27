@@ -60,28 +60,31 @@ void Pdp11Adapter34::onInit() {
     auto cpuSignals = ResponseKY11LBSignals(0, 0, 0, 0, 0);
     cpuSignals.process(); // calls virtual onRcvMessageFromPdp11() and updates GUI
 
-    // setup bit fields. fieldnames like markers in XML! 
+// convert "LSB-first" bianry string to value
+#define LSB1ST(s) (BinaryString((s), /*msbfirst*/false).value)
+
+    // setup bit fields. "noraml" string liek in DECc doc, lsb 1st, fieldnames like markers in XML! 
     controlWordFields = {
-    ControlWordField(0,8,"0","NEXT_MPC_ADDRESS"),
-    ControlWordField(9,11,"0","MISCELLANEOUS_CONTROL"),
-    ControlWordField(12,12,"0","DATA_TRAN"),
-    ControlWordField(13,14,"0","BUS_CONTROL"),
-    ControlWordField(15,15,"0","ENAB_MAINT"),
-    ControlWordField(16,16,"0","LOAD_BAR"),
-    ControlWordField(17,17,"1","LONG_CYCLE_L"),
-    ControlWordField(18,18,"0","AUX_CONTROL"),
-    ControlWordField(19,23,"00101","ALU,BLEG_CONTROL"),
-    ControlWordField(24,27,"0000","B,BX,OVX,DBE_CONTROL"),
-    ControlWordField(28,29,"00","SSMUX_CONTROL"),
-    ControlWordField(30,31,"01","AMUX_CONTROL"),
-    ControlWordField(32,35,"0000","BUT_BITS"),
-    ControlWordField(36,37,"00","SPA_SRC_SEL"),
-    ControlWordField(38,39,"11","SPA_DST_SEL"),
-    ControlWordField(40,40,"1","FORCE_RS_V_1_L"),
-    ControlWordField(41,41,"1","PREVIOUS_MODE_L"),
-    ControlWordField(42,42,"0","BUT_SERVICE"),
-    ControlWordField(43,43,"0","FORCE_KERNEL"),
-    ControlWordField(44,47,"0000","ROM_SPA")
+    ControlWordField(0, 8, LSB1ST("0"), "NEXT_MPC_ADDRESS"),
+    ControlWordField(9, 11, LSB1ST("0"), "MISCELLANEOUS_CONTROL"),
+    ControlWordField(12 ,12, LSB1ST("0"), "DATA_TRAN"),
+    ControlWordField(13, 14, LSB1ST("0"), "BUS_CONTROL"),
+    ControlWordField(15, 15, LSB1ST("0"), "ENAB_MAINT"),
+    ControlWordField(16, 16, LSB1ST("0"), "LOAD_BAR"),
+    ControlWordField(17, 17, LSB1ST("1"), "LONG_CYCLE_L"),
+    ControlWordField(18, 18, LSB1ST("0"), "AUX_CONTROL"),
+    ControlWordField(19, 23, LSB1ST("00101"), "ALU,BLEG_CONTROL"),
+    ControlWordField(24, 27, LSB1ST("0000"), "B,BX,OVX,DBE_CONTROL"),
+    ControlWordField(28, 29, LSB1ST("00"), "SSMUX_CONTROL"),
+    ControlWordField(30, 31, LSB1ST("01"), "AMUX_CONTROL"),
+    ControlWordField(32, 35, LSB1ST("0000"), "BUT_BITS"),
+    ControlWordField(36, 37, LSB1ST("00"), "SPA_SRC_SEL"),
+    ControlWordField(38, 39, LSB1ST("11"), "SPA_DST_SEL"),
+    ControlWordField(40, 40, LSB1ST("1"), "FORCE_RS_V_1_L"),
+    ControlWordField(41, 41, LSB1ST("1"), "PREVIOUS_MODE_L"),
+    ControlWordField(42, 42, LSB1ST("0"), "BUT_SERVICE"),
+    ControlWordField(43, 43, LSB1ST("0"), "FORCE_KERNEL"),
+    ControlWordField(44, 47, LSB1ST("0000"), "ROM_SPA")
     };
 
     loadControlStore(resourceDir, ".", "m8266-controlstore.xml");

@@ -28,7 +28,7 @@ Abstract base class
 
 
 // class factory, generate Pdp11 instance by class name via type enum
-static std::map<std::string, enum Pdp11Adapter::Type> typeNames {
+static std::map<std::string, enum Pdp11Adapter::Type> typeNames{
 {"none", Pdp11Adapter::Type::none},
 {"pdp1134phys", Pdp11Adapter::Type::pdp1134phys},
 {"pdp1134sim", Pdp11Adapter::Type::pdp1134sim},
@@ -186,8 +186,8 @@ void Pdp11Adapter::onInit() {
 void Pdp11Adapter::onResponseVersion(ResponseVersion* responseVersion) {
     //wxString title = wxString::Format("uTracer11 - %s, connected to %s", pdp11Adapter->getTypeLabel(), messageInterface->name);
     wxString title = wxString::Format("uTracer11 - %s, connected to \"%s\" via %s", getTypeLabel(),
-                                      responseVersion->version,
-                                      wxGetApp().messageInterface->name);
+        responseVersion->version,
+        wxGetApp().messageInterface->name);
     wxGetApp().mainFrame->SetLabel(title);
 }
 
@@ -394,14 +394,14 @@ void Pdp11Adapter::doEvalUnibusSignals(ResponseUnibusSignals* unibusSignals)
     s = wxString::Format("%d", unibusSignals->signals.intr);
     panel->unibusSignalIntrText->SetLabel(s);
     s = wxString::Format("%d,%d,%d,%d", unibusSignals->signals.br74 & 1,
-                         (unibusSignals->signals.br74 >> 1) & 1,
-                         (unibusSignals->signals.br74 >> 2) & 1,
-                         (unibusSignals->signals.br74 >> 3) & 1);  //4,5,6,7
+        (unibusSignals->signals.br74 >> 1) & 1,
+        (unibusSignals->signals.br74 >> 2) & 1,
+        (unibusSignals->signals.br74 >> 3) & 1);  //4,5,6,7
     panel->unibusSignalBr4567Text->SetLabel(s);
     s = wxString::Format("%d,%d,%d,%d", unibusSignals->signals.bg74 & 1,
-                         (unibusSignals->signals.bg74 >> 1) & 1,
-                         (unibusSignals->signals.bg74 >> 2) & 1,
-                         (unibusSignals->signals.bg74 >> 3) & 1);  //4,5,6,7
+        (unibusSignals->signals.bg74 >> 1) & 1,
+        (unibusSignals->signals.bg74 >> 2) & 1,
+        (unibusSignals->signals.bg74 >> 3) & 1);  //4,5,6,7
     panel->unibusSignalBg4567Text->SetLabel(s);
     s = wxString::Format("%d", unibusSignals->signals.npr);
     panel->unibusSignalNprText->SetLabel(s);
@@ -523,7 +523,7 @@ void Pdp11Adapter::onMemoryGridClick(MemoryGridController* gridController, unsig
    </controlword>
 */
 void Pdp11Adapter::loadControlStore(wxFileName resourcePath, std::string subDir, std::string xmlFileName) {
-	wxFileName path = resourcePath ;
+    wxFileName path = resourcePath;
     path.SetFullName(xmlFileName);
     path.AppendDir(subDir);
 
@@ -556,8 +556,8 @@ void Pdp11Adapter::loadControlStore(wxFileName resourcePath, std::string subDir,
             }
             // now have mpc and bits text
             unsigned mpc = std::stoi(mpcText, nullptr, 8);
-			// controlword string -> value
-			BinaryString bs(bitsText,/*msb first */true);
+            // controlword string -> value
+            BinaryString bs(bitsText,/*msb first */true);
             uControlStore.insert(std::pair<unsigned, uint64_t>(mpc, bs.value));
         }
         rootChild = rootChild->GetNext();
