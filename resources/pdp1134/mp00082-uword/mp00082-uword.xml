@@ -33,7 +33,7 @@
    <font>
       <family>SWISS</family> <!-- see enum wxFontFamily -->
       <!-- height is given by bounding box of labels -->
-      <weight>BOLD</weight> <!-- see enum wxFontWeight -->
+      <weight>NORMAL</weight> <!-- see enum wxFontWeight -->
       <color>#ff0000</color> <!-- red -->
       <alphapercent>100</alphapercent> <!-- not transparent -->
    </font>

@@ -144,8 +144,8 @@ void Pdp11Adapter34::paintDocumentAnnotations() {
 
 	// for the moment static image, no geometries
 	
-    std::vector<std::string> uWordKeyList = { "BIT.00", "BIT.24", "BIT.47", 
-    	"FIELDLABEL.NEXT_MPC_ADDRESS", "FIELDVALUE.ROM_SPA.0000"} ;
+    std::vector<std::string> uWordKeyList = 
+    { "BIT.00", "BIT.24", "BIT.47", "FIELDLABEL.NEXT_MPC_ADDRESS", "FIELDVALUE.ROM_SPA.0000"} ;
 	if (uWordPanel != nullptr  && uWordPanel->IsShownOnScreen()) // startup passed?
 		uwordPageAnnotations.paintScaled(uWordKeyList, uWordPanel);
 	

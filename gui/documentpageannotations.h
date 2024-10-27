@@ -110,7 +110,7 @@ public:
     int x0 = 0, y0 = 0, x1 = 0, y1 = 0; // 2 corners of bounding box
     void parse(std::string text) override;
     std::string render() override;
-    void paintScaled(double scaleX, double scaleY, wxGraphicsContext* gc);
+    void paintScaled(double scaleX, double scaleY, wxGraphicsContext* gc) override;
     void dump() override;
 };
 
