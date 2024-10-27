@@ -1,0 +1,88 @@
+Modification to put in MUD slot / M9312
+-----------------------------------------
+
+Errata
+-----------
+Silk: "KY11" -> "KY11-LB"
+
+Share KY11 MSCP23017 with KM11
+use additional inputs to monitor inputs from KY11-LB controller 
+
+
+2024-08
+--------
+Board name schanged to "M93X2" .. it is 9302 and 9312
+
+DIP switch accessible from front.
+
+FASTON und FASTONGND for external boot switch
+(aus BlinkenBone 11/70 adapter übernehmen)
+BOOTSWITCH 22k pullup
+BOOTSWITCH RETURN über 1K an GND
+
+
+
+EEPROM
+1MBit = 128kx8 I2C eeprom drauf
+Reichelt 24LC1025 I/P
+A0,A1 = GND, A2 to vcc,
+I2C addr 0 1010<block>00 =0xa0
+MCP23017 have 0x20+x
+
+DCLO U12.2 to Arduino Pin 11 D8 ex AUX0
+ACLO U12.2 to Arduino Pin 12 D9 ex AUX1
+
+M.U.D.: GND nur an AC2, AT1, BC2, BT1
+Cut traces:
+GND: AN1,AP1,AR1,AS1, AB2,AV2, BD1,BE1, BB2,BV2
+
+M.U.D:
+Solder bridges for BG*, NPG* (open for MUD!)
+  -> 2x5 Jumperblock or 2x5 steckbare 0-Ohm SIP Leiste
+BG4,5,6,7 = BE2, BB1, BA1, AV1
+NPG = AU1
+
+BBSY writeable
+U4.13 an UNIBUS BBSY_L
+U4.11,U4.12 an BBSY_OUT an MCP23017-0.3 GPB4 = pin 5
+
+Silk label U3 8837
+Silk: "µTracer11 M9302probe"
+
+
+2024-03
+------------
+I2C pullups
+minimal for 1MHz speed
+DESIGNING-WITH-I2C-BUS-DEVICES.pdf
+-> 1.7kohm, two parallel -> R1-R4 10KOhm-> 3.3kOhm
+SDA is sunk by MEGA4809 and MCP23017. SCL only by MEGA.
+
+
+Signal C1_OUT
+U12.6 MCP0.3 GPB5 =>   U4.8,9
+U4.10 -> "C1" pin header
+
+
+U13, U14 74LS374
+Inputs/Outputs vertauscht !!!
+
+Signal SACK_OUT
+U12.7 -> U4 5,6
+U4.4 -> JP1.2
+
+U7: 74ls00 -> 74ls86
+Signal LATCH_DATA
+MCP0.2 GPB7 -> U7B.4
+
+
+Errata
+Silk:
+"C2" "100nF"
+R9, R10: "1K"
+LED D1, D2: Polarity
+
+
+2024-02
+-----------
+
