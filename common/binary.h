@@ -30,13 +30,18 @@ public:
     uint64_t value ;
 
     // create from string, derive value
-    BinaryString(std::string _text, bool _msbFirst): text(_text), msbFirst(_msbFirst) {
+    BinaryString(std::string _text, bool _msbFirst) {
+		text = _text ;
+		msbFirst = _msbFirst ;
         bitCount = _text.length() ;
         value = getValueFromString() ;
     }
 
-// create from value, derive string
-    BinaryString(uint64_t _value, unsigned _bitCount, bool _msbFirst):  value(_value), bitCount(_bitCount), msbFirst(_msbFirst)  {
+	// create from value, derive string
+    BinaryString(uint64_t _value, unsigned _bitCount, bool _msbFirst) {
+	    value = _value ;
+		bitCount = _bitCount ;
+		msbFirst = _msbFirst ;
         text = getStringFromValue() ;
     }
 

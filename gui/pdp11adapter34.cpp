@@ -183,9 +183,7 @@ void Pdp11Adapter34::paintMicroStoreDocumentAnnotations(std::string mpcAsKey) {
         // for each control word bit field
         for (ControlWordField& cwf : controlWordFields) {
             unsigned fieldValue = cwf.extract(controlword);
-            // 1. check wether field has its "Normal" value 
-            bool isNormal = (fieldValue == cwf.normalValue);
-            // 2. paint the single bits into the long 48 bit header on MP00082-15.jpg
+            // 1. paint the single bits into the long 48 bit header on MP00082-15.jpg
             for (unsigned fieldBitIdx = 0; fieldBitIdx < cwf.bitCount(); fieldBitIdx++) {
                 unsigned controlwordBitIdx = fieldBitIdx + cwf.bitFrom;
                 // get "0"/"1" annotations of each bit
@@ -212,7 +210,7 @@ void Pdp11Adapter34::paintMicroStoreDocumentAnnotations(std::string mpcAsKey) {
                 keyList.push_back(bitKey); // always paint all bits
             }
 
-            // 3. for every field: mark its label, if bits not "normal" 
+            // 2. for every field: mark its label, if bits not "normal" 
             // label key like "FIELDLABEL.AUX_CONTROL"
             if (fieldValue != cwf.normalValue) {
                 std::string fieldLabelKey = wxString::Format("FIELDLABEL.%s", cwf.fieldLabel).ToStdString();
@@ -222,7 +220,7 @@ void Pdp11Adapter34::paintMicroStoreDocumentAnnotations(std::string mpcAsKey) {
                 keyList.push_back(fieldLabelKey);
             }
 
-            // 4. for every field with a value table: 
+            // 3. for every field with a value table: 
             // mark the table entry for current field value, if shown on MP00082-15
             // table entry key like "FIELDLABEL.AUX_CONTROL.000"
             {

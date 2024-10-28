@@ -194,6 +194,8 @@ void DocumentPageAnnotationText::paintScaled(double scaleX, double scaleY, wxGra
     case wxALIGN_RIGHT:
         textHorizontalOffset = (boxScaledWidth - 2 * border) - textWidth;
         break;
+	default: 
+		textHorizontalOffset = border; // left
     }
     wxDouble textX0 = boxScaledX0 + textHorizontalOffset;
     wxDouble textY0 = boxScaledY0;

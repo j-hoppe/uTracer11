@@ -3,7 +3,6 @@
 #include "binary.h"
 
 
-
 uint64_t getBitSubField(uint64_t value, unsigned bitFrom, unsigned bitTo) {
     uint64_t result = 0;
     unsigned bitDestIdx, bitSrcIdx;
@@ -22,10 +21,11 @@ uint64_t BinaryString::getValueFromString() {
     for (char& c : text) {
         // skip non-binary filler chars
         if (c == '0' || c == '1') {
-            if (c == '1')
+            if (c == '1') {
                 if (msbFirst)
                     result |= bitMask(bitCount - bitIdx - 1);
                 else result |= bitMask(bitIdx);
+            }
             bitIdx++;
         }
     }
@@ -39,12 +39,13 @@ std::string BinaryString::getStringFromValue() {
     std::string result(bitCount, '0'); // enough 0s, now set only the '1's
     unsigned i; // indexes bits in value
     for (i = 0; i < bitCount; i++) {
-        if (getBit(value, i)) // bitMask set?
+        if (getBit(value, i)) { // bitMask set?
             // set '1's 'from left or right
             if (msbFirst)
                 result.at(bitCount - i - 1) = '1'; // for lower bits set right most '1's
             else
                 result.at(i) = '1'; // low bitMask, low string position
+        }
     }
     return result;
 }

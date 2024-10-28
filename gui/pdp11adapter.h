@@ -58,8 +58,6 @@ public:
                 result |= 1 << iDst;
         return result;
     }
-    unsigned getFieldBitIndex(unsigned    controlwordBitIndex) {
-    	}
 };
 
 class Pdp11Adapter {
