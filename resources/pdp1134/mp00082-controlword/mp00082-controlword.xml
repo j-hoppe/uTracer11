@@ -41,336 +41,288 @@
 
    <annotation>
       <key>BIT.00</key>
-      <label>BIT.00</label>
       <geometry>
          <text>52,219,91,269</text>
       </geometry>
    </annotation>
    <annotation>
       <key>BIT.01</key>
-      <label>BIT.01</label>
       <geometry>
          <text>122,219,161,269</text>
       </geometry>
    </annotation>
    <annotation>
       <key>BIT.02</key>
-      <label>BIT.02</label>
       <geometry>
          <text>182,218,221,268</text>
       </geometry>
    </annotation>
    <annotation>
       <key>BIT.03</key>
-      <label>BIT.03</label>
       <geometry>
          <text>241,218,280,268</text>
       </geometry>
    </annotation>
    <annotation>
       <key>BIT.04</key>
-      <label>BIT.04</label>
       <geometry>
          <text>311,218,350,268</text>
       </geometry>
    </annotation>
    <annotation>
       <key>BIT.05</key>
-      <label>BIT.05</label>
       <geometry>
          <text>368,218,407,268</text>
       </geometry>
    </annotation>
    <annotation>
       <key>BIT.06</key>
-      <label>BIT.06</label>
       <geometry>
          <text>421,218,460,268</text>
       </geometry>
    </annotation>
    <annotation>
       <key>BIT.07</key>
-      <label>BIT.07</label>
       <geometry>
          <text>485,218,524,268</text>
       </geometry>
    </annotation>
    <annotation>
       <key>BIT.08</key>
-      <label>BIT.08</label>
       <geometry>
          <text>555,217,594,267</text>
       </geometry>
    </annotation>
    <annotation>
       <key>BIT.09</key>
-      <label>BIT.09</label>
       <geometry>
          <text>625,217,664,267</text>
       </geometry>
    </annotation>
    <annotation>
       <key>BIT.10</key>
-      <label>BIT.10</label>
       <geometry>
          <text>684,217,723,267</text>
       </geometry>
    </annotation>
    <annotation>
       <key>BIT.11</key>
-      <label>BIT.11</label>
       <geometry>
          <text>749,217,788,267</text>
       </geometry>
    </annotation>
    <annotation>
       <key>BIT.12</key>
-      <label>BIT.12</label>
       <geometry>
          <text>810,217,849,267</text>
       </geometry>
    </annotation>
    <annotation>
       <key>BIT.13</key>
-      <label>BIT.13</label>
       <geometry>
          <text>882,217,921,267</text>
       </geometry>
    </annotation>
    <annotation>
       <key>BIT.14</key>
-      <label>BIT.14</label>
       <geometry>
          <text>936,216,975,266</text>
       </geometry>
    </annotation>
    <annotation>
       <key>BIT.15</key>
-      <label>BIT.15</label>
       <geometry>
          <text>1006,216,1045,266</text>
       </geometry>
    </annotation>
    <annotation>
       <key>BIT.16</key>
-      <label>BIT.16</label>
       <geometry>
          <text>1069,216,1108,266</text>
       </geometry>
    </annotation>
    <annotation>
       <key>BIT.17</key>
-      <label>BIT.17</label>
       <geometry>
          <text>1128,216,1167,266</text>
       </geometry>
    </annotation>
    <annotation>
       <key>BIT.18</key>
-      <label>BIT.18</label>
       <geometry>
          <text>1191,216,1230,266</text>
       </geometry>
    </annotation>
    <annotation>
       <key>BIT.19</key>
-      <label>BIT.19</label>
       <geometry>
          <text>1255,216,1294,266</text>
       </geometry>
    </annotation>
    <annotation>
       <key>BIT.20</key>
-      <label>BIT.20</label>
       <geometry>
          <text>1310,216,1349,266</text>
       </geometry>
    </annotation>
    <annotation>
       <key>BIT.21</key>
-      <label>BIT.21</label>
       <geometry>
          <text>1376,216,1415,266</text>
       </geometry>
    </annotation>
    <annotation>
       <key>BIT.22</key>
-      <label>BIT.22</label>
       <geometry>
          <text>1440,216,1479,266</text>
       </geometry>
    </annotation>
    <annotation>
       <key>BIT.23</key>
-      <label>BIT.23</label>
       <geometry>
          <text>1500,216,1539,266</text>
       </geometry>
    </annotation>
    <annotation>
       <key>BIT.24</key>
-      <label>BIT.24</label>
       <geometry>
          <text>1564,216,1603,266</text>
       </geometry>
    </annotation>
    <annotation>
       <key>BIT.25</key>
-      <label>BIT.25</label>
       <geometry>
          <text>1627,216,1666,266</text>
       </geometry>
    </annotation>
    <annotation>
       <key>BIT.26</key>
-      <label>BIT.26</label>
       <geometry>
          <text>1695,216,1734,266</text>
       </geometry>
    </annotation>
    <annotation>
       <key>BIT.27</key>
-      <label>BIT.27</label>
       <geometry>
          <text>1752,216,1791,266</text>
       </geometry>
    </annotation>
    <annotation>
       <key>BIT.28</key>
-      <label>BIT.28</label>
       <geometry>
          <text>1821,216,1860,266</text>
       </geometry>
    </annotation>
    <annotation>
       <key>BIT.29</key>
-      <label>BIT.29</label>
       <geometry>
          <text>1885,216,1924,266</text>
       </geometry>
    </annotation>
    <annotation>
       <key>BIT.30</key>
-      <label>BIT.30</label>
       <geometry>
          <text>1948,216,1987,266</text>
       </geometry>
    </annotation>
    <annotation>
       <key>BIT.31</key>
-      <label>BIT.31</label>
       <geometry>
          <text>2010,216,2049,266</text>
       </geometry>
    </annotation>
    <annotation>
       <key>BIT.32</key>
-      <label>BIT.32</label>
       <geometry>
          <text>2077,216,2116,266</text>
       </geometry>
    </annotation>
    <annotation>
       <key>BIT.33</key>
-      <label>BIT.33</label>
       <geometry>
          <text>2132,216,2171,266</text>
       </geometry>
    </annotation>
    <annotation>
       <key>BIT.34</key>
-      <label>BIT.34</label>
       <geometry>
          <text>2200,216,2239,266</text>
       </geometry>
    </annotation>
    <annotation>
       <key>BIT.35</key>
-      <label>BIT.35</label>
       <geometry>
          <text>2259,216,2298,266</text>
       </geometry>
    </annotation>
    <annotation>
       <key>BIT.36</key>
-      <label>BIT.36</label>
       <geometry>
          <text>2326,217,2365,267</text>
       </geometry>
    </annotation>
    <annotation>
       <key>BIT.37</key>
-      <label>BIT.37</label>
       <geometry>
          <text>2388,216,2427,266</text>
       </geometry>
    </annotation>
    <annotation>
       <key>BIT.38</key>
-      <label>BIT.38</label>
       <geometry>
          <text>2453,217,2492,267</text>
       </geometry>
    </annotation>
    <annotation>
       <key>BIT.39</key>
-      <label>BIT.39</label>
       <geometry>
          <text>2513,216,2552,266</text>
       </geometry>
    </annotation>
    <annotation>
       <key>BIT.40</key>
-      <label>BIT.40</label>
       <geometry>
          <text>2579,216,2618,266</text>
       </geometry>
    </annotation>
    <annotation>
       <key>BIT.41</key>
-      <label>BIT.41</label>
       <geometry>
          <text>2639,216,2678,266</text>
       </geometry>
    </annotation>
    <annotation>
       <key>BIT.42</key>
-      <label>BIT.42</label>
       <geometry>
          <text>2702,216,2741,266</text>
       </geometry>
    </annotation>
    <annotation>
       <key>BIT.43</key>
-      <label>BIT.43</label>
       <geometry>
          <text>2766,217,2805,267</text>
       </geometry>
    </annotation>
    <annotation>
       <key>BIT.44</key>
-      <label>BIT.44</label>
       <geometry>
          <text>2824,218,2863,268</text>
       </geometry>
    </annotation>
    <annotation>
       <key>BIT.45</key>
-      <label>BIT.45</label>
       <geometry>
          <text>2884,217,2923,267</text>
       </geometry>
    </annotation>
    <annotation>
       <key>BIT.46</key>
-      <label>BIT.46</label>
       <geometry>
          <text>2949,217,2988,267</text>
       </geometry>
    </annotation>
    <annotation>
       <key>BIT.47</key>
-      <label>BIT.47</label>
       <geometry>
          <text>3009,218,3048,268</text>
       </geometry>
@@ -378,140 +330,120 @@
 
    <annotation>
       <key>FIELDLABEL.NEXT_MPC_ADDRESS</key>
-      <label>FIELDLABEL.NEXT_MPC_ADDRESS</label>
       <geometry>
          <rectangle>352,1286,794,1320</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDLABEL.MISCELLANEOUS_CONTROL</key>
-      <label>FIELDLABEL.MISCELLANEOUS_CONTROL</label>
       <geometry>
          <rectangle>778,1236,1220,1270</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDLABEL.DATA_TRAN</key>
-      <label>FIELDLABEL.DATA_TRAN</label>
       <geometry>
          <rectangle>906,1184,1261,1218</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDLABEL.BUS_CONTROL</key>
-      <label>FIELDLABEL.BUS_CONTROL</label>
       <geometry>
          <rectangle>995,1134,1350,1168</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDLABEL.ENAB_MAINT</key>
-      <label>FIELDLABEL.ENAB_MAINT</label>
       <geometry>
          <rectangle>1091,1080,1377,1114</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDLABEL.LOAD_BAR</key>
-      <label>FIELDLABEL.LOAD_BAR</label>
       <geometry>
          <rectangle>1157,1032,1392,1066</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDLABEL.LONG_CYCLE_L</key>
-      <label>FIELDLABEL.LONG_CYCLE_L</label>
       <geometry>
          <rectangle>1226,979,1529,1013</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDLABEL.AUX_CONTROL</key>
-      <label>FIELDLABEL.AUX_CONTROL</label>
       <geometry>
          <rectangle>1284,928,1587,962</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDLABEL.ALU,BLEG_CONTROL</key>
-      <label>FIELDLABEL.ALU,BLEG_CONTROL</label>
       <geometry>
          <rectangle>1459,879,1807,913</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDLABEL.B,BX,OVX,DBE_CONTROL</key>
-      <label>FIELDLABEL.B,BX,OVX,DBE_CONTROL</label>
       <geometry>
          <rectangle>1748,826,2223,860</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDLABEL.SSMUX_CONTROL</key>
-      <label>FIELDLABEL.SSMUX_CONTROL</label>
       <geometry>
          <rectangle>1941,776,2313,810</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDLABEL.AMUX_CONTROL</key>
-      <label>FIELDLABEL.AMUX_CONTROL</label>
       <geometry>
          <rectangle>2080,726,2393,760</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDLABEL.BUT_BITS</key>
-      <label>FIELDLABEL.BUT_BITS</label>
       <geometry>
          <rectangle>2255,676,2473,710</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDLABEL.SPA_SRC_SEL</key>
-      <label>FIELDLABEL.SPA_SRC_SEL</label>
       <geometry>
          <rectangle>2445,623,2751,657</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDLABEL.SPA_DST_SEL</key>
-      <label>FIELDLABEL.SPA_DST_SEL</label>
       <geometry>
          <rectangle>2568,574,2845,608</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDLABEL.FORCE_RS_V_1_L</key>
-      <label>FIELDLABEL.FORCE_RS_V_1_L</label>
       <geometry>
          <rectangle>2669,524,2946,558</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDLABEL.PREVIOUS_MODE_L</key>
-      <label>FIELDLABEL.PREVIOUS_MODE_L</label>
       <geometry>
          <rectangle>2731,474,3053,508</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDLABEL.BUT_SERVICE</key>
-      <label>FIELDLABEL.BUT_SERVICE</label>
       <geometry>
          <rectangle>2794,425,3070,459</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDLABEL.FORCE_KERNEL</key>
-      <label>FIELDLABEL.FORCE_KERNEL</label>
       <geometry>
          <rectangle>2855,374,3156,408</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDLABEL.ROM_SPA</key>
-      <label>FIELDLABEL.ROM_SPA</label>
       <geometry>
          <rectangle>3009,323,3234,357</rectangle>
       </geometry>
@@ -520,56 +452,48 @@
    <!-- Table "MISC CONTROL" -->
    <annotation>
       <key>FIELDVALUE.MISCELLANEOUS_CONTROL.000</key>
-      <label>FIELDVALUE.MISCELLANEOUS_CONTROL.000</label>
       <geometry>
          <rectangle>980,1492,1204,1521</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.MISCELLANEOUS_CONTROL.001</key>
-      <label>FIELDVALUE.MISC_CMISCELLANEOUS_CONTROLONTROL.001</label>
       <geometry>
          <rectangle>980,1532,1204,1561</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.MISCELLANEOUS_CONTROL.010</key>
-      <label>FIELDVALUE.MISCELLANEOUS_CONTROL.010</label>
       <geometry>
          <rectangle>980,1570,1204,1599</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.MISCELLANEOUS_CONTROL.011</key>
-      <label>FIELDVALUE.MISCELLANEOUS_CONTROL.011</label>
       <geometry>
          <rectangle>980,1608,1204,1637</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.MISCELLANEOUS_CONTROL.100</key>
-      <label>FIELDVALUE.MISCELLANEOUS_CONTROL.100</label>
       <geometry>
          <rectangle>980,1645,1204,1674</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.MISCELLANEOUS_CONTROL.101</key>
-      <label>FIELDVALUE.MISCELLANEOUS_CONTROL.101</label>
       <geometry>
          <rectangle>980,1684,1204,1713</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.MISCELLANEOUS_CONTROL.110</key>
-      <label>FIELDVALUE.MISCELLANEOUS_CONTROL.110</label>
       <geometry>
          <rectangle>980,1721,1204,1750</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.MISCELLANEOUS_CONTROL.111</key>
-      <label>FIELDVALUE.MISCELLANEOUS_CONTROL.111</label>
       <geometry>
          <rectangle>980,1759,1204,1788</rectangle>
       </geometry>
@@ -578,28 +502,24 @@
    <!-- Table "BUS CONTROL" -->
    <annotation>
       <key>FIELDVALUE.BUS_CONTROL.00</key>
-      <label>FIELDVALUE.BUS_CONTROL.00</label>
       <geometry>
          <rectangle>1273,1392,1422,1421</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.BUS_CONTROL.01</key>
-      <label>FIELDVALUE.BUS_CONTROL.01</label>
       <geometry>
          <rectangle>1273,1430,1422,1459</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.BUS_CONTROL.10</key>
-      <label>FIELDVALUE.BUS_CONTROL.10</label>
       <geometry>
          <rectangle>1273,1469,1422,1498</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.BUS_CONTROL.11</key>
-      <label>FIELDVALUE.BUS_CONTROL.11</label>
       <geometry>
          <rectangle>1273,1506,1422,1535</rectangle>
       </geometry>
@@ -608,182 +528,156 @@
    <!-- Table "ALU BLEG CONTROL" -->
    <annotation>
       <key>FIELDVALUE.ALU,BLEG_CONTROL.00000</key>
-      <label>FIELDVALUE.ALU,BLEG_CONTROL.00000</label>
       <geometry>
          <rectangle>1475,1254,1775,1283</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.ALU,BLEG_CONTROL.00001</key>
-      <label>FIELDVALUE.ALU,BLEG_CONTROL.00001</label>
       <geometry>
          <rectangle>1475,1292,1775,1321</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.ALU,BLEG_CONTROL.00010</key>
-      <label>FIELDVALUE.ALU,BLEG_CONTROL.00010</label>
       <geometry>
          <rectangle>1475,1331,1775,1360</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.ALU,BLEG_CONTROL.00011</key>
-      <label>FIELDVALUE.ALU,BLEG_CONTROL.00011</label>
       <geometry>
          <rectangle>1475,1368,1775,1397</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.ALU,BLEG_CONTROL.00100</key>
-      <label>FIELDVALUE.ALU,BLEG_CONTROL.00100</label>
       <geometry>
          <rectangle>1476,1405,1776,1434</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.ALU,BLEG_CONTROL.00101</key>
-      <label>FIELDVALUE.ALU,BLEG_CONTROL.00101</label>
       <geometry>
          <rectangle>1476,1443,1776,1472</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.ALU,BLEG_CONTROL.00110</key>
-      <label>FIELDVALUE.ALU,BLEG_CONTROL.00110</label>
       <geometry>
          <rectangle>1475,1480,1775,1509</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.ALU,BLEG_CONTROL.00111</key>
-      <label>FIELDVALUE.ALU,BLEG_CONTROL.00111</label>
       <geometry>
          <rectangle>1475,1517,1775,1546</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.ALU,BLEG_CONTROL.01000</key>
-      <label>FIELDVALUE.ALU,BLEG_CONTROL.01000</label>
       <geometry>
          <rectangle>1476,1556,1776,1585</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.ALU,BLEG_CONTROL.01001</key>
-      <label>FIELDVALUE.ALU,BLEG_CONTROL.01001</label>
       <geometry>
          <rectangle>1476,1593,1776,1622</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.ALU,BLEG_CONTROL.01010</key>
-      <label>FIELDVALUE.ALU,BLEG_CONTROL.01010</label>
       <geometry>
          <rectangle>1476,1632,1776,1661</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.ALU,BLEG_CONTROL.01011</key>
-      <label>FIELDVALUE.ALU,BLEG_CONTROL.01011</label>
       <geometry>
          <rectangle>1476,1670,1776,1699</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.ALU,BLEG_CONTROL.01100</key>
-      <label>FIELDVALUE.ALU,BLEG_CONTROL.01100</label>
       <geometry>
          <rectangle>1476,1707,1776,1736</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.ALU,BLEG_CONTROL.01101</key>
-      <label>FIELDVALUE.ALU,BLEG_CONTROL.01101</label>
       <geometry>
          <rectangle>1476,1745,1776,1774</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.ALU,BLEG_CONTROL.01110</key>
-      <label>FIELDVALUE.ALU,BLEG_CONTROL.01110</label>
       <geometry>
          <rectangle>1475,1782,1775,1811</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.ALU,BLEG_CONTROL.10000</key>
-      <label>FIELDVALUE.ALU,BLEG_CONTROL.10000</label>
       <geometry>
          <rectangle>1475,1820,1775,1849</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.ALU,BLEG_CONTROL.10001</key>
-      <label>FIELDVALUE.ALU,BLEG_CONTROL.10001</label>
       <geometry>
          <rectangle>1476,1858,1776,1887</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.ALU,BLEG_CONTROL.10010</key>
-      <label>FIELDVALUE.ALU,BLEG_CONTROL.10010</label>
       <geometry>
          <rectangle>1475,1896,1775,1925</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.ALU,BLEG_CONTROL.10011</key>
-      <label>FIELDVALUE.ALU,BLEG_CONTROL.10011</label>
       <geometry>
          <rectangle>1475,1934,1775,1963</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.ALU,BLEG_CONTROL.10100</key>
-      <label>FIELDVALUE.ALU,BLEG_CONTROL.10100</label>
       <geometry>
          <rectangle>1475,1971,1775,2000</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.ALU,BLEG_CONTROL.10101</key>
-      <label>FIELDVALUE.ALU,BLEG_CONTROL.10101</label>
       <geometry>
          <rectangle>1476,2011,1776,2040</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.ALU,BLEG_CONTROL.10110</key>
-      <label>FIELDVALUE.ALU,BLEG_CONTROL.10110</label>
       <geometry>
          <rectangle>1476,2048,1776,2077</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.ALU,BLEG_CONTROL.10111</key>
-      <label>FIELDVALUE.ALU,BLEG_CONTROL.10111</label>
       <geometry>
          <rectangle>1475,2086,1775,2115</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.ALU,BLEG_CONTROL.11000</key>
-      <label>FIELDVALUE.ALU,BLEG_CONTROL.11000</label>
       <geometry>
          <rectangle>1475,2123,1775,2152</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.ALU,BLEG_CONTROL.11001</key>
-      <label>FIELDVALUE.ALU,BLEG_CONTROL.11001</label>
       <geometry>
          <rectangle>1475,2162,1775,2191</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.ALU,BLEG_CONTROL.11010</key>
-      <label>FIELDVALUE.ALU,BLEG_CONTROL.11010</label>
       <geometry>
          <rectangle>1475,2201,1775,2230</rectangle>
       </geometry>
@@ -792,112 +686,96 @@
    <!-- Table "B,BX,OVX,DBE CONTROL" -->
    <annotation>
       <key>FIELDVALUE.B,BX,OVX,DBE_CONTROL.0000</key>
-      <label>FIELDVALUE.B,BX,OVX,DBE_CONTROL.0000</label>
       <geometry>
          <rectangle>1827,1215,2191,1244</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.B,BX,OVX,DBE_CONTROL.0001</key>
-      <label>FIELDVALUE.B,BX,OVX,DBE_CONTROL.0001</label>
       <geometry>
          <rectangle>1828,1252,2192,1281</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.B,BX,OVX,DBE_CONTROL.0010</key>
-      <label>FIELDVALUE.B,BX,OVX,DBE_CONTROL.0010</label>
       <geometry>
          <rectangle>1828,1289,2192,1318</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.B,BX,OVX,DBE_CONTROL.0011</key>
-      <label>FIELDVALUE.B,BX,OVX,DBE_CONTROL.0011</label>
       <geometry>
          <rectangle>1827,1328,2191,1357</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.B,BX,OVX,DBE_CONTROL.0100</key>
-      <label>FIELDVALUE.B,BX,OVX,DBE_CONTROL.0100</label>
       <geometry>
          <rectangle>1827,1365,2191,1394</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.B,BX,OVX,DBE_CONTROL.0101</key>
-      <label>FIELDVALUE.B,BX,OVX,DBE_CONTROL.0101</label>
       <geometry>
          <rectangle>1828,1405,2192,1434</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.B,BX,OVX,DBE_CONTROL.0110</key>
-      <label>FIELDVALUE.B,BX,OVX,DBE_CONTROL.0110</label>
       <geometry>
          <rectangle>1827,1441,2191,1470</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.B,BX,OVX,DBE_CONTROL.0111</key>
-      <label>FIELDVALUE.B,BX,OVX,DBE_CONTROL.0111</label>
       <geometry>
          <rectangle>1827,1480,2191,1509</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.B,BX,OVX,DBE_CONTROL.1000</key>
-      <label>FIELDVALUE.B,BX,OVX,DBE_CONTROL.1000</label>
       <geometry>
          <rectangle>1827,1516,2191,1545</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.B,BX,OVX,DBE_CONTROL.1001</key>
-      <label>FIELDVALUE.B,BX,OVX,DBE_CONTROL.1001</label>
       <geometry>
          <rectangle>1826,1554,2190,1583</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.B,BX,OVX,DBE_CONTROL.1010</key>
-      <label>FIELDVALUE.B,BX,OVX,DBE_CONTROL.1010</label>
       <geometry>
          <rectangle>1826,1591,2190,1620</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.B,BX,OVX,DBE_CONTROL.1011</key>
-      <label>FIELDVALUE.B,BX,OVX,DBE_CONTROL.1011</label>
       <geometry>
          <rectangle>1827,1629,2191,1658</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.B,BX,OVX,DBE_CONTROL.1100</key>
-      <label>FIELDVALUE.B,BX,OVX,DBE_CONTROL.1100</label>
       <geometry>
          <rectangle>1827,1667,2191,1696</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.B,BX,OVX,DBE_CONTROL.1101</key>
-      <label>FIELDVALUE.B,BX,OVX,DBE_CONTROL.1101</label>
       <geometry>
          <rectangle>1827,1705,2191,1734</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.B,BX,OVX,DBE_CONTROL.1110</key>
-      <label>FIELDVALUE.B,BX,OVX,DBE_CONTROL.1110</label>
       <geometry>
          <rectangle>1827,1744,2191,1773</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.B,BX,OVX,DBE_CONTROL.1111</key>
-      <label>FIELDVALUE.B,BX,OVX,DBE_CONTROL.1111</label>
       <geometry>
          <rectangle>1827,1781,2191,1810</rectangle>
       </geometry>
@@ -906,28 +784,24 @@
    <!-- Table "AMUX CONTROL" -->
    <annotation>
       <key>FIELDVALUE.AMUX_CONTROL.00</key>
-      <label>FIELDVALUE.AMUX_CONTROL.00</label>
       <geometry>
          <rectangle>2283,1088,2432,1117</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.AMUX_CONTROL.01</key>
-      <label>FIELDVALUE.AMUX_CONTROL.01</label>
       <geometry>
          <rectangle>2283,1125,2432,1154</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.AMUX_CONTROL.10</key>
-      <label>FIELDVALUE.AMUX_CONTROL.10</label>
       <geometry>
          <rectangle>2283,1162,2432,1191</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.AMUX_CONTROL.11</key>
-      <label>FIELDVALUE.AMUX_CONTROL.11</label>
       <geometry>
          <rectangle>2283,1200,2432,1229</rectangle>
       </geometry>
@@ -936,28 +810,24 @@
    <!-- Table "SSMUX CONTROL" -->
    <annotation>
       <key>FIELDVALUE.SSMUX_CONTROL.00</key>
-      <label>FIELDVALUE.SSMUX_CONTROL.00</label>
       <geometry>
          <rectangle>2282,1390,2431,1419</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.SSMUX_CONTROL.01</key>
-      <label>FIELDVALUE.SSMUX_CONTROL.01</label>
       <geometry>
          <rectangle>2283,1428,2432,1457</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.SSMUX_CONTROL.10</key>
-      <label>FIELDVALUE.SSMUX_CONTROL.10</label>
       <geometry>
          <rectangle>2282,1465,2431,1494</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.SSMUX_CONTROL.11</key>
-      <label>FIELDVALUE.SSMUX_CONTROL.11</label>
       <geometry>
          <rectangle>2282,1502,2431,1531</rectangle>
       </geometry>
@@ -966,112 +836,96 @@
    <!-- Table "BUT BITS" -->
    <annotation>
       <key>FIELDVALUE.BUT_BITS.0000</key>
-      <label>FIELDVALUE.BUT_BITS.0000</label>
       <geometry>
          <rectangle>2483,973,2817,1002</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.BUT_BITS.0001</key>
-      <label>FIELDVALUE.BUT_BITS.0001</label>
       <geometry>
          <rectangle>2483,1011,2817,1040</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.BUT_BITS.0010</key>
-      <label>FIELDVALUE.BUT_BITS.0010</label>
       <geometry>
          <rectangle>2483,1049,2817,1078</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.BUT_BITS.0011</key>
-      <label>FIELDVALUE.BUT_BITS.0011</label>
       <geometry>
          <rectangle>2483,1087,2817,1116</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.BUT_BITS.0100</key>
-      <label>FIELDVALUE.BUT_BITS.0100</label>
       <geometry>
          <rectangle>2483,1125,2817,1154</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.BUT_BITS.0101</key>
-      <label>FIELDVALUE.BUT_BITS.0101</label>
       <geometry>
          <rectangle>2484,1163,2818,1192</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.BUT_BITS.0110</key>
-      <label>FIELDVALUE.BUT_BITS.0110</label>
       <geometry>
          <rectangle>2482,1200,2816,1229</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.BUT_BITS.0111</key>
-      <label>FIELDVALUE.BUT_BITS.0111</label>
       <geometry>
          <rectangle>2483,1238,2817,1267</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.BUT_BITS.1000</key>
-      <label>FIELDVALUE.BUT_BITS.1000</label>
       <geometry>
          <rectangle>2483,1275,2817,1304</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.BUT_BITS.1001</key>
-      <label>FIELDVALUE.BUT_BITS.1001</label>
       <geometry>
          <rectangle>2484,1314,2818,1343</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.BUT_BITS.1010</key>
-      <label>FIELDVALUE.BUT_BITS.1010</label>
       <geometry>
          <rectangle>2484,1351,2818,1380</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.BUT_BITS.1011</key>
-      <label>FIELDVALUE.BUT_BITS.1011</label>
       <geometry>
          <rectangle>2484,1388,2818,1417</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.BUT_BITS.1100</key>
-      <label>FIELDVALUE.BUT_BITS.1100</label>
       <geometry>
          <rectangle>2483,1427,2817,1456</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.BUT_BITS.1101</key>
-      <label>FIELDVALUE.BUT_BITS.1101</label>
       <geometry>
          <rectangle>2484,1464,2818,1493</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.BUT_BITS.1110</key>
-      <label>FIELDVALUE.BUT_BITS.1110</label>
       <geometry>
          <rectangle>2484,1501,2818,1530</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.BUT_BITS.1111</key>
-      <label>FIELDVALUE.BUT_BITS.1111</label>
       <geometry>
          <rectangle>2484,1539,2818,1568</rectangle>
       </geometry>
@@ -1081,28 +935,24 @@
    <!-- Table "SPA SRC SEL" -->
    <annotation>
       <key>FIELDVALUE.SPA_SRC_SEL.00</key>
-      <label>FIELDVALUE.SPA_SRC_SEL.00</label>
       <geometry>
          <rectangle>2893,797,3043,826</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.SPA_SRC_SEL.01</key>
-      <label>FIELDVALUE.SPA_SRC_SEL.01</label>
       <geometry>
          <rectangle>2894,834,3044,863</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.SPA_SRC_SEL.10</key>
-      <label>FIELDVALUE.SPA_SRC_SEL.10</label>
       <geometry>
          <rectangle>2895,871,3045,900</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.SPA_SRC_SEL.11</key>
-      <label>FIELDVALUE.SPA_SRC_SEL.11</label>
       <geometry>
          <rectangle>2895,908,3044,937</rectangle>
       </geometry>
@@ -1111,28 +961,24 @@
    <!-- Table "SPA DST SEL" -->
    <annotation>
       <key>FIELDVALUE.SPA_DST_SEL.00</key>
-      <label>FIELDVALUE.SPA_DST_SEL.00</label>
       <geometry>
          <rectangle>3120,696,3268,725</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.SPA_DST_SEL.01</key>
-      <label>FIELDVALUE.SPA_DST_SEL.01</label>
       <geometry>
          <rectangle>3120,734,3268,763</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.SPA_DST_SEL.10</key>
-      <label>FIELDVALUE.SPA_DST_SEL.10</label>
       <geometry>
          <rectangle>3119,771,3267,800</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.SPA_DST_SEL.11</key>
-      <label>FIELDVALUE.SPA_DST_SEL.11</label>
       <geometry>
          <rectangle>3120,808,3268,837</rectangle>
       </geometry>
@@ -1141,77 +987,66 @@
    <!-- Table "ROM SPA" -->
    <annotation>
       <key>FIELDVALUE.ROM_SPA.1010</key>
-      <label>FIELDVALUE.ROM_SPA.1010</label>
       <geometry>
          <rectangle>3343,608,3566,637</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.ROM_SPA.1001</key>
-      <label>FIELDVALUE.ROM_SPA.1001</label>
       <geometry>
          <rectangle>3343,646,3566,675</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.ROM_SPA.1000</key>
-      <label>FIELDVALUE.ROM_SPA.1000</label>
       <geometry>
          <rectangle>3343,683,3566,712</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.ROM_SPA.0111</key>
-      <label>FIELDVALUE.ROM_SPA.0111</label>
       <geometry>
          <rectangle>3343,721,3566,750</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.ROM_SPA.0110</key>
-      <label>FIELDVALUE.ROM_SPA.0110</label>
       <geometry>
          <rectangle>3343,758,3566,787</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.ROM_SPA.0101</key>
-      <label>FIELDVALUE.ROM_SPA.0101</label>
       <geometry>
          <rectangle>3343,796,3566,825</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.ROM_SPA.0100</key>
-      <label>FIELDVALUE.ROM_SPA.0100</label>
       <geometry>
          <rectangle>3344,834,3567,863</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.ROM_SPA.0011</key>
-      <label>FIELDVALUE.ROM_SPA.0011</label>
       <geometry>
          <rectangle>3344,871,3567,900</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.ROM_SPA.0010</key>
-      <label>FIELDVALUE.ROM_SPA.0010</label>
       <geometry>
          <rectangle>3344,909,3567,938</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.ROM_SPA.0001</key>
-      <label>FIELDVALUE.ROM_SPA.0001</label>
       <geometry>
          <rectangle>3344,947,3567,976</rectangle>
       </geometry>
    </annotation>
    <annotation>
       <key>FIELDVALUE.ROM_SPA.0000</key>
-      <label>FIELDVALUE.ROM_SPA.0000</label>
       <geometry>
          <rectangle>3344,984,3567,1013</rectangle>
       </geometry>
