@@ -20,6 +20,7 @@ Abstract base class
 #include <map>
 #include <stdint.h>
 #include "utils.h" // linux/vs macros
+#include "binary.h"
 #include "messages.h" // from M93X2 probe project
 #include "memoryimage.h" // UNIBUS memory, clone from QUniBone
 #include "memorygridcontroller.h"
@@ -39,14 +40,21 @@ public:
 
     ControlWordField(unsigned _bitFrom, unsigned _bitTo, unsigned _normalValue, wxString _fieldLabel) :
         bitFrom(_bitFrom), bitTo(_bitTo), normalValue(_normalValue), fieldLabel(_fieldLabel) {}
-    unsigned getWidth() {
+
+    unsigned bitCount() {
         return bitTo - bitFrom + 1;
     }
+
+	// return 
+	int bitIdx(unsigned controlwordBitIdx) {
+		return controlwordBitIdx - bitFrom ;
+	}
+	
     unsigned extract(uint64_t controlword) {
         unsigned result = 0;
         unsigned iDst, iSrc;
         for (iDst = 0, iSrc = bitFrom; iSrc <= bitTo; iDst++, iSrc++)
-            if ((controlword & ((uint64_t)1 << iSrc)))
+            if (getBit(controlword, iSrc))
                 result |= 1 << iDst;
         return result;
     }

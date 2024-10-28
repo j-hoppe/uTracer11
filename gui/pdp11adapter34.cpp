@@ -186,22 +186,29 @@ void Pdp11Adapter34::paintMicroStoreDocumentAnnotations(std::string mpcAsKey) {
             // 1. check wether field has its "Normal" value 
             bool isNormal = (fieldValue == cwf.normalValue);
             // 2. paint the single bits into the long 48 bit header on MP00082-15.jpg
-            for (unsigned bitIdx = cwf.bitFrom; bitIdx <= cwf.bitTo; bitIdx++) {
+            for (unsigned fieldBitIdx = 0; fieldBitIdx < cwf.bitCount(); fieldBitIdx++) {
+                unsigned controlwordBitIdx = fieldBitIdx + cwf.bitFrom;
                 // get "0"/"1" annotations of each bit
                 // key for a single bit is like "BIT.47", see XML
-                std::string bitKey = wxString::Format("BIT.%0.2d", bitIdx).ToStdString();
+                std::string bitKey = wxString::Format("BIT.%0.2d", controlwordBitIdx).ToStdString();
                 // find text annotation for each bit
                 DocumentPageAnnotation* dpa = controlwordPageAnnotations.find(bitKey);
                 if (dpa == nullptr)
                     throw std::logic_error("Annotation " + bitKey + " not found");
-				// "bit" annotation must have a single "text" geometry, may throw.
-				DocumentPageAnnotationText *textgeom =  dynamic_cast<DocumentPageAnnotationText*>(dpa->geometries.at(0)) ;
+                // "bit" annotation must have a single "text" geometry, may throw.
+                DocumentPageAnnotationText* textgeom = dynamic_cast<DocumentPageAnnotationText*>(dpa->geometries.at(0));
                 if (textgeom == nullptr)
                     throw std::logic_error("Annotation " + bitKey + " is found, but not a text");
-                bool bitValue = !!(controlword & ((uint64_t)1 << bitIdx));
-                // paint red or black bit symbols
-                textgeom->text = bitValue ? "1" : "0";
-                textgeom->fontColor = isNormal ? *wxBLACK : controlwordPageAnnotations.geometryFontColor;
+                bool controlwordBitValue = getBit(controlword, controlwordBitIdx);
+                bool fieldNormalBitValue = getBit(cwf.normalValue, fieldBitIdx);
+                // paint bits which differ from their "normal" value in red
+                textgeom->text = controlwordBitValue ? "1" : "0";
+                bool activeBit = (controlwordBitValue != fieldNormalBitValue);
+                if (cwf.fieldLabel.IsSameAs("NEXT_MPC_ADDRESS")) // all bits from MPC field always red
+                    activeBit = true;
+                if (activeBit)
+                    textgeom->fontColor = controlwordPageAnnotations.geometryFontColor;
+                else textgeom->fontColor = *wxBLACK;
                 keyList.push_back(bitKey); // always paint all bits
             }
             // 3. for every field: mark its label, if not "normal"

@@ -8,9 +8,17 @@
 #include <stdint.h>
 
 
-// helper: extract the bit sub field at value[bitFrom...BitTo]
+// helper: extract the bitMask sub field at value[bitFrom...BitTo]
+inline uint64_t bitMask(unsigned bitIdx) {
+	return (uint64_t)1 << bitIdx ;
+}
+
+inline bool getBit(uint64_t value, unsigned bitIdx) {
+        return !!(value & bitMask(bitIdx)) ;
+}
+
+
 uint64_t getBitSubField(uint64_t value, unsigned bitFrom, unsigned bitTo)  ;
-bool getBit(uint64_t value, unsigned bitIdx) ;
 
 
 // a string of "0"s and "1"s
