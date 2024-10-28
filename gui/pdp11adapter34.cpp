@@ -211,11 +211,28 @@ void Pdp11Adapter34::paintMicroStoreDocumentAnnotations(std::string mpcAsKey) {
                 else textgeom->fontColor = *wxBLACK;
                 keyList.push_back(bitKey); // always paint all bits
             }
-            // 3. for every field: mark its label, if not "normal"
+
+            // 3. for every field: mark its label, if bits not "normal" 
+            // label key like "FIELDLABEL.AUX_CONTROL"
+            if (fieldValue != cwf.normalValue) {
+                std::string fieldLabelKey = wxString::Format("FIELDLABEL.%s", cwf.fieldLabel).ToStdString();
+                DocumentPageAnnotation* dpa = controlwordPageAnnotations.find(fieldLabelKey);
+                if (dpa == nullptr)
+                    throw std::logic_error("Annotation " + fieldLabelKey + " not found");
+                keyList.push_back(fieldLabelKey);
+            }
 
             // 4. for every field with a value table: 
             // mark the table entry for current field value, if shown on MP00082-15
-
+            // table entry key like "FIELDLABEL.AUX_CONTROL.000"
+            {
+                BinaryString valueBinaryString(fieldValue, cwf.bitCount(), /*msbfirst*/true);
+                std::string fieldValueEntryKey = wxString::Format("FIELDVALUE.%s.%s",
+                    cwf.fieldLabel.ToStdString(), valueBinaryString.text).ToStdString();
+                DocumentPageAnnotation* dpa = controlwordPageAnnotations.find(fieldValueEntryKey);
+                if (dpa != nullptr) // not all fields have tables for theirs values
+                    keyList.push_back(fieldValueEntryKey);
+            }
 
             /*
                 std::vector<std::string> keyList =

@@ -27,7 +27,7 @@
    <pen>
       <align>outside</align> <!-- paint frame on outside of marked boxes -->
       <color>#ff0000</color> <!-- red -->
-      <width>20</width>
+      <width>15</width>
       <alphapercent>25</alphapercent>
    </pen>
    <font>
@@ -519,57 +519,57 @@
 
    <!-- Table "MISC CONTROL" -->
    <annotation>
-      <key>FIELDVALUE.MISC_CONTROL.000</key>
-      <label>FIELDVALUE.MISC_CONTROL.000</label>
+      <key>FIELDVALUE.MISCELLANEOUS_CONTROL.000</key>
+      <label>FIELDVALUE.MISCELLANEOUS_CONTROL.000</label>
       <geometry>
          <rectangle>980,1492,1204,1521</rectangle>
       </geometry>
    </annotation>
    <annotation>
-      <key>FIELDVALUE.MISC_CONTROL.001</key>
-      <label>FIELDVALUE.MISC_CONTROL.001</label>
+      <key>FIELDVALUE.MISCELLANEOUS_CONTROL.001</key>
+      <label>FIELDVALUE.MISC_CMISCELLANEOUS_CONTROLONTROL.001</label>
       <geometry>
          <rectangle>980,1532,1204,1561</rectangle>
       </geometry>
    </annotation>
    <annotation>
-      <key>FIELDVALUE.MISC_CONTROL.010</key>
-      <label>FIELDVALUE.MISC_CONTROL.010</label>
+      <key>FIELDVALUE.MISCELLANEOUS_CONTROL.010</key>
+      <label>FIELDVALUE.MISCELLANEOUS_CONTROL.010</label>
       <geometry>
          <rectangle>980,1570,1204,1599</rectangle>
       </geometry>
    </annotation>
    <annotation>
-      <key>FIELDVALUE.MISC_CONTROL.011</key>
-      <label>FIELDVALUE.MISC_CONTROL.011</label>
+      <key>FIELDVALUE.MISCELLANEOUS_CONTROL.011</key>
+      <label>FIELDVALUE.MISCELLANEOUS_CONTROL.011</label>
       <geometry>
          <rectangle>980,1608,1204,1637</rectangle>
       </geometry>
    </annotation>
    <annotation>
-      <key>FIELDVALUE.MISC_CONTROL.100</key>
-      <label>FIELDVALUE.MISC_CONTROL.100</label>
+      <key>FIELDVALUE.MISCELLANEOUS_CONTROL.100</key>
+      <label>FIELDVALUE.MISCELLANEOUS_CONTROL.100</label>
       <geometry>
          <rectangle>980,1645,1204,1674</rectangle>
       </geometry>
    </annotation>
    <annotation>
-      <key>FIELDVALUE.MISC_CONTROL.101</key>
-      <label>FIELDVALUE.MISC_CONTROL.101</label>
+      <key>FIELDVALUE.MISCELLANEOUS_CONTROL.101</key>
+      <label>FIELDVALUE.MISCELLANEOUS_CONTROL.101</label>
       <geometry>
          <rectangle>980,1684,1204,1713</rectangle>
       </geometry>
    </annotation>
    <annotation>
-      <key>FIELDVALUE.MISC_CONTROL.110</key>
-      <label>FIELDVALUE.MISC_CONTROL.110</label>
+      <key>FIELDVALUE.MISCELLANEOUS_CONTROL.110</key>
+      <label>FIELDVALUE.MISCELLANEOUS_CONTROL.110</label>
       <geometry>
          <rectangle>980,1721,1204,1750</rectangle>
       </geometry>
    </annotation>
    <annotation>
-      <key>FIELDVALUE.MISC_CONTROL.111</key>
-      <label>FIELDVALUE.MISC_CONTROL.111</label>
+      <key>FIELDVALUE.MISCELLANEOUS_CONTROL.111</key>
+      <label>FIELDVALUE.MISCELLANEOUS_CONTROL.111</label>
       <geometry>
          <rectangle>980,1759,1204,1788</rectangle>
       </geometry>
