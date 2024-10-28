@@ -1,5 +1,7 @@
 /*  pdp11adapter34 - base interface to physical and simulated PDP-11/34
 */
+#include <string>
+#include <stdexcept>
 
 #include "pdp11adapter34.h"
 
@@ -60,31 +62,32 @@ void Pdp11Adapter34::onInit() {
     auto cpuSignals = ResponseKY11LBSignals(0, 0, 0, 0, 0);
     cpuSignals.process(); // calls virtual onRcvMessageFromPdp11() and updates GUI
 
-// convert "LSB-first" bianry string to value
+    // convert "LSB-first" bianry string to value
 #define LSB1ST(s) (BinaryString((s), /*msbfirst*/false).value)
 
-    // setup bit fields. "noraml" string liek in DECc doc, lsb 1st, fieldnames like markers in XML! 
+    // setup bit fields. "normal" bit string like in DEC doc, LSB 1st, fieldnames like markers in XML! 
     controlWordFields = {
-    ControlWordField(0, 8, LSB1ST("0"), "NEXT_MPC_ADDRESS"),
-    ControlWordField(9, 11, LSB1ST("0"), "MISCELLANEOUS_CONTROL"),
-    ControlWordField(12 ,12, LSB1ST("0"), "DATA_TRAN"),
-    ControlWordField(13, 14, LSB1ST("0"), "BUS_CONTROL"),
-    ControlWordField(15, 15, LSB1ST("0"), "ENAB_MAINT"),
-    ControlWordField(16, 16, LSB1ST("0"), "LOAD_BAR"),
-    ControlWordField(17, 17, LSB1ST("1"), "LONG_CYCLE_L"),
-    ControlWordField(18, 18, LSB1ST("0"), "AUX_CONTROL"),
-    ControlWordField(19, 23, LSB1ST("00101"), "ALU,BLEG_CONTROL"),
-    ControlWordField(24, 27, LSB1ST("0000"), "B,BX,OVX,DBE_CONTROL"),
-    ControlWordField(28, 29, LSB1ST("00"), "SSMUX_CONTROL"),
-    ControlWordField(30, 31, LSB1ST("01"), "AMUX_CONTROL"),
-    ControlWordField(32, 35, LSB1ST("0000"), "BUT_BITS"),
-    ControlWordField(36, 37, LSB1ST("00"), "SPA_SRC_SEL"),
-    ControlWordField(38, 39, LSB1ST("11"), "SPA_DST_SEL"),
-    ControlWordField(40, 40, LSB1ST("1"), "FORCE_RS_V_1_L"),
-    ControlWordField(41, 41, LSB1ST("1"), "PREVIOUS_MODE_L"),
-    ControlWordField(42, 42, LSB1ST("0"), "BUT_SERVICE"),
-    ControlWordField(43, 43, LSB1ST("0"), "FORCE_KERNEL"),
-    ControlWordField(44, 47, LSB1ST("0000"), "ROM_SPA")
+        // impossible noram value => shown always as "active"
+        ControlWordField(0, 8, 99999, "NEXT_MPC_ADDRESS"),
+        ControlWordField(9, 11, LSB1ST("000"), "MISCELLANEOUS_CONTROL"),
+        ControlWordField(12 ,12, LSB1ST("0"), "DATA_TRAN"),
+        ControlWordField(13, 14, LSB1ST("00"), "BUS_CONTROL"),
+        ControlWordField(15, 15, LSB1ST("0"), "ENAB_MAINT"),
+        ControlWordField(16, 16, LSB1ST("0"), "LOAD_BAR"),
+        ControlWordField(17, 17, LSB1ST("1"), "LONG_CYCLE_L"),
+        ControlWordField(18, 18, LSB1ST("0"), "AUX_CONTROL"),
+        ControlWordField(19, 23, LSB1ST("00101"), "ALU,BLEG_CONTROL"),
+        ControlWordField(24, 27, LSB1ST("0000"), "B,BX,OVX,DBE_CONTROL"),
+        ControlWordField(28, 29, LSB1ST("00"), "SSMUX_CONTROL"),
+        ControlWordField(30, 31, LSB1ST("01"), "AMUX_CONTROL"),
+        ControlWordField(32, 35, LSB1ST("0000"), "BUT_BITS"),
+        ControlWordField(36, 37, LSB1ST("00"), "SPA_SRC_SEL"),
+        ControlWordField(38, 39, LSB1ST("11"), "SPA_DST_SEL"),
+        ControlWordField(40, 40, LSB1ST("1"), "FORCE_RS_V_1_L"),
+        ControlWordField(41, 41, LSB1ST("1"), "PREVIOUS_MODE_L"),
+        ControlWordField(42, 42, LSB1ST("0"), "BUT_SERVICE"),
+        ControlWordField(43, 43, LSB1ST("0"), "FORCE_KERNEL"),
+        ControlWordField(44, 47, LSB1ST("0000"), "ROM_SPA")
     };
 
     loadControlStore(resourceDir, ".", "m8266-controlstore.xml");
@@ -153,35 +156,85 @@ void Pdp11Adapter34::onTimer(unsigned periodMs) {
 
 // annotate the control word page. 
 // key = 3 digit mpc
-void Pdp11Adapter34::paintMicroStoreDocumentAnnotations(std::string key) {
+void Pdp11Adapter34::paintMicroStoreDocumentAnnotations(std::string mpcAsKey) {
     // skip before startup and if not visible
     if (controlwordPanel == nullptr || !controlwordPanel->IsShownOnScreen())
         return;
 
-    // uword: for each mpc a list of 0s and 1s (48 bit field)
-    // 1. paint "0" or "1" onto certain positions
-    // 2. extract certain bit subfields (eg: 28..31 = SSMUX control)
-    // 		this is the key for a geometry (box around SSMUX table entry)
-    //controlwordPageAnnotations.paintScaled(key, uwordPanel);
+    try { // every error prints a message and exits this method
 
-    // for the moment static image, no geometries
+        // resulting list of annotations to display:
+        // bit numbers, field and table markers
+        std::vector<std::string> keyList;
 
-    std::vector<std::string> keyList =
-    { "BIT.00", "BIT.24", "BIT.47", "FIELDLABEL.NEXT_MPC_ADDRESS", "FIELDVALUE.ROM_SPA.0000" };
+        // get current controlword
+        unsigned mpc = stol(mpcAsKey, nullptr, 8); // need numeric value
+        if (controlStore.count(mpc) == 0)
+            throw std::logic_error("Control word for key \"" + mpcAsKey + "\" not in controlStore");
+        uint64_t controlword = controlStore.at(mpc); // current 48 bit word
 
-    controlwordPageAnnotations.paintScaled(keyList, controlwordPanel);
+        // 1. paint "0" or "1" into the controlword onto bit positions
+        //   
+        // uword: for each mpc a list of 0s and 1s (48 bit field)
+        // 2. extract certain bit subfields (eg: 28..31 = SSMUX control)
+        // 		this is the key for a geometry (box around SSMUX table entry)
+        //controlwordPageAnnotations.paintScaled(key, uwordPanel);
+
+        // for each control word bit field
+        for (ControlWordField& cwf : controlWordFields) {
+            unsigned fieldValue = cwf.extract(controlword);
+            // 1. check wether field has its "Normal" value 
+            bool isNormal = (fieldValue == cwf.normalValue);
+            // 2. paint the single bits into the long 48 bit header on MP00082-15.jpg
+            for (unsigned bitIdx = cwf.bitFrom; bitIdx <= cwf.bitTo; bitIdx++) {
+                // get "0"/"1" annotations of each bit
+                // key for a single bit is like "BIT.47", see XML
+                std::string bitKey = wxString::Format("BIT.%0.2d", bitIdx).ToStdString();
+                // find text annotation for each bit
+                DocumentPageAnnotation* dpa = controlwordPageAnnotations.find(bitKey);
+                if (dpa == nullptr)
+                    throw std::logic_error("Annotation " + bitKey + " not found");
+				// "bit" annotation must have a single "text" geometry, may throw.
+				DocumentPageAnnotationText *textgeom =  dynamic_cast<DocumentPageAnnotationText*>(dpa->geometries.at(0)) ;
+                if (textgeom == nullptr)
+                    throw std::logic_error("Annotation " + bitKey + " is found, but not a text");
+                bool bitValue = !!(controlword & ((uint64_t)1 << bitIdx));
+                // paint red or black bit symbols
+                textgeom->text = bitValue ? "1" : "0";
+                textgeom->fontColor = isNormal ? *wxBLACK : controlwordPageAnnotations.geometryFontColor;
+                keyList.push_back(bitKey); // always paint all bits
+            }
+            // 3. for every field: mark its label, if not "normal"
+
+            // 4. for every field with a value table: 
+            // mark the table entry for current field value, if shown on MP00082-15
+
+
+            /*
+                std::vector<std::string> keyList =
+                { "BIT.00", "BIT.24", "BIT.47", "FIELDLABEL.NEXT_MPC_ADDRESS", "FIELDVALUE.ROM_SPA.0000" };
+            */
+        }
+
+        // Finally: paint all required annotations
+        controlwordPageAnnotations.paintScaled(keyList, controlwordPanel);
+    }
+    catch (const std::exception& e) {
+        wxLogError("in paintMicroStoreDocumentAnnotations(): %s", e.what());
+    }
 }
+
 
 // paint datapath image. Several objects marked
 // which are mentioned in current uflow annotation datafield
 // get datafields for current upc
 // key = 3 digit mpc
-void Pdp11Adapter34::paintDatapathDocumentAnnotations(std::string key) {
+void Pdp11Adapter34::paintDatapathDocumentAnnotations(std::string mpcAsKey) {
     // skip before startup and if not visible
     if (dataPathPanel == nullptr || !dataPathPanel->IsShownOnScreen())
         return;
 
-    auto dpa = uflowPageAnnotations.find(key);
+    auto dpa = uflowPageAnnotations.find(mpcAsKey);
     if (dpa == nullptr)
         return; // "file not found" display, no data for upc
     // get objects to mark
@@ -199,15 +252,15 @@ void Pdp11Adapter34::paintDocumentAnnotations() {
     // paints only on visible panels
 
     // key in the uFlow XML are 3-digit octal values
-    std::string key = wxString::Format("%03o", microProgramCounter).ToStdString();
+    std::string mpcAsKey = wxString::Format("%03o", microProgramCounter).ToStdString();
 
     // uflow: a single geometry for the mpc
     if (uFlowPanel != nullptr) // startup passed?
-        uflowPageAnnotations.paintScaled(key, uFlowPanel);
+        uflowPageAnnotations.paintScaled(mpcAsKey, uFlowPanel);
 
-    paintMicroStoreDocumentAnnotations(key);
+    paintMicroStoreDocumentAnnotations(mpcAsKey);
 
-    paintDatapathDocumentAnnotations(key);
+    paintDatapathDocumentAnnotations(mpcAsKey);
 }
 
 void Pdp11Adapter34::setManClkEnable(bool _manClkEnable)

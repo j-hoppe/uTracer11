@@ -171,8 +171,6 @@ void DocumentPageAnnotationText::paintScaled(double scaleX, double scaleY, wxGra
     wxCoord boxScaledWidth = round(scaleX * (x1 - x0));
     wxCoord boxScaledHeight = round(scaleY * (y1 - y0));
 
-	text= "0" ; //debug
-	
     // adapt font size. 1 pixel border, even if scaled down
     int border = 1;
     int requiredTextHeight = boxScaledHeight - 2 * border;
@@ -287,8 +285,7 @@ void DocumentPageAnnotation::parseFromNode(wxXmlNode* node, DocumentPageAnnotati
             imageFileName = wxFileName(fullFilename);
         }
         else if (child->GetName().IsSameAs("geometry", false)) {
-            // auto geometry = DocumentPageAnnotation();
-            parseGeometryFromNode(child, parent);
+            parseGeometryFromNode(child, parent); // rectangle, line or text
         }
         else if (child->GetName().IsSameAs("datafield1", false))
             parseDatafieldFromNode(child, 0);

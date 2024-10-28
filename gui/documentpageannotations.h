@@ -139,6 +139,7 @@ public:
     std::vector<std::string> dataFields;
 
     DocumentPageAnnotation();
+	virtual ~DocumentPageAnnotation() {} // make polymorphic
 
     void parseGeometryFromNode(wxXmlNode* node, DocumentPageAnnotations* parent);
     void parseDatafieldFromNode(wxXmlNode* node, unsigned idx);
@@ -152,7 +153,7 @@ public:
 // all pages and possible annotations for a scanned DEC document
 class DocumentPageAnnotations {
 
-    // class tables for parsing
+    // class tables for parsing font properties
     static std::map<wxString, enum wxFontFamily> fontFamilyMap;
     static std::map<wxString, enum wxFontWeight> fontWeightMap;
 

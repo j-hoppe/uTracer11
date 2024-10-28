@@ -32,8 +32,8 @@ public:
     virtual void uStep() override;
     //virtual void doAutoStepping(uint32_t stopUpc, int stopUnibusCycle, uint32_t stopUnibusAddress, int stopRepeatCount) override;
 
-	void paintMicroStoreDocumentAnnotations(std::string key) ;
-	void paintDatapathDocumentAnnotations(std::string key) ;
+	void paintMicroStoreDocumentAnnotations(std::string mpcAsKey) ;
+	void paintDatapathDocumentAnnotations(std::string mpcAsKey) ;
     virtual void paintDocumentAnnotations() override;
 
     virtual void onResponseKM11Signals(ResponseKM11Signals* km11Signals) override;

@@ -536,7 +536,7 @@ void Pdp11Adapter::loadControlStore(wxFileName resourcePath, std::string subDir,
         return;
     }
     wxLogInfo("%s opened", path.GetAbsolutePath());
-    uControlStore.clear();
+    controlStore.clear();
 
     // iterate all <controlword>
     wxXmlNode* rootChild = doc.GetRoot()->GetChildren();
@@ -558,7 +558,7 @@ void Pdp11Adapter::loadControlStore(wxFileName resourcePath, std::string subDir,
             unsigned mpc = std::stoi(mpcText, nullptr, 8);
             // controlword string -> value
             BinaryString bs(bitsText,/*msb first */true);
-            uControlStore.insert(std::pair<unsigned, uint64_t>(mpc, bs.value));
+            controlStore.insert(std::pair<unsigned, uint64_t>(mpc, bs.value));
         }
         rootChild = rootChild->GetNext();
     }

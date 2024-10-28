@@ -169,6 +169,7 @@
     <ClInclude Include="uTracer11FB.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\common\binary.cpp" />
     <ClCompile Include="..\common\csvreader.cpp" />
     <ClInclude Include="..\common\csvreader.h" />
     <ClCompile Include="..\common\memoryimage.cpp" />

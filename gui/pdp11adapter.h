@@ -50,6 +50,8 @@ public:
                 result |= 1 << iDst;
         return result;
     }
+    unsigned getFieldBitIndex(unsigned    controlwordBitIndex) {
+    	}
 };
 
 class Pdp11Adapter {
@@ -126,7 +128,7 @@ public:
     Pdp11uFlowPanel* uFlowPanel = nullptr;
 
     // all have a micro code control store. long controlword upto 64 bits index by mpc.
-    std::map<unsigned, uint64_t>	uControlStore;
+    std::map<unsigned, uint64_t>	controlStore;
 
     virtual void setupGui(wxFileName _resourceDir);
     // Set State of control, visibility and functions
