@@ -229,7 +229,7 @@ void *RequestKM11SignalsRead::process() {
     return ResponseKM11Signals(channel, val0A, val0B, val1A, val1B).render();
 }
 
-// write 4 outputs of KM11A as hex digit//
+// write 4 outputs of KM11A as hex digit
 // response a short "OK"
 void *RequestKM11SignalsWrite::process() {
     Mcp23017 *mcp0, *mcp1;

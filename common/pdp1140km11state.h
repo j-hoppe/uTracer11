@@ -35,10 +35,11 @@ public:
     bool eps_z = 0;
     bool eps_n = 0;
 
-    // outputs from KM11A to CPU, inverted?
-    bool mstop = 0; // active: stop micro program execution at mpc set on console switches
-    bool mclk = 0; // physically inverted
-    bool mclk_enab = 0; // physically inverted
+    // outputs from KM11A to CPU, physically inverted on M93X2 probe
+    // here logically "true" = active
+    bool mstop = false; // active: stop micro program execution at mpc set on console switches
+    bool mclk = false; 
+    bool mclk_enab = false; 
 
     // lowlevel encode/decode
 

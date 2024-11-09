@@ -126,7 +126,10 @@ R M A       read all 28 signals from KM11A
 
 
 W M A <val>   write 4 outputs of KM11A as hex digit
-    Format: <val0-3>, val.3=<out11> val.2=<out10> val.1=<out01> val.0=<out00>
+    Outputs out** are "active low": a "1" switches an out** to GND.
+    If no KM11 is plugged into the 11/40, CPU internal MCLK signals are pulled H = inactive.
+    So default out** signals must be H, like no KM11 is plugged in.
+    Format: <val3-0>, val.3=<out11> val.2=<out10> val.1=<out01> val.0=<out00>
     response: M <mscp30.gpioa> <mscp30.gpiob> <mscp31.gpioa> <mscp31.gpiob> (hex)
 
 R M B       read  KM11B

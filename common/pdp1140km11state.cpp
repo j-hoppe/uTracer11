@@ -28,8 +28,8 @@ roma    romb    romc    romd    expovfl msr01   epsn
 Signals indices [col,row] on M93X2probe KM11 PCB:
     IN (LEDs)                                           Out (switches)
 0,0     1,0     2,0     3,0     4,0     5,0     6,0
-0,1     1,1     2,1     3,1     4,1     5,1     6,1     0,0  1,0
-0,2     1,2     2,2     3,2     4,2     5,2     6,2     0,1  1,1
+0,1     1,1     2,1     3,1     4,1     5,1     6,1     0,0  0,1
+0,2     1,2     2,2     3,2     4,2     5,2     6,2     1,0  1,1
 0,3     1,3     2,3     3,3     4,3     5,3     6,3
 
 
@@ -231,8 +231,8 @@ void Pdp1140KM11State::outputsToKM11AWriteRequest(RequestKM11SignalsWrite* reqKm
     // out10 = MCLK   out11 = MCLK ENAB
     auto out00 = 0;
     auto out01 = mstop;
-    auto out10 = !mclk; // "mclk_l" in fpms
-    auto out11 = !mclk_enab; // "mclk_enab_l" in fpms
+    auto out10 = mclk; // "mclk_l" in fpms
+    auto out11 = mclk_enab; // "mclk_enab_l" in fpms
     reqKm11A->val03 = setbit(out00, 0) | setbit(out01, 1) | setbit(out10, 2) | setbit(out11, 3);
 }
 
