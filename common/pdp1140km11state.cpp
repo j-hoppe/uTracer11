@@ -24,6 +24,12 @@ pba17   pba14   pba11   pba08   expunfl msr00   epsz
 
 roma    romb    romc    romd    expovfl msr01   epsn
 
+FlipChip signals on slot F1:
+K2      J1      P1      R1      S1      N2      R2
+N1      C1      L1      K1      M2      D2      E2       A1     B2
+V1      T2      F1      S2      F2      H2      H1       U1     V2
+P2      U2      D1      M1      E1      J2      L2
+
 
 Signals indices [col,row] on M93X2probe KM11 PCB:
     IN (LEDs)                                           Out (switches)

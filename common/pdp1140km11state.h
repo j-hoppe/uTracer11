@@ -37,9 +37,14 @@ public:
 
     // outputs from KM11A to CPU, physically inverted on M93X2 probe
     // here logically "true" = active
+
+    // "NO MSTOP?", KM11 pin B2, Sheet K4-2
     bool mstop = false; // active: stop micro program execution at mpc set on console switches
-    bool mclk = false; 
-    bool mclk_enab = false; 
+    // "MCLK" , KM11 pin U1, sheet K4-2
+    bool mclk = false;
+
+    // "MCLK ENABLE" , KM11 pin V2, sheet K4-2
+    bool mclk_enab = false;
 
     // lowlevel encode/decode
 
