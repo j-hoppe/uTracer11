@@ -248,8 +248,8 @@ void Pdp1140KM11State::outputsFromKM11AWriteRequest(RequestKM11SignalsWrite* req
     auto out10 = getbit(reqKm11A->val03, 2);
     auto out11 = getbit(reqKm11A->val03, 3);
     mstop = out01 ;
-    mclk = !out10 ; // "mclk_l" in fpms
-    mclk_enab = !out11; // "mclk_enab_l" in fpms
+    mclk = out10 ; // "mclk_l" in fpms
+    mclk_enab = out11; // "mclk_enab_l" in fpms
 }
 
 
