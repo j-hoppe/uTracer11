@@ -68,20 +68,7 @@ void Pdp11Adapter40::onInit() {
 
 
 #ifdef TODO
-    // Check xml: key is 3 digit octal value
-    for (auto itpa = uflowPageAnnotations.pageAnnotations.begin(); itpa != uflowPageAnnotations.pageAnnotations.end(); itpa++) {
-        DocumentPageAnnotation* pa = &(itpa->second);
-        size_t pos;
-        std::stoi(pa->key, &pos, 8); // try convert to octal
-        if (pos != 3)
-            wxLogError("Illegal octal key in 11/40 uflow.xml");
-    }
-
     datapathPageAnnotations.loadXml(resourceDir, "mp00082-datapath", "mp00082-datapath.xml");
-
-    // set manclock to initial state of "ManClock" ToggleButton. false  = not pressed
-    auto _manClkEnable = wxGetApp().mainFrame->manClockEnableButton->GetValue();
-    setManClkEnable(_manClkEnable); // state change
 
     // search in current uflow MPC data for keys of datapath objects
     // like "d:\retrocmp\dec\pdp11\uTracer11\resources\pdp1134\"
@@ -93,6 +80,10 @@ void Pdp11Adapter40::onInit() {
     // list all annotations datafields[2] with
     uflowPageAnnotations.dumpKeywordsForDatafields(uflowTodataPathKeyPatterns);
 #endif
+
+    // set manclock to initial state of "ManClock" ToggleButton. false  = not pressed
+    auto _manClkEnable = wxGetApp().mainFrame->manClockEnableButton->GetValue();
+    setManClkEnable(_manClkEnable); // state change
 }
 
 // called periodically

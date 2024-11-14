@@ -106,10 +106,6 @@ void Pdp11Adapter34::onInit() {
 
     datapathPageAnnotations.loadXml(resourceDir, "mp00082-datapath", "mp00082-datapath.xml");
 
-    // set manclock to initial state of "ManClock" ToggleButton. false  = not pressed
-    auto _manClkEnable = wxGetApp().mainFrame->manClockEnableButton->GetValue();
-    setManClkEnable(_manClkEnable); // state change
-
     // search in current uflow MPC data for keys of datapath objects
     // like "d:\retrocmp\dec\pdp11\uTracer11\resources\pdp1134\"
     uflowTodataPathKeyPatterns.loadXml(resourceDir, ".", "uflow2datapath.xml");
@@ -119,6 +115,11 @@ void Pdp11Adapter34::onInit() {
     // verify matching of regexes to datafields
     // list all annotations datafields[2] with
     uflowPageAnnotations.dumpKeywordsForDatafields(uflowTodataPathKeyPatterns);
+
+    // set manclock to initial state of "ManClock" ToggleButton. false  = not pressed
+    auto _manClkEnable = wxGetApp().mainFrame->manClockEnableButton->GetValue();
+    setManClkEnable(_manClkEnable); // state change
+
 }
 
 // called periodically
