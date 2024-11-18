@@ -72,12 +72,13 @@ protected:
     void DoLogTextAtLevel(wxLogLevel level, const wxString& msg) override
     {
         // wxLOG_FatalError, wxLOG_Error, wxLOG_Warning, wxLOG_Message, wxLOG_Status
-        // also to status bar
-        if (level <= wxLOG_Status)
+        // also to status bar, if frame yet instantiated
+        if (level <= wxLOG_Status && wxGetApp().mainFrame != nullptr)
             wxGetApp().mainFrame->SetStatusText(msg);
 
         // Everything to textCtrl
-        m_textCtrl->AppendText(msg + "\n");
+        if (m_textCtrl != nullptr)
+            m_textCtrl->AppendText(msg + "\n");
 
         // force user to commit
         if (level == wxLOG_Error || level == wxLOG_FatalError) {

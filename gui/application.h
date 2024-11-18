@@ -40,6 +40,9 @@ class Application : public wxApp
     virtual bool OnExceptionInMainLoop() override;
     virtual bool OnInit() override;
     virtual void OnInitCmdLine(wxCmdLineParser& parser) override;
+    virtual bool OnCmdLineError(wxCmdLineParser& parser) override;
+    virtual bool OnCmdLineHelp(wxCmdLineParser& parser) override;
+
     virtual bool OnCmdLineParsed(wxCmdLineParser& parser) override;
 
     void connectToMessageInterface();

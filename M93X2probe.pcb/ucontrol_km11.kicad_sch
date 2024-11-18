@@ -1747,9 +1747,9 @@
 		)
 		(symbol "power:+5V"
 			(power)
+			(pin_numbers hide)
 			(pin_names
-				(offset 0)
-			)
+				(offset 0) hide)
 			(exclude_from_sim no)
 			(in_bom yes)
 			(on_board yes)
@@ -1847,8 +1847,8 @@
 			(symbol "+5V_1_1"
 				(pin power_in line
 					(at 0 0 90)
-					(length 0) hide
-					(name "+5V"
+					(length 0)
+					(name "~"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -1867,9 +1867,9 @@
 		)
 		(symbol "power:GND"
 			(power)
+			(pin_numbers hide)
 			(pin_names
-				(offset 0)
-			)
+				(offset 0) hide)
 			(exclude_from_sim no)
 			(in_bom yes)
 			(on_board yes)
@@ -1943,8 +1943,8 @@
 			(symbol "GND_1_1"
 				(pin power_in line
 					(at 0 0 270)
-					(length 0) hide
-					(name "GND"
+					(length 0)
+					(name "~"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -3552,7 +3552,7 @@
 		)
 		(uuid "e155025c-daa1-4150-967f-9a17fe774fd7")
 	)
-	(label "KM11A_IN32"
+	(label "KM11A_S2"
 		(at 97.79 194.31 0)
 		(fields_autoplaced yes)
 		(effects
@@ -3563,7 +3563,7 @@
 		)
 		(uuid "0152875b-9254-4418-b5bc-660d3f388f5a")
 	)
-	(label "KM11A_OUT01_L"
+	(label "KM11A_B2_L"
 		(at 97.79 156.21 0)
 		(fields_autoplaced yes)
 		(effects
@@ -3574,7 +3574,7 @@
 		)
 		(uuid "01f1c606-4445-47c8-91ab-abc5596cc474")
 	)
-	(label "KM11A_IN12"
+	(label "KM11A_T2"
 		(at 66.04 48.26 180)
 		(fields_autoplaced yes)
 		(effects
@@ -3585,7 +3585,7 @@
 		)
 		(uuid "0584b124-f8f8-44f6-b57a-3376a307cdc3")
 	)
-	(label "KM11B_OUT10"
+	(label "KM11B_U1_L"
 		(at 146.05 78.74 180)
 		(fields_autoplaced yes)
 		(effects
@@ -3596,7 +3596,7 @@
 		)
 		(uuid "05f26bf0-02b5-4340-9363-d88f6c662159")
 	)
-	(label "KM11A_IN60"
+	(label "KM11A_R2"
 		(at 66.04 71.12 180)
 		(fields_autoplaced yes)
 		(effects
@@ -3607,7 +3607,7 @@
 		)
 		(uuid "06b892ff-9f0f-4ade-a75a-d931e9db236d")
 	)
-	(label "KM11A_IN43"
+	(label "KM11A_E1"
 		(at 97.79 207.01 0)
 		(fields_autoplaced yes)
 		(effects
@@ -3618,7 +3618,7 @@
 		)
 		(uuid "07e9b0c5-e4ca-471b-8caa-9296ac050372")
 	)
-	(label "KM11B_IN43"
+	(label "KM11B_E1"
 		(at 160.02 63.5 0)
 		(fields_autoplaced yes)
 		(effects
@@ -3629,7 +3629,7 @@
 		)
 		(uuid "08114b2c-8c01-4691-b1a9-a2c9ef9a343f")
 	)
-	(label "KM11B_IN61"
+	(label "KM11B_E2"
 		(at 160.02 71.12 0)
 		(fields_autoplaced yes)
 		(effects
@@ -3640,7 +3640,7 @@
 		)
 		(uuid "082e7754-c391-4435-9a7f-6524e15cffec")
 	)
-	(label "KM11A_IN40"
+	(label "KM11A_S1"
 		(at 66.04 60.96 180)
 		(fields_autoplaced yes)
 		(effects
@@ -3651,7 +3651,7 @@
 		)
 		(uuid "095eb8ac-0263-4d15-bab4-da806350cc2a")
 	)
-	(label "KM11A_IN30"
+	(label "KM11A_R1"
 		(at 97.79 151.13 0)
 		(fields_autoplaced yes)
 		(effects
@@ -3662,7 +3662,7 @@
 		)
 		(uuid "0aeb4ecb-3448-4b12-b345-a912ed639d01")
 	)
-	(label "KM11B_IN03"
+	(label "KM11B_P2"
 		(at 228.6 124.46 0)
 		(fields_autoplaced yes)
 		(effects
@@ -3673,7 +3673,7 @@
 		)
 		(uuid "0d6cb901-5bba-49d4-a435-153765482b18")
 	)
-	(label "KM11B_IN51"
+	(label "KM11B_D2"
 		(at 160.02 66.04 0)
 		(fields_autoplaced yes)
 		(effects
@@ -3684,7 +3684,7 @@
 		)
 		(uuid "1019742f-1ee8-4a39-8ed7-4c04c6f28488")
 	)
-	(label "KM11B_IN42"
+	(label "KM11B_F2"
 		(at 146.05 63.5 180)
 		(fields_autoplaced yes)
 		(effects
@@ -3695,7 +3695,7 @@
 		)
 		(uuid "11876127-237e-40bd-949b-f3385751eda6")
 	)
-	(label "KM11A_IN32"
+	(label "KM11A_S2"
 		(at 66.04 58.42 180)
 		(fields_autoplaced yes)
 		(effects
@@ -3706,7 +3706,7 @@
 		)
 		(uuid "15171f0b-dcbf-41b4-82ec-23b70c952278")
 	)
-	(label "KM11B_IN01"
+	(label "KM11B_N1"
 		(at 160.02 40.64 0)
 		(fields_autoplaced yes)
 		(effects
@@ -3717,7 +3717,7 @@
 		)
 		(uuid "157fbd15-b0c8-449f-8969-79b226787a23")
 	)
-	(label "KM11A_IN42"
+	(label "KM11A_F2"
 		(at 97.79 204.47 0)
 		(fields_autoplaced yes)
 		(effects
@@ -3728,7 +3728,7 @@
 		)
 		(uuid "164b412b-62d2-4963-a813-72c3e640d092")
 	)
-	(label "KM11A_IN61"
+	(label "KM11A_E2"
 		(at 80.01 71.12 0)
 		(fields_autoplaced yes)
 		(effects
@@ -3739,7 +3739,7 @@
 		)
 		(uuid "16d316de-0452-4cc0-9f51-5bf790c72825")
 	)
-	(label "KM11B_OUT00_L"
+	(label "KM11B_A1_L"
 		(at 228.6 134.62 0)
 		(fields_autoplaced yes)
 		(effects
@@ -3750,7 +3750,7 @@
 		)
 		(uuid "18da2957-745e-4604-aa1c-2d47b0a404b6")
 	)
-	(label "KM11B_IN20"
+	(label "KM11B_P1"
 		(at 228.6 140.97 0)
 		(fields_autoplaced yes)
 		(effects
@@ -3761,7 +3761,7 @@
 		)
 		(uuid "1cff9e2e-9dd4-4742-90f6-39bd98fe82e7")
 	)
-	(label "KM11B_IN21"
+	(label "KM11B_L1"
 		(at 160.02 50.8 0)
 		(fields_autoplaced yes)
 		(effects
@@ -3772,7 +3772,7 @@
 		)
 		(uuid "1d3aba81-c5ca-425a-ad30-fee8c44da8d8")
 	)
-	(label "KM11A_OUT10"
+	(label "KM11A_U1_L"
 		(at 97.79 212.09 0)
 		(fields_autoplaced yes)
 		(effects
@@ -3783,7 +3783,7 @@
 		)
 		(uuid "1d4ad0b8-f7f0-4654-8f6a-b177b8b8cae0")
 	)
-	(label "KM11A_IN10"
+	(label "KM11A_J1"
 		(at 97.79 127 0)
 		(fields_autoplaced yes)
 		(effects
@@ -3794,7 +3794,7 @@
 		)
 		(uuid "1f30d71a-1fa3-4e8b-bcd6-db91c51d47e2")
 	)
-	(label "KM11A_IN12"
+	(label "KM11A_T2"
 		(at 97.79 132.08 0)
 		(fields_autoplaced yes)
 		(effects
@@ -3805,7 +3805,7 @@
 		)
 		(uuid "23c09f33-bd84-45b1-a01c-44e609572d24")
 	)
-	(label "KM11B_IN52"
+	(label "KM11B_H2"
 		(at 146.05 68.58 180)
 		(fields_autoplaced yes)
 		(effects
@@ -3816,7 +3816,7 @@
 		)
 		(uuid "2648a34b-f1f3-44f2-983a-e005aa838bd1")
 	)
-	(label "KM11B_IN30"
+	(label "KM11B_R1"
 		(at 228.6 151.13 0)
 		(fields_autoplaced yes)
 		(effects
@@ -3827,7 +3827,7 @@
 		)
 		(uuid "275f7dc4-94a9-4808-b0fe-7851d3136b47")
 	)
-	(label "KM11B_OUT00_L"
+	(label "KM11B_A1_L"
 		(at 146.05 76.2 180)
 		(fields_autoplaced yes)
 		(effects
@@ -3838,7 +3838,7 @@
 		)
 		(uuid "27b8c9cd-46db-4e63-81e0-201853f7c6d7")
 	)
-	(label "KM11A_IN52"
+	(label "KM11A_H2"
 		(at 97.79 218.44 0)
 		(fields_autoplaced yes)
 		(effects
@@ -3849,7 +3849,7 @@
 		)
 		(uuid "27e724df-68d8-4343-92af-ded66fa8d694")
 	)
-	(label "KM11A_IN41"
+	(label "KM11A_M2"
 		(at 80.01 60.96 0)
 		(fields_autoplaced yes)
 		(effects
@@ -3860,7 +3860,7 @@
 		)
 		(uuid "2db45fda-5c5b-4e2f-97f2-d63e55c54c89")
 	)
-	(label "KM11B_IN00"
+	(label "KM11B_K2"
 		(at 228.6 116.84 0)
 		(fields_autoplaced yes)
 		(effects
@@ -3871,7 +3871,7 @@
 		)
 		(uuid "2e3e1240-25e9-4d88-b2fc-b5d709fd7181")
 	)
-	(label "KM11B_IN63"
+	(label "KM11B_L2"
 		(at 227.33 232.41 0)
 		(fields_autoplaced yes)
 		(effects
@@ -3882,7 +3882,7 @@
 		)
 		(uuid "31cfc063-8a93-499e-811f-44c0ac3891f6")
 	)
-	(label "KM11A_IN21"
+	(label "KM11A_L1"
 		(at 97.79 143.51 0)
 		(fields_autoplaced yes)
 		(effects
@@ -3893,7 +3893,7 @@
 		)
 		(uuid "33ce76e7-0431-482d-bf88-f8bb50d8372c")
 	)
-	(label "KM11A_IN53"
+	(label "KM11A_J2"
 		(at 80.01 68.58 0)
 		(fields_autoplaced yes)
 		(effects
@@ -3904,7 +3904,7 @@
 		)
 		(uuid "4453431f-3ed0-4bec-8498-deee0431733e")
 	)
-	(label "KM11A_OUT00_L"
+	(label "KM11A_A1_L"
 		(at 97.79 134.62 0)
 		(fields_autoplaced yes)
 		(effects
@@ -3915,7 +3915,7 @@
 		)
 		(uuid "45ba29f6-4495-4aaa-b2a5-cdf73bc4e714")
 	)
-	(label "KM11A_IN50"
+	(label "KM11A_N2"
 		(at 66.04 66.04 180)
 		(fields_autoplaced yes)
 		(effects
@@ -3926,7 +3926,7 @@
 		)
 		(uuid "46e8c079-c56a-4eca-ba1d-e77428b6f584")
 	)
-	(label "KM11B_IN21"
+	(label "KM11B_L1"
 		(at 228.6 143.51 0)
 		(fields_autoplaced yes)
 		(effects
@@ -3937,7 +3937,7 @@
 		)
 		(uuid "49591307-f16f-4bf8-a07b-b956e6032fba")
 	)
-	(label "KM11A_IN02"
+	(label "KM11A_V1"
 		(at 97.79 121.92 0)
 		(fields_autoplaced yes)
 		(effects
@@ -3948,7 +3948,7 @@
 		)
 		(uuid "4ae07c51-fe29-4e75-be3b-fefd399e8964")
 	)
-	(label "KM11B_IN11"
+	(label "KM11B_C1"
 		(at 160.02 45.72 0)
 		(fields_autoplaced yes)
 		(effects
@@ -3959,7 +3959,7 @@
 		)
 		(uuid "50a83e89-2836-4e55-a1fd-4641a89ce90b")
 	)
-	(label "KM11B_IN13"
+	(label "KM11B_U2"
 		(at 160.02 48.26 0)
 		(fields_autoplaced yes)
 		(effects
@@ -3970,7 +3970,7 @@
 		)
 		(uuid "51757a06-ef4c-4eff-9774-cc7188fde5da")
 	)
-	(label "KM11A_IN30"
+	(label "KM11A_R1"
 		(at 66.04 55.88 180)
 		(fields_autoplaced yes)
 		(effects
@@ -3981,7 +3981,7 @@
 		)
 		(uuid "568e412c-67b7-4e31-add5-3e00af5faf31")
 	)
-	(label "KM11A_IN51"
+	(label "KM11A_D2"
 		(at 80.01 66.04 0)
 		(fields_autoplaced yes)
 		(effects
@@ -3992,7 +3992,7 @@
 		)
 		(uuid "581a21aa-ea6b-4102-a49f-86795b359af6")
 	)
-	(label "KM11B_IN40"
+	(label "KM11B_S1"
 		(at 146.05 60.96 180)
 		(fields_autoplaced yes)
 		(effects
@@ -4003,7 +4003,7 @@
 		)
 		(uuid "5dc66efb-7643-4860-8671-ade4de6c8212")
 	)
-	(label "KM11B_IN60"
+	(label "KM11B_R2"
 		(at 146.05 71.12 180)
 		(fields_autoplaced yes)
 		(effects
@@ -4014,7 +4014,7 @@
 		)
 		(uuid "5de78dbf-639d-49a9-8c01-6bbb519444ca")
 	)
-	(label "KM11B_IN52"
+	(label "KM11B_H2"
 		(at 227.33 219.71 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4025,7 +4025,7 @@
 		)
 		(uuid "5f0552cb-b209-41c7-95eb-061d2c7adb87")
 	)
-	(label "KM11B_IN31"
+	(label "KM11B_K1"
 		(at 228.6 153.67 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4036,7 +4036,7 @@
 		)
 		(uuid "63e15567-34e3-4dd5-9a46-a96e02862da4")
 	)
-	(label "KM11A_IN63"
+	(label "KM11A_L2"
 		(at 80.01 73.66 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4047,7 +4047,7 @@
 		)
 		(uuid "641c7829-95d7-43a3-bf86-ae00217853f8")
 	)
-	(label "KM11A_IN13"
+	(label "KM11A_U2"
 		(at 80.01 48.26 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4058,7 +4058,7 @@
 		)
 		(uuid "65ac2fa5-a5ae-4868-9acd-1a6099f37d7e")
 	)
-	(label "KM11B_IN11"
+	(label "KM11B_C1"
 		(at 228.6 129.54 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4069,7 +4069,7 @@
 		)
 		(uuid "65baf0d7-2e45-4af7-967c-d5a9fc0c9c48")
 	)
-	(label "KM11A_OUT01_L"
+	(label "KM11A_B2_L"
 		(at 80.01 76.2 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4080,7 +4080,7 @@
 		)
 		(uuid "67a9a38b-0a00-4794-a598-2c46843907b0")
 	)
-	(label "KM11B_IN32"
+	(label "KM11B_S2"
 		(at 227.33 195.58 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4091,7 +4091,7 @@
 		)
 		(uuid "72dbaf5e-2ec5-4599-b775-e9e7b5a2690a")
 	)
-	(label "KM11B_OUT11_L"
+	(label "KM11B_V2_L"
 		(at 227.33 234.95 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4102,7 +4102,7 @@
 		)
 		(uuid "7372343c-f847-4027-842c-9fafc518e6f1")
 	)
-	(label "KM11A_IN22"
+	(label "KM11A_F1"
 		(at 66.04 53.34 180)
 		(fields_autoplaced yes)
 		(effects
@@ -4113,7 +4113,7 @@
 		)
 		(uuid "7a93fe8f-9161-4f18-9492-e24136ed908d")
 	)
-	(label "KM11B_IN62"
+	(label "KM11B_H1"
 		(at 146.05 73.66 180)
 		(fields_autoplaced yes)
 		(effects
@@ -4124,7 +4124,7 @@
 		)
 		(uuid "7bd574c5-799b-4a42-ba44-8f79fa1574c5")
 	)
-	(label "KM11A_OUT11_L"
+	(label "KM11A_V2_L"
 		(at 80.01 78.74 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4135,7 +4135,7 @@
 		)
 		(uuid "7c0dfa01-f0e7-4341-ab61-7956ec1cbf84")
 	)
-	(label "KM11B_IN01"
+	(label "KM11B_N1"
 		(at 228.6 119.38 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4146,7 +4146,7 @@
 		)
 		(uuid "80bcff86-fe14-4e32-8ff1-9e383a2bca0c")
 	)
-	(label "KM11B_IN31"
+	(label "KM11B_K1"
 		(at 160.02 55.88 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4157,7 +4157,7 @@
 		)
 		(uuid "81906eff-ac0e-4b57-bd51-1cd814e0abae")
 	)
-	(label "KM11B_IN33"
+	(label "KM11B_M1"
 		(at 227.33 198.12 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4168,7 +4168,7 @@
 		)
 		(uuid "823ad0f0-e7e3-449e-a128-432791ad588d")
 	)
-	(label "KM11B_IN02"
+	(label "KM11B_V1"
 		(at 228.6 121.92 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4179,7 +4179,7 @@
 		)
 		(uuid "84d89fd4-e683-4cf2-b10c-b150413e65f8")
 	)
-	(label "KM11A_IN41"
+	(label "KM11A_M2"
 		(at 97.79 201.93 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4190,7 +4190,7 @@
 		)
 		(uuid "86c758c1-6b05-45e3-9440-ff6f566fc10e")
 	)
-	(label "KM11A_IN62"
+	(label "KM11A_H1"
 		(at 97.79 228.6 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4201,7 +4201,7 @@
 		)
 		(uuid "8b0374f4-926f-46ac-baa7-d36ea47bb491")
 	)
-	(label "KM11B_IN43"
+	(label "KM11B_E1"
 		(at 227.33 208.28 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4212,7 +4212,7 @@
 		)
 		(uuid "8b2770a3-f091-451b-b734-78b740d7e293")
 	)
-	(label "KM11A_IN11"
+	(label "KM11A_C1"
 		(at 97.79 129.54 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4223,7 +4223,7 @@
 		)
 		(uuid "8d93c32a-e781-4271-b53b-f01c2a338302")
 	)
-	(label "KM11A_IN03"
+	(label "KM11A_P2"
 		(at 80.01 43.18 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4234,7 +4234,7 @@
 		)
 		(uuid "8ec44994-063c-44fc-ad4e-fc6e907bd411")
 	)
-	(label "KM11A_IN22"
+	(label "KM11A_F1"
 		(at 97.79 146.05 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4245,7 +4245,7 @@
 		)
 		(uuid "92435733-a20b-419c-a354-150937b266f8")
 	)
-	(label "KM11B_IN02"
+	(label "KM11B_V1"
 		(at 146.05 43.18 180)
 		(fields_autoplaced yes)
 		(effects
@@ -4256,7 +4256,7 @@
 		)
 		(uuid "93a6b743-e39d-4238-877a-747a3ebd95aa")
 	)
-	(label "KM11A_IN42"
+	(label "KM11A_F2"
 		(at 66.04 63.5 180)
 		(fields_autoplaced yes)
 		(effects
@@ -4267,7 +4267,7 @@
 		)
 		(uuid "965e582f-cb17-436b-8b5c-ecccdcdd2cac")
 	)
-	(label "KM11B_IN10"
+	(label "KM11B_J1"
 		(at 228.6 127 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4278,7 +4278,7 @@
 		)
 		(uuid "97c3f906-adba-4cfc-ac6e-07a4e896b239")
 	)
-	(label "KM11A_IN10"
+	(label "KM11A_J1"
 		(at 66.04 45.72 180)
 		(fields_autoplaced yes)
 		(effects
@@ -4289,7 +4289,7 @@
 		)
 		(uuid "988a900f-3ce0-4230-9b77-1ed3d141cc00")
 	)
-	(label "KM11B_IN13"
+	(label "KM11B_U2"
 		(at 228.6 138.43 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4300,7 +4300,7 @@
 		)
 		(uuid "9df4acce-66d3-46a6-82aa-635012e12657")
 	)
-	(label "KM11B_OUT11_L"
+	(label "KM11B_V2_L"
 		(at 160.02 78.74 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4311,7 +4311,7 @@
 		)
 		(uuid "9eee014a-cef6-4549-9f65-c07f67f307be")
 	)
-	(label "KM11B_IN12"
+	(label "KM11B_T2"
 		(at 146.05 48.26 180)
 		(fields_autoplaced yes)
 		(effects
@@ -4322,7 +4322,7 @@
 		)
 		(uuid "a2c9635d-33b3-460e-b04d-b173638ad948")
 	)
-	(label "KM11B_IN23"
+	(label "KM11B_D1"
 		(at 228.6 148.59 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4333,7 +4333,7 @@
 		)
 		(uuid "a747c9bf-d802-454e-8211-2ea095cbe323")
 	)
-	(label "KM11B_IN20"
+	(label "KM11B_P1"
 		(at 146.05 50.8 180)
 		(fields_autoplaced yes)
 		(effects
@@ -4344,7 +4344,7 @@
 		)
 		(uuid "a79270bd-e8d6-4d55-b4d1-f24f6defbacb")
 	)
-	(label "KM11B_IN50"
+	(label "KM11B_N2"
 		(at 227.33 210.82 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4355,7 +4355,7 @@
 		)
 		(uuid "a7a35727-6868-475e-9453-3e6a811806c0")
 	)
-	(label "KM11B_IN53"
+	(label "KM11B_J2"
 		(at 227.33 222.25 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4366,7 +4366,7 @@
 		)
 		(uuid "a7cf8995-1c14-4c1a-9455-6cdaf69b3921")
 	)
-	(label "KM11A_IN62"
+	(label "KM11A_H1"
 		(at 66.04 73.66 180)
 		(fields_autoplaced yes)
 		(effects
@@ -4377,7 +4377,7 @@
 		)
 		(uuid "a7d013a2-81cf-44af-9980-6b4780f89db3")
 	)
-	(label "KM11A_OUT10"
+	(label "KM11A_U1_L"
 		(at 66.04 78.74 180)
 		(fields_autoplaced yes)
 		(effects
@@ -4388,7 +4388,7 @@
 		)
 		(uuid "a8454d2e-e68a-4819-b224-1992cee4434f")
 	)
-	(label "KM11B_IN32"
+	(label "KM11B_S2"
 		(at 146.05 58.42 180)
 		(fields_autoplaced yes)
 		(effects
@@ -4399,7 +4399,7 @@
 		)
 		(uuid "ac1bcff1-bfe9-48cd-afa9-1cd007b9079c")
 	)
-	(label "KM11A_IN31"
+	(label "KM11A_K1"
 		(at 80.01 55.88 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4410,7 +4410,7 @@
 		)
 		(uuid "acae540e-c633-42c8-98b3-40bb8c11020e")
 	)
-	(label "KM11A_IN43"
+	(label "KM11A_E1"
 		(at 80.01 63.5 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4421,7 +4421,7 @@
 		)
 		(uuid "acc205d6-72a1-4068-99e4-75138b1f34cf")
 	)
-	(label "KM11B_OUT10"
+	(label "KM11B_U1_L"
 		(at 227.33 213.36 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4432,7 +4432,7 @@
 		)
 		(uuid "adae72b4-1c28-406c-8b20-683f2bbae33b")
 	)
-	(label "KM11B_IN03"
+	(label "KM11B_P2"
 		(at 160.02 43.18 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4443,7 +4443,7 @@
 		)
 		(uuid "adebcd43-54e3-4585-bbce-1168a0cf82e0")
 	)
-	(label "KM11B_IN50"
+	(label "KM11B_N2"
 		(at 146.05 66.04 180)
 		(fields_autoplaced yes)
 		(effects
@@ -4454,7 +4454,7 @@
 		)
 		(uuid "ae5f147b-9db5-4edd-a58d-f73ada4fd22c")
 	)
-	(label "KM11A_IN23"
+	(label "KM11A_D1"
 		(at 97.79 148.59 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4465,7 +4465,7 @@
 		)
 		(uuid "af4096a1-cff2-4894-add1-bf8f407edcd4")
 	)
-	(label "KM11A_IN40"
+	(label "KM11A_S1"
 		(at 97.79 199.39 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4476,7 +4476,7 @@
 		)
 		(uuid "aff1ae66-0d45-4e21-b2c3-6ba52856156c")
 	)
-	(label "KM11B_IN60"
+	(label "KM11B_R2"
 		(at 227.33 224.79 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4487,7 +4487,7 @@
 		)
 		(uuid "b1b4490f-cf0c-49c5-9013-a8c815f6da05")
 	)
-	(label "KM11A_IN31"
+	(label "KM11A_K1"
 		(at 97.79 153.67 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4498,7 +4498,7 @@
 		)
 		(uuid "b1df8f36-8978-4046-a086-b0e04038d204")
 	)
-	(label "KM11A_IN00"
+	(label "KM11A_K2"
 		(at 66.04 40.64 180)
 		(fields_autoplaced yes)
 		(effects
@@ -4509,7 +4509,7 @@
 		)
 		(uuid "b1e11f74-fab9-4a58-a4cd-7e8b5bb90548")
 	)
-	(label "KM11A_IN50"
+	(label "KM11A_N2"
 		(at 97.79 209.55 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4520,7 +4520,7 @@
 		)
 		(uuid "b2e83db2-a78c-4713-b999-4dc6b559551a")
 	)
-	(label "KM11A_IN03"
+	(label "KM11A_P2"
 		(at 97.79 124.46 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4531,7 +4531,7 @@
 		)
 		(uuid "b4380848-62ad-4706-8f48-ef1ce32da994")
 	)
-	(label "KM11B_IN00"
+	(label "KM11B_K2"
 		(at 146.05 40.64 180)
 		(fields_autoplaced yes)
 		(effects
@@ -4542,7 +4542,7 @@
 		)
 		(uuid "b7d9b00c-7cd0-4fc0-aff6-082fc3854463")
 	)
-	(label "KM11A_IN61"
+	(label "KM11A_E2"
 		(at 97.79 226.06 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4553,7 +4553,7 @@
 		)
 		(uuid "b8923954-2479-4f9c-a033-cd22cb1d0941")
 	)
-	(label "KM11B_IN61"
+	(label "KM11B_E2"
 		(at 227.33 227.33 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4564,7 +4564,7 @@
 		)
 		(uuid "b8d9350d-7e76-4ffb-8c5a-6ccc7cd24923")
 	)
-	(label "KM11A_IN01"
+	(label "KM11A_N1"
 		(at 80.01 40.64 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4575,7 +4575,7 @@
 		)
 		(uuid "bb62bdd8-bd45-4d4b-8875-83f2e601b82b")
 	)
-	(label "KM11A_IN01"
+	(label "KM11A_N1"
 		(at 97.79 119.38 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4586,7 +4586,7 @@
 		)
 		(uuid "bda0a54d-1edc-45d4-9759-6c7ae7be85e7")
 	)
-	(label "KM11A_IN52"
+	(label "KM11A_H2"
 		(at 66.04 68.58 180)
 		(fields_autoplaced yes)
 		(effects
@@ -4597,7 +4597,7 @@
 		)
 		(uuid "bead78e4-8e83-4988-8b52-a0a091d3ec81")
 	)
-	(label "KM11A_IN20"
+	(label "KM11A_P1"
 		(at 66.04 50.8 180)
 		(fields_autoplaced yes)
 		(effects
@@ -4608,7 +4608,7 @@
 		)
 		(uuid "bf0fd99e-4bdb-43e8-b2d9-a175a9c62a3f")
 	)
-	(label "KM11B_IN62"
+	(label "KM11B_H1"
 		(at 227.33 229.87 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4619,7 +4619,7 @@
 		)
 		(uuid "c11ea72c-b7b8-4651-8403-9ea16c4cfe0a")
 	)
-	(label "KM11B_IN53"
+	(label "KM11B_J2"
 		(at 160.02 68.58 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4630,7 +4630,7 @@
 		)
 		(uuid "c2060b34-2662-4541-a22c-2e2b7c5fcf57")
 	)
-	(label "KM11B_IN40"
+	(label "KM11B_S1"
 		(at 227.33 200.66 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4641,7 +4641,7 @@
 		)
 		(uuid "c2f1efa1-6ce4-41eb-9941-c3ee2c2e42a8")
 	)
-	(label "KM11A_IN02"
+	(label "KM11A_V1"
 		(at 66.04 43.18 180)
 		(fields_autoplaced yes)
 		(effects
@@ -4652,7 +4652,7 @@
 		)
 		(uuid "c3726ba1-f9b7-417c-8686-dbf0d644c1b1")
 	)
-	(label "KM11A_IN20"
+	(label "KM11A_P1"
 		(at 97.79 140.97 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4663,7 +4663,7 @@
 		)
 		(uuid "c431f79e-8ae3-4f88-8a9e-8f64f841990e")
 	)
-	(label "KM11A_IN60"
+	(label "KM11A_R2"
 		(at 97.79 223.52 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4674,7 +4674,7 @@
 		)
 		(uuid "c6542b3d-346e-4b35-8a2e-3edd65318b45")
 	)
-	(label "KM11B_IN51"
+	(label "KM11B_D2"
 		(at 227.33 217.17 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4685,7 +4685,7 @@
 		)
 		(uuid "caf0a580-51c0-4e49-b8e9-f2489f3ce57e")
 	)
-	(label "KM11B_OUT01_L"
+	(label "KM11B_B2_L"
 		(at 160.02 76.2 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4696,7 +4696,7 @@
 		)
 		(uuid "d3124da7-7210-4183-9788-dde90c31d87d")
 	)
-	(label "KM11B_IN22"
+	(label "KM11B_F1"
 		(at 228.6 146.05 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4707,7 +4707,7 @@
 		)
 		(uuid "d572ed44-ffdb-4df1-8b51-654798282cfb")
 	)
-	(label "KM11A_IN53"
+	(label "KM11A_J2"
 		(at 97.79 220.98 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4718,7 +4718,7 @@
 		)
 		(uuid "d579b221-165a-4314-9a41-f4c292e2dcde")
 	)
-	(label "KM11A_IN63"
+	(label "KM11A_L2"
 		(at 97.79 231.14 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4729,7 +4729,7 @@
 		)
 		(uuid "d7e86a35-cc13-441e-a97b-bedd1b5ac74f")
 	)
-	(label "KM11A_IN51"
+	(label "KM11A_D2"
 		(at 97.79 215.9 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4740,7 +4740,7 @@
 		)
 		(uuid "d96ec18a-d862-42bf-a0c3-a38e98242479")
 	)
-	(label "KM11B_IN23"
+	(label "KM11B_D1"
 		(at 160.02 53.34 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4751,7 +4751,7 @@
 		)
 		(uuid "de054a03-aae8-4960-8bf4-a6f26f100488")
 	)
-	(label "KM11A_IN23"
+	(label "KM11A_D1"
 		(at 80.01 53.34 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4762,7 +4762,7 @@
 		)
 		(uuid "e03c57c4-ab10-421f-85d4-6456334941b4")
 	)
-	(label "KM11B_IN41"
+	(label "KM11B_M2"
 		(at 160.02 60.96 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4773,7 +4773,7 @@
 		)
 		(uuid "e09265a5-99e0-41c6-a6c0-f535acb6ca55")
 	)
-	(label "KM11B_IN22"
+	(label "KM11B_F1"
 		(at 146.05 53.34 180)
 		(fields_autoplaced yes)
 		(effects
@@ -4784,7 +4784,7 @@
 		)
 		(uuid "e19c9548-38f9-434d-b9c7-2080df20824e")
 	)
-	(label "KM11A_OUT11_L"
+	(label "KM11A_V2_L"
 		(at 97.79 233.68 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4795,7 +4795,7 @@
 		)
 		(uuid "e1a9434c-222a-42e1-87cc-ad63472c1727")
 	)
-	(label "KM11B_IN42"
+	(label "KM11B_F2"
 		(at 227.33 205.74 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4806,7 +4806,7 @@
 		)
 		(uuid "e4d7f763-036c-428b-b723-d38817409a82")
 	)
-	(label "KM11A_IN11"
+	(label "KM11A_C1"
 		(at 80.01 45.72 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4817,7 +4817,7 @@
 		)
 		(uuid "e65ac442-2ffb-47f6-b3d1-c7d947c06fbc")
 	)
-	(label "KM11B_IN33"
+	(label "KM11B_M1"
 		(at 160.02 58.42 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4828,7 +4828,7 @@
 		)
 		(uuid "eef47ea8-80ed-4026-ae2f-09366ba913fd")
 	)
-	(label "KM11A_IN21"
+	(label "KM11A_L1"
 		(at 80.01 50.8 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4839,7 +4839,7 @@
 		)
 		(uuid "f05b27a4-3663-4625-9196-d6389e9a85e5")
 	)
-	(label "KM11A_IN13"
+	(label "KM11A_U2"
 		(at 97.79 138.43 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4850,7 +4850,7 @@
 		)
 		(uuid "f2413be3-74d8-400c-8846-c13b00d9ccbf")
 	)
-	(label "KM11A_IN33"
+	(label "KM11A_M1"
 		(at 97.79 196.85 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4861,7 +4861,7 @@
 		)
 		(uuid "f2fd9a22-37b5-475c-b28d-8a64549f60c8")
 	)
-	(label "KM11B_IN12"
+	(label "KM11B_T2"
 		(at 228.6 132.08 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4872,7 +4872,7 @@
 		)
 		(uuid "f41117a0-d9fb-43be-9c69-ef059defa1a0")
 	)
-	(label "KM11B_IN10"
+	(label "KM11B_J1"
 		(at 146.05 45.72 180)
 		(fields_autoplaced yes)
 		(effects
@@ -4883,7 +4883,7 @@
 		)
 		(uuid "f4a1c123-5137-497f-8e40-7a7a903889cb")
 	)
-	(label "KM11B_IN63"
+	(label "KM11B_L2"
 		(at 160.02 73.66 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4894,7 +4894,7 @@
 		)
 		(uuid "f4ae0a5a-8d16-4938-ad12-f2817ed488b6")
 	)
-	(label "KM11A_IN33"
+	(label "KM11A_M1"
 		(at 80.01 58.42 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4905,7 +4905,7 @@
 		)
 		(uuid "f553ab19-c5aa-4afd-9c03-68c461b5c453")
 	)
-	(label "KM11B_OUT01_L"
+	(label "KM11B_B2_L"
 		(at 228.6 156.21 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4916,7 +4916,7 @@
 		)
 		(uuid "f5dcc401-f07d-4f47-aff0-266bc032501e")
 	)
-	(label "KM11B_IN30"
+	(label "KM11B_R1"
 		(at 146.05 55.88 180)
 		(fields_autoplaced yes)
 		(effects
@@ -4927,7 +4927,7 @@
 		)
 		(uuid "f7f06112-a77d-4015-ab71-7bd14d411a2e")
 	)
-	(label "KM11A_IN00"
+	(label "KM11A_K2"
 		(at 97.79 116.84 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4938,7 +4938,7 @@
 		)
 		(uuid "f9bf9873-6eef-4bf4-9116-df27fd213cd3")
 	)
-	(label "KM11A_OUT00_L"
+	(label "KM11A_A1_L"
 		(at 66.04 76.2 180)
 		(fields_autoplaced yes)
 		(effects
@@ -4949,7 +4949,7 @@
 		)
 		(uuid "fa76d92c-045a-47e1-be15-7ebce434f7bb")
 	)
-	(label "KM11B_IN41"
+	(label "KM11B_M2"
 		(at 227.33 203.2 0)
 		(fields_autoplaced yes)
 		(effects
@@ -5396,7 +5396,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
 			(at 73.66 251.46 0)
 			(effects
 				(font
@@ -5531,7 +5531,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
 			(at 73.66 173.99 0)
 			(effects
 				(font
@@ -5596,7 +5596,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
 			(at 203.2 252.73 0)
 			(effects
 				(font
@@ -5967,7 +5967,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "Power symbol creates a global label with name \"+5V\""
 			(at 203.2 184.15 0)
 			(effects
 				(font
@@ -6032,7 +6032,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "Power symbol creates a global label with name \"+5V\""
 			(at 204.47 105.41 0)
 			(effects
 				(font
@@ -6167,7 +6167,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
 			(at 204.47 173.99 0)
 			(effects
 				(font
@@ -6374,7 +6374,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
 			(at 80.01 85.09 0)
 			(effects
 				(font
@@ -6439,7 +6439,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
 			(at 147.32 85.09 0)
 			(effects
 				(font
@@ -6716,7 +6716,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
 			(at 269.24 270.51 0)
 			(effects
 				(font
@@ -6782,7 +6782,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "Power symbol creates a global label with name \"+5V\""
 			(at 229.87 262.89 0)
 			(effects
 				(font
@@ -6847,7 +6847,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
 			(at 67.31 85.09 0)
 			(effects
 				(font
@@ -6912,7 +6912,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "Power symbol creates a global label with name \"+5V\""
 			(at 73.66 182.88 0)
 			(effects
 				(font
@@ -7189,7 +7189,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "Power symbol creates a global label with name \"+5V\""
 			(at 73.66 105.41 0)
 			(effects
 				(font
@@ -7418,7 +7418,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
 			(at 160.02 85.09 0)
 			(effects
 				(font

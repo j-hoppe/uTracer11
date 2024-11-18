@@ -120,7 +120,13 @@ R M A       read all 28 signals from KM11A
     |P2   U2   D1   M1   E1   J2   L2                  nector   +´
     `-----------------------------------------------------------´
 
-    PCB signals:
+     <mscp30.gpioa><7:0> = A1    T2   C1   J1   P2   V1   N1   K2
+     <mscp30.gpiob><7:0> = B2    K1   R1   D1   F1   L1   P1   U2
+     <mscp31.gpioa><7:0> = U1    N2   E1   F2   M2   S1   M1   S2
+     <mscp31.gpiob><7:0> = V2    L2   H1   E2   R2   J2   H2   D2
+
+
+    Old PCB signals:
     .-----------------------------------------------------------.
     |00   10   20   30   40   50   60                    flip   +.
     |01   11   21   31   41   51   61      00  01        chip    |
@@ -138,7 +144,7 @@ W M A <val>   write 4 outputs of KM11A as hex digit
     Outputs out** are "active low": a "1" switches an out** to GND.
     If no KM11 is plugged into the 11/40, CPU internal MCLK signals are pulled H = inactive.
     So default out** signals must be H, like no KM11 is plugged in.
-    Format: <val3-0>, val.3=<out11> val.2=<out10> val.1=<out01> val.0=<out00>
+    Format: <val3-0>, val.3=<V2> val.2=<U1> val.1=<B2> val.0=<A1>
     response: M <mscp30.gpioa> <mscp30.gpiob> <mscp31.gpioa> <mscp31.gpiob> (hex)
 
 R M B       read  KM11B
@@ -172,7 +178,7 @@ R MCP <group> <addr> <half>
         (long string!)
 
 R STATEDEF
-		request defintions of internal registers, used for emulators which deliver more data
+		request definitions of internal registers, used for emulators which deliver more data
 		than visibile over KM11/KY11-LB/UNIBUS.
         response: STATEDEF
 

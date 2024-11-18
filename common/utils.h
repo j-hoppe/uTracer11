@@ -76,6 +76,10 @@ inline void trim(std::string& s) {
 #endif
 
 
+// get a KM11 signal bit from the matrix andd shift it
+#define getbit(val,shift) (!!( (val) & (1 << (shift) ) ) )  // extract a bit as bool
+#define setbit(bitmask,shift) ( (bitmask) ? 1 << (shift):0 )
+
 #endif // __UTILS_H__
 
 

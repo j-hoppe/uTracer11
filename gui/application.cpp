@@ -79,7 +79,7 @@ static const wxCmdLineEntryDesc g_cmdLineDesc[] =
 {
      { wxCMD_LINE_SWITCH, "h", "help", "displays help on the command line parameters",
           wxCMD_LINE_VAL_NONE, wxCMD_LINE_OPTION_HELP },
-     { wxCMD_LINE_OPTION , "t", "pdptype", "PDP11 model like \"pdp1134phys\"",
+     { wxCMD_LINE_OPTION , "t", "pdptype", "PDP-11 model like \"pdp1134phys\"",
           wxCMD_LINE_VAL_STRING, wxCMD_LINE_OPTION_MANDATORY  },
 #ifdef __WINDOWS__
      { wxCMD_LINE_OPTION , "sp", "serial", "serial port to PDP-11 hardware probe, like \"COM2\"",
@@ -88,7 +88,7 @@ static const wxCmdLineEntryDesc g_cmdLineDesc[] =
      { wxCMD_LINE_OPTION , "sp", "serial", "serial port to PDP-11 hardware probe, like \"/dev/ttyS0\"",
           wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
 #endif
-     { wxCMD_LINE_OPTION , "sa", "socket", "TCP/IP socket address of remote PDP11, like \"localhost:49152\"",
+     { wxCMD_LINE_OPTION , "sa", "socket", "TCP/IP socket address of remote PDP-11, like \"localhost:65392\"",
           wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL  },
      { wxCMD_LINE_OPTION , "rd", "resourcedir", "path to resource directory",
           wxCMD_LINE_VAL_STRING, wxCMD_LINE_OPTION_MANDATORY  },
@@ -107,6 +107,20 @@ void Application::OnInitCmdLine(wxCmdLineParser& parser)
     // Linuxes: must refuse '/' as parameter starter or cannot use "/path" style paths
     parser.SetSwitchChars("-");
 #endif
+}
+
+bool Application::OnCmdLineHelp(wxCmdLineParser& parser)
+{
+    wxString msg = parser.GetUsageString();
+    wxMessageBox(msg, "Commandline help", wxICON_INFORMATION);
+    return false;
+}
+
+bool Application::OnCmdLineError(wxCmdLineParser& parser)
+{
+    wxString msg = parser.GetUsageString();
+    wxMessageBox(msg, "Commandline error", wxICON_ERROR);
+    return false;
 }
 
 
@@ -238,6 +252,9 @@ bool Application::OnInit()
         // is also system log
         wxLog::SetActiveTarget(new MyLogTarget(mainFrame->eventsTextCtrl, "log.txt"));
         wxLog::SetLogLevel(wxLOG_Max); // all!
+
+
+        mainFrame->toolsNotebook->SetSelection(0);
 
         connectToMessageInterface();
 

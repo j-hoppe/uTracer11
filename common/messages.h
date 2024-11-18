@@ -325,6 +325,17 @@ public:
         snprintf(txtBuffer, txtBufferSize, "M %c %x %x %x %x", channel, gpio0a, gpio0b, gpio1a, gpio1b);
         return txtBuffer;
     }
+
+#if !defined(PLATFORM_ARDUINO)
+	// GUI packs/unpacks GPIO registers values to/from FlipChip pin signals
+    bool K2,N1,V1,P2,J1,C1,T2 ; // gpio0a
+	bool U2,P1,L1,F1,D1,R1,K1 ; // gpio0b
+	bool S2,M1,S1,M2,F2,E1,N2 ; // gpio1a
+    bool D2,H2,J2,R2,E2,H1,L2 ; // gpio1b
+    void getFlipchipSignalsFromGpioVals();
+	void setGpioValsFromFlipchipSignals() ;
+#endif
+	
     void* process() override; // to be defined differently in M93X2 PCB and PC host
 };
 
@@ -341,6 +352,13 @@ public:
         snprintf(txtBuffer, txtBufferSize, "W M %c %x", channel, val03);
         return txtBuffer;
     }
+#if !defined(PLATFORM_ARDUINO)
+    bool A1,B2,U1,V2;
+	void setVal03FromFlipchipSignals() ;
+	void getFlipchipSignalsFromVal03() ;
+#endif
+
+	
     void* process() override; // to be defined differently in M93X2 PCB and PC host
 };
 

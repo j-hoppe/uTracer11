@@ -500,6 +500,54 @@ const char *ResponseKM11Signals::initFromArgToken(int startTokenIdx) {
     return nullptr ; // ok
 }
 
+#if !defined(PLATFORM_ARDUINO)
+void ResponseKM11Signals::getFlipchipSignalsFromGpioVals() {
+    K2 = getbit(gpio0a, 0);
+    N1 = getbit(gpio0a, 1);
+    V1 = getbit(gpio0a, 2);
+    P2 = getbit(gpio0a, 3);
+    J1 = getbit(gpio0a, 4);
+    C1 = getbit(gpio0a, 5);
+    T2 = getbit(gpio0a, 6);
+
+    U2 = getbit(gpio0b, 0);
+    P1 = getbit(gpio0b, 1);
+    L1 = getbit(gpio0b, 2);
+    F1 = getbit(gpio0b, 3);
+    D1 = getbit(gpio0b, 4);
+    R1 = getbit(gpio0b, 5);
+    K1 = getbit(gpio0b, 6);
+
+    S2 = getbit(gpio1a, 0);
+    M1 = getbit(gpio1a, 1);
+    S1 = getbit(gpio1a, 2);
+    M2 = getbit(gpio1a, 3);
+    F2 = getbit(gpio1a, 4);
+    E1 = getbit(gpio1a, 5);
+    N2 = getbit(gpio1a, 6);
+
+    D2 = getbit(gpio1b, 0);
+    H2 = getbit(gpio1b, 1);
+    J2 = getbit(gpio1b, 2);
+    R2 = getbit(gpio1b, 3);
+    E2 = getbit(gpio1b, 4);
+    H1 = getbit(gpio1b, 5);
+    L2 = getbit(gpio1b, 6);
+}
+
+void ResponseKM11Signals::setGpioValsFromFlipchipSignals() {
+    gpio0a = setbit(K2, 0) | setbit(N1, 1) | setbit(V1, 2) | setbit(P2, 3)
+             | setbit(J1, 4) | setbit(C1, 5) | setbit(T2, 6) ;
+    gpio0b = setbit(U2, 0) | setbit(P1, 1) | setbit(L1, 2) | setbit(F1, 3)
+             | setbit(D1, 4) | setbit(R1, 5) | setbit(K1, 6) ;
+    gpio1a = setbit(S2, 0) | setbit(M1, 1) | setbit(S1, 2) | setbit(M2, 3)
+             | setbit(F2, 4) | setbit(E1, 5)	| setbit(N2, 6) ;
+    gpio1b = setbit(D2, 0) | setbit(H2, 1) | setbit(J2, 2) | setbit(R2, 3)
+             | setbit(E2, 4) | setbit(H1, 5)	| setbit(L2, 6) ;
+}
+
+#endif
+
 const char *RequestKM11SignalsWrite::initFromArgToken(int startTokenIdx) {
     int argTokenCount = tokenCount - startTokenIdx ; // argument tokens
     if (argTokenCount != 2)
@@ -525,6 +573,20 @@ const char *RequestLedWrite::initFromArgToken(int startTokenIdx) {
         return "<unit> must be 0 or 1";
     return nullptr ; // ok
 }
+
+#if !defined(PLATFORM_ARDUINO)
+void RequestKM11SignalsWrite::setVal03FromFlipchipSignals() {
+    val03 = setbit(A1, 0) | setbit(B2, 1) | setbit(U1, 2) | setbit(V2, 3);
+}
+
+void RequestKM11SignalsWrite::getFlipchipSignalsFromVal03() {
+    A1 = getbit(val03, 0);
+    B2 = getbit(val03, 1);
+    U1 = getbit(val03, 2);
+    V2 = getbit(val03, 3);
+}
+
+#endif
 
 const char *RequestSwitchesRead::initFromArgToken(int startTokenIdx) {
     int argTokenCount = tokenCount - startTokenIdx ; // argument tokens
@@ -625,11 +687,11 @@ const char *ResponseUnibusCycle::initFromArgToken(int startTokenIdx) {
 
 // GUI needs a mean to mark cycles as "invalid"
 bool ResponseUnibusCycle::isValid() {
-	if (c1c0 > 3)
-		return false ;
-	else if (addr > 0x3ffff) // 18 bit
-		return false ;
-	else return true ;
+    if (c1c0 > 3)
+        return false ;
+    else if (addr > 0x3ffff) // 18 bit
+        return false ;
+    else return true ;
 }
 
 
