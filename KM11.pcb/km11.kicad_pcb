@@ -251,7 +251,7 @@
 		(path "/00000000-0000-0000-0000-00005cbabb21")
 		(sheetname "Root")
 		(sheetfile "km11.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_text user "E2"
 			(at -16.7132 -16.51 90)
 			(layer "B.SilkS")
@@ -1167,7 +1167,7 @@
 		(path "/0adda4bd-0f0c-4eb5-a761-d21a21bd1e40")
 		(sheetname "Root")
 		(sheetfile "km11.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -1.33 -1.33)
 			(end 0 -1.33)
@@ -1420,7 +1420,7 @@
 		(path "/e0cd3a86-7262-461d-8e6a-8a2ce4f3736a/0d83067d-62cf-4282-81ba-dfaf6bd46985")
 		(sheetname "arduino")
 		(sheetfile "arduino.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start 0.23 -1.07)
 			(end 0.23 -1.055)
@@ -1672,7 +1672,7 @@
 		(path "/9fffd339-3fe0-4a35-970c-a0284283d800")
 		(sheetname "Root")
 		(sheetfile "km11.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start 13.39 -5.21)
 			(end 13.39 45.85)
@@ -2849,7 +2849,7 @@
 		(path "/faa93f72-822a-411a-9a76-52f29269cd2a")
 		(sheetname "Root")
 		(sheetfile "km11.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -1.33 -1.33)
 			(end 0 -1.33)
@@ -3102,7 +3102,7 @@
 		(path "/5f0ea7aa-68f1-4950-8901-c64347aa435c")
 		(sheetname "Root")
 		(sheetfile "km11.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -1.33 -1.33)
 			(end 0 -1.33)
@@ -3366,7 +3366,7 @@
 		(path "/84440fa4-ad2c-496a-9310-29765f61c9a9")
 		(sheetname "Root")
 		(sheetfile "km11.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -1.33 -1.33)
 			(end 0 -1.33)
@@ -3619,7 +3619,7 @@
 		(path "/e0cd3a86-7262-461d-8e6a-8a2ce4f3736a/79896d97-790d-42c7-bb09-95f07f1e331f")
 		(sheetname "arduino")
 		(sheetfile "arduino.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start 1.16 -1.33)
 			(end 1.16 19.11)
@@ -4038,7 +4038,7 @@
 		(path "/a794bae7-1a53-423e-8f96-4517568dcad2")
 		(sheetname "Root")
 		(sheetfile "km11.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -1.33 -1.33)
 			(end 0 -1.33)
@@ -4291,7 +4291,7 @@
 		(path "/ff922d27-4427-4bdf-a265-de44f02660e6")
 		(sheetname "Root")
 		(sheetfile "km11.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -1.33 -1.33)
 			(end 0 -1.33)
@@ -4544,7 +4544,7 @@
 		(path "/e0cd3a86-7262-461d-8e6a-8a2ce4f3736a/8f4fbc46-525f-4c48-a3dc-a7f6baa9070c")
 		(sheetname "arduino")
 		(sheetfile "arduino.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start 4.77 1.055)
 			(end 4.77 1.07)
@@ -4796,7 +4796,7 @@
 		(path "/ad85a4f9-2431-467a-8885-13a560b184c9")
 		(sheetname "Root")
 		(sheetfile "km11.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -1.33 -1.33)
 			(end 0 -1.33)
@@ -5049,7 +5049,7 @@
 		(path "/37059d62-6cba-4d8f-a2c6-5416b5886458")
 		(sheetname "Root")
 		(sheetfile "km11.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -1.33 -1.33)
 			(end 0 -1.33)
@@ -5302,7 +5302,7 @@
 		(path "/69841e78-24f2-4329-9a4f-0c8af0fbc3b1")
 		(sheetname "Root")
 		(sheetfile "km11.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -1.33 -1.33)
 			(end 0 -1.33)
@@ -5566,7 +5566,7 @@
 		(path "/e0cd3a86-7262-461d-8e6a-8a2ce4f3736a/e6d831bf-c200-40b4-ac35-ad355146d79b")
 		(sheetname "arduino")
 		(sheetfile "arduino.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start 1.33 1.27)
 			(end 1.33 19.11)
@@ -5896,7 +5896,7 @@
 		(path "/35a0e6e8-f0d6-4f46-ac6c-c6bda230f481")
 		(sheetname "Root")
 		(sheetfile "km11.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -1.33 -1.33)
 			(end 0 -1.33)
@@ -6149,7 +6149,7 @@
 		(path "/501e85ca-dc4d-4e72-a96e-cdaa386765ed")
 		(sheetname "Root")
 		(sheetfile "km11.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -1.33 -1.33)
 			(end 0 -1.33)
@@ -6402,7 +6402,7 @@
 		(path "/2d005742-b94c-4c92-b2fc-d0ac40a40217")
 		(sheetname "Root")
 		(sheetfile "km11.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -1.33 -1.33)
 			(end 0 -1.33)
@@ -6655,7 +6655,7 @@
 		(path "/c85ffaea-c645-48ca-81e6-0dc48221ca3d")
 		(sheetname "Root")
 		(sheetfile "km11.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -1.33 -1.33)
 			(end 0 -1.33)
@@ -6908,7 +6908,7 @@
 		(path "/e0cd3a86-7262-461d-8e6a-8a2ce4f3736a/153d0fa8-eb63-4c80-988d-f00497a22e94")
 		(sheetname "arduino")
 		(sheetfile "arduino.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start 3.23 4.87)
 			(end 2.83 4.87)
@@ -7373,7 +7373,7 @@
 		(path "/423edb38-a553-46c7-a270-29a5c14b0ada")
 		(sheetname "Root")
 		(sheetfile "km11.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -1.33 -1.33)
 			(end 0 -1.33)
@@ -7637,7 +7637,7 @@
 		(path "/512c6750-7992-41fc-88f6-91519d8942e0")
 		(sheetname "Root")
 		(sheetfile "km11.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -1.33 -1.33)
 			(end 0 -1.33)
@@ -7891,7 +7891,7 @@
 		(path "/1cef1ba5-1054-430a-9ec9-07b810aef5ce")
 		(sheetname "Root")
 		(sheetfile "km11.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -1.33 -1.33)
 			(end 0 -1.33)
@@ -8166,7 +8166,7 @@
 		(path "/9ddaa31f-c95e-4cb1-9b40-e78bcd8b4769")
 		(sheetname "Root")
 		(sheetfile "km11.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -1.33 -1.33)
 			(end 0 -1.33)
@@ -8419,7 +8419,7 @@
 		(path "/a5cad8a4-0596-43c6-814c-1e59f138ac03")
 		(sheetname "Root")
 		(sheetfile "km11.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start 1.28 -2.6)
 			(end 3.08 -2.6)
@@ -8851,7 +8851,7 @@
 		(path "/14dff98f-3fe9-4c08-85c1-5fb29c1c8e38")
 		(sheetname "Root")
 		(sheetfile "km11.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -1.33 -1.33)
 			(end 0 -1.33)
@@ -9103,7 +9103,7 @@
 		(path "/e0cd3a86-7262-461d-8e6a-8a2ce4f3736a/c56b75ec-38a1-4cd3-90ea-00d85f3c709d")
 		(sheetname "arduino")
 		(sheetfile "arduino.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start 0 38.1)
 			(end 54.61 38.1)
@@ -10455,7 +10455,7 @@
 		(path "/e0cd3a86-7262-461d-8e6a-8a2ce4f3736a/a1d0cd4a-8713-4e76-aef5-ad949da6e5dd")
 		(sheetname "arduino")
 		(sheetfile "arduino.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start 7.08 -1.37)
 			(end 7.08 -1.04)
@@ -10727,7 +10727,7 @@
 		(path "/e37a36fe-3cda-4f29-85a5-f9d2ced348e0")
 		(sheetname "Root")
 		(sheetfile "km11.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -1.33 -1.33)
 			(end 0 -1.33)
@@ -10980,7 +10980,7 @@
 		(path "/3c470d2c-a2da-4e43-9f1b-bd808c1bc3f5")
 		(sheetname "Root")
 		(sheetfile "km11.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -1.33 -1.33)
 			(end 0 -1.33)
@@ -11233,7 +11233,7 @@
 		(path "/53499e4f-912f-4cf8-a84b-68f449ebd9a5")
 		(sheetname "Root")
 		(sheetfile "km11.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -1.33 -1.33)
 			(end 0 -1.33)
@@ -11486,7 +11486,7 @@
 		(path "/95f74111-4a25-4e06-b93f-be8772627ab7")
 		(sheetname "Root")
 		(sheetfile "km11.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -1.33 -1.33)
 			(end 0 -1.33)
@@ -11739,7 +11739,7 @@
 		(path "/e0cd3a86-7262-461d-8e6a-8a2ce4f3736a/14265b76-330e-456c-a34f-5163cf03b3e8")
 		(sheetname "arduino")
 		(sheetfile "arduino.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -1.14 10.04)
 			(end 8.76 10.04)
@@ -12381,7 +12381,7 @@
 		(path "/d7eef4e1-d7e4-4fe0-aeec-92cdcce9da87")
 		(sheetname "Root")
 		(sheetfile "km11.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -1.33 -1.33)
 			(end 0 -1.33)
@@ -12634,7 +12634,7 @@
 		(path "/a93b1daa-fa21-46d4-bb20-1c02bca0d629")
 		(sheetname "Root")
 		(sheetfile "km11.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -1.33 -1.33)
 			(end 0 -1.33)
@@ -12887,7 +12887,7 @@
 		(path "/222fc11f-fd27-467a-83b6-4998977a40b4")
 		(sheetname "Root")
 		(sheetfile "km11.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -1.33 -1.33)
 			(end 0 -1.33)
@@ -13140,7 +13140,7 @@
 		(path "/e0cd3a86-7262-461d-8e6a-8a2ce4f3736a/7e15cd05-82f7-45b8-a818-e0fcfe5a6253")
 		(sheetname "arduino")
 		(sheetfile "arduino.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start 0.23 -1.07)
 			(end 0.23 -1.055)
@@ -13392,7 +13392,7 @@
 		(path "/d8c88cf0-beb2-4fc5-833f-5d9855187660")
 		(sheetname "Root")
 		(sheetfile "km11.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -1.33 -1.33)
 			(end 0 -1.33)
@@ -13645,7 +13645,7 @@
 		(path "/001bb50b-1d98-4aad-8b31-1e3b1d3c17af")
 		(sheetname "Root")
 		(sheetfile "km11.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -1.33 3.87)
 			(end 1.33 3.87)
@@ -13909,7 +13909,7 @@
 		(path "/cba7e51a-14f4-498c-a4ab-50ff8d52bf02")
 		(sheetname "Root")
 		(sheetfile "km11.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -1.33 -1.33)
 			(end 0 -1.33)
@@ -14162,7 +14162,7 @@
 		(path "/4b5b5326-51c8-42ef-ac3c-0af196c15bf3")
 		(sheetname "Root")
 		(sheetfile "km11.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -1.33 -1.33)
 			(end 0 -1.33)
@@ -14415,7 +14415,7 @@
 		(path "/f4fd8d86-5358-48ce-825c-5b86b80e6e67")
 		(sheetname "Root")
 		(sheetfile "km11.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -1.33 -1.33)
 			(end 0 -1.33)
@@ -14668,7 +14668,7 @@
 		(path "/96ba82c9-6dbc-4118-bf66-4c3232cc57ba")
 		(sheetname "Root")
 		(sheetfile "km11.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -1.33 -1.33)
 			(end 0 -1.33)
@@ -14921,7 +14921,7 @@
 		(path "/2c3fb9e6-d7dd-4d64-b33f-c39403c9d017")
 		(sheetname "Root")
 		(sheetfile "km11.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -1.33 -1.33)
 			(end 0 -1.33)
@@ -15185,7 +15185,7 @@
 		(path "/e0cd3a86-7262-461d-8e6a-8a2ce4f3736a/e4d941b8-6010-4e8c-a825-330e5c2545ed")
 		(sheetname "arduino")
 		(sheetfile "arduino.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start 0.23 -1.07)
 			(end 0.23 -1.055)
@@ -15437,7 +15437,7 @@
 		(path "/e0cd3a86-7262-461d-8e6a-8a2ce4f3736a/b874e29b-5b59-44eb-9477-0819cdc1ea38")
 		(sheetname "arduino")
 		(sheetfile "arduino.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start 3.23 4.87)
 			(end 2.83 4.87)
@@ -15902,7 +15902,7 @@
 		(path "/e683acd1-c86d-440a-a572-1842e3f0301f")
 		(sheetname "Root")
 		(sheetfile "km11.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -1.33 -1.33)
 			(end 0 -1.33)
@@ -16155,7 +16155,7 @@
 		(path "/e0cd3a86-7262-461d-8e6a-8a2ce4f3736a/0c6f7ae9-0037-4758-9f17-87472f393f79")
 		(sheetname "arduino")
 		(sheetfile "arduino.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start 13.39 -5.21)
 			(end 13.39 15.37)
@@ -16708,7 +16708,7 @@
 		(path "/1ea7830d-e622-4515-97ee-f96c3ff7f93c")
 		(sheetname "Root")
 		(sheetfile "km11.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -1.33 -1.33)
 			(end 0 -1.33)
@@ -16961,7 +16961,7 @@
 		(path "/798aa8b2-b988-430e-9433-7db6739d5181")
 		(sheetname "Root")
 		(sheetfile "km11.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -1.33 -1.33)
 			(end 0 -1.33)
@@ -17214,7 +17214,7 @@
 		(path "/e0cd3a86-7262-461d-8e6a-8a2ce4f3736a/3e42a214-b353-4d41-8ddd-ef91ade13079")
 		(sheetname "arduino")
 		(sheetfile "arduino.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -1.33 -1.33)
 			(end 0 -1.33)
@@ -17477,7 +17477,7 @@
 		(path "/e0cd3a86-7262-461d-8e6a-8a2ce4f3736a/fa1c06c2-1ce5-4238-894d-2e4865045ba5")
 		(sheetname "arduino")
 		(sheetfile "arduino.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -1.61 -0.9)
 			(end -1.61 1.2)
@@ -17887,7 +17887,7 @@
 		(path "/e67e234e-9276-4acd-a403-11340d545365")
 		(sheetname "Root")
 		(sheetfile "km11.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -1.33 -1.33)
 			(end 0 -1.33)
@@ -18140,7 +18140,7 @@
 		(path "/28bd498d-0c62-4ceb-a4d1-6b21369ba953")
 		(sheetname "Root")
 		(sheetfile "km11.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -1.33 -1.33)
 			(end 0 -1.33)
@@ -18405,7 +18405,7 @@
 		(path "/e0cd3a86-7262-461d-8e6a-8a2ce4f3736a/d76ac833-ed78-4b9d-b2b6-6f22bcb47eb7")
 		(sheetname "arduino")
 		(sheetfile "arduino.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start 7.08 -1.37)
 			(end 7.08 -1.04)
@@ -18677,7 +18677,7 @@
 		(path "/7e8a5235-1695-41ec-898d-d2d7fe3833fc")
 		(sheetname "Root")
 		(sheetfile "km11.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -1.33 -1.33)
 			(end 0 -1.33)
