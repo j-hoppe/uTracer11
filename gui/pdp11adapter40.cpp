@@ -140,10 +140,10 @@ void Pdp11Adapter40::paintDocumentAnnotations() {
 
 void Pdp11Adapter40::setManClkEnable(bool _manClkEnable)
 {
-    km11State.mclk_enab = _manClkEnable;
+    km11AState.mclk_enab = _manClkEnable;
 
     auto msg = new RequestKM11SignalsWrite('A', 0); // empty template
-    km11State.outputsToKM11AWriteRequest(msg); // encode outputs to KM11 pins
+    km11AState.outputsToKM11AWriteRequest(msg); // encode outputs to KM11 pins
     wxGetApp().messageInterface->xmtRequest(msg); // send+delete
     // answer from M93X2probe is ResponseKM11Signals
     Pdp11Adapter::setManClkEnable(_manClkEnable); // actions same for all pdp11s
@@ -153,15 +153,15 @@ void Pdp11Adapter40::uStep()
 {
 	// Momentary switch S4 on KM11 produces 1-0-1 on MCLK_L
 	// -> 0-1-0 on positive km11State.mclk
-    km11State.mclk = 1; // assume 0 already set
+    km11AState.mclk = 1; // assume 0 already set
     auto msg = new RequestKM11SignalsWrite();
-    km11State.outputsToKM11AWriteRequest(msg);  // encode
+    km11AState.outputsToKM11AWriteRequest(msg);  // encode
     wxGetApp().messageInterface->xmtRequest(msg); // send+delete
 
     // send falling edge
-    km11State.mclk = 0;
+    km11AState.mclk = 0;
     msg = new RequestKM11SignalsWrite();
-    km11State.outputsToKM11AWriteRequest(msg);
+    km11AState.outputsToKM11AWriteRequest(msg);
     wxGetApp().messageInterface->xmtRequest(msg); // send+delete
 
     // answer from M93X2probe is ResponseKY11LBSignals
@@ -206,74 +206,74 @@ void Pdp11Adapter40::onResponseKM11Signals(ResponseKM11Signals* km11Signals) {
 
     if (km11Signals->channel == 'A') {
         // parse
-        km11State.inputsFromKM11AResponse(km11Signals);
+        km11AState.inputsFromKM11AResponse(km11Signals);
 
         // process MPC events only for change
-        if (microProgramCounter != km11State.pupp) {
+        if (microProgramCounter != km11AState.pupp) {
             // MPC changed => new value, => event + display update
-            doEvalMpc(km11State.pupp) ;
+            doEvalMpc(km11AState.pupp) ;
         }
 
         if (km11StatusPanel) { // not for simulation ?
             // display
-            s = wxString::Format("%0.3o", km11State.pupp);
+            s = wxString::Format("%0.3o", km11AState.pupp);
             km11StatusPanel->pdp1140Km11aPuppText->SetLabel(s);
-            s = wxString::Format("%0.3o", km11State.bupp);
+            s = wxString::Format("%0.3o", km11AState.bupp);
             km11StatusPanel->pdp1140Km11aBuppText->SetLabel(s);
-            s = wxString::Format("%d", km11State.trap);
+            s = wxString::Format("%d", km11AState.trap);
             km11StatusPanel->pdp1140Km11aTrapText->SetLabel(s);
-            s = wxString::Format("%d", km11State.ssyn);
+            s = wxString::Format("%d", km11AState.ssyn);
             km11StatusPanel->pdp1140Km11aSsynText->SetLabel(s);
-            s = wxString::Format("%d", km11State.msyn);
+            s = wxString::Format("%d", km11AState.msyn);
             km11StatusPanel->pdp1140Km11aMsynText->SetLabel(s);
-            s = wxString::Format("%d", km11State.c);
+            s = wxString::Format("%d", km11AState.c);
             km11StatusPanel->pdp1140Km11aCText->SetLabel(s);
-            s = wxString::Format("%d", km11State.v);
+            s = wxString::Format("%d", km11AState.v);
             km11StatusPanel->pdp1140Km11aVText->SetLabel(s);
-            s = wxString::Format("%d", km11State.z);
+            s = wxString::Format("%d", km11AState.z);
             km11StatusPanel->pdp1140Km11aZText->SetLabel(s);
-            s = wxString::Format("%d", km11State.n);
+            s = wxString::Format("%d", km11AState.n);
             km11StatusPanel->pdp1140Km11aNText->SetLabel(s);
-            s = wxString::Format("%d", km11State.t);
+            s = wxString::Format("%d", km11AState.t);
             km11StatusPanel->pdp1140Km11aTText->SetLabel(s);
         }
     }
     else if (km11Signals->channel == 'B') {
         // parse
-        km11State.inputsFromKM11BResponse(km11Signals);
+        km11BState.inputsFromKM11BResponse(km11Signals);
         if (km11StatusPanel) { // not for simulation ?
             // display
-            s = wxString::Format("%0.6o", km11State.pba);
+            s = wxString::Format("%0.6o", km11BState.pba);
             km11StatusPanel->pdp1140Km11bPbaText->SetLabel(s);
-            s = wxString::Format("%d%d", km11State.rom_a, km11State.rom_b);
+            s = wxString::Format("%d%d", km11BState.rom_a, km11BState.rom_b);
             km11StatusPanel->pdp1140Km11bRomAbText->SetLabel(s);
-            s = wxString::Format("%d", km11State.rom_c);
+            s = wxString::Format("%d", km11BState.rom_c);
             km11StatusPanel->pdp1140Km11bRomCText->SetLabel(s);
-            s = wxString::Format("%d", km11State.rom_d);
+            s = wxString::Format("%d", km11BState.rom_d);
             km11StatusPanel->pdp1140Km11bRomDText->SetLabel(s);
-            s = wxString::Format("%d", km11State.b_15);
+            s = wxString::Format("%d", km11BState.b_15);
             km11StatusPanel->pdp1140Km11bB15Text->SetLabel(s);
-            s = wxString::Format("%d", km11State.ecin_00);
+            s = wxString::Format("%d", km11BState.ecin_00);
             km11StatusPanel->pdp1140Km11bEcin00Text->SetLabel(s);
-            s = wxString::Format("%d", km11State.exp_unfl);
+            s = wxString::Format("%d", km11BState.exp_unfl);
             km11StatusPanel->pdp1140Km11bExpUnflText->SetLabel(s);
-            s = wxString::Format("%d", km11State.exp_ovfl);
+            s = wxString::Format("%d", km11BState.exp_ovfl);
             km11StatusPanel->pdp1140Km11bExpOvflText->SetLabel(s);
-            s = wxString::Format("%d", km11State.dr00);
+            s = wxString::Format("%d", km11BState.dr00);
             km11StatusPanel->pdp1140Km11bDr00Text->SetLabel(s);
-            s = wxString::Format("%d", km11State.dr09);
+            s = wxString::Format("%d", km11BState.dr09);
             km11StatusPanel->pdp1140Km11bDr09Text->SetLabel(s);
-            s = wxString::Format("%d", km11State.msr00);
+            s = wxString::Format("%d", km11BState.msr00);
             km11StatusPanel->pdp1140Km11bMsr00Text->SetLabel(s);
-            s = wxString::Format("%d", km11State.msr01);
+            s = wxString::Format("%d", km11BState.msr01);
             km11StatusPanel->pdp1140Km11bMsr01Text->SetLabel(s);
-            s = wxString::Format("%d", km11State.eps_c);
+            s = wxString::Format("%d", km11BState.eps_c);
             km11StatusPanel->pdp1140Km11bEpsCText->SetLabel(s);
-            s = wxString::Format("%d", km11State.eps_v);
+            s = wxString::Format("%d", km11BState.eps_v);
             km11StatusPanel->pdp1140Km11bEpsVText->SetLabel(s);
-            s = wxString::Format("%d", km11State.eps_z);
+            s = wxString::Format("%d", km11BState.eps_z);
             km11StatusPanel->pdp1140Km11bEpsZText->SetLabel(s);
-            s = wxString::Format("%d", km11State.eps_n);
+            s = wxString::Format("%d", km11BState.eps_n);
             km11StatusPanel->pdp1140Km11bEpsNText->SetLabel(s);
         }
     }

@@ -1,5 +1,13 @@
 
-/* Encode/decode KM11 signals
+/* Encode/decode KM11 signals for the PDP-11/40
+
+Remember: its a long way to transmit a  CPU simulator variable 
+ over the message interface to the GUI.
+1. CPU simulator var "mpc"			CPU
+2. logical KM11A signals  ("PUPP")	Km11 overlay
+3. KM11 flip chip signals (K2,N1,V1,P1,....)
+4. compact "gpio" hex values
+ 
 
 Signal layout on DEC KM11A (CPU)
     KD11-A Maintenance Console Overlay (A-SS-5509081-0-12)
@@ -40,7 +48,7 @@ Signals indices [col,row] on M93X2probe KM11 PCB: see messages.txt
 
 
 // GUI evaluates raw KM11 signals from PDP11/40 or simulator
-void Pdp1140KM11State::inputsFromKM11AResponse(ResponseKM11Signals* respKm11A)
+void Pdp1140KM11AState::inputsFromKM11AResponse(ResponseKM11Signals* respKm11A)
 {
     if (respKm11A->channel != 'A')
         LOGERROR("Pdp1140KM11Signals::inputsFromKM11A: channel A expected, is %c", respKm11A->channel);
@@ -66,7 +74,7 @@ void Pdp1140KM11State::inputsFromKM11AResponse(ResponseKM11Signals* respKm11A)
 }
 
 
-void Pdp1140KM11State::inputsToKM11AResponse(ResponseKM11Signals* respKm11A) {
+void Pdp1140KM11AState::inputsToKM11AResponse(ResponseKM11Signals* respKm11A) {
     // get bits from state vars, different for all KM11s
     respKm11A->K2 = getbit(pupp, 6);
     respKm11A->N1 = getbit(pupp, 7);
@@ -103,7 +111,7 @@ void Pdp1140KM11State::inputsToKM11AResponse(ResponseKM11Signals* respKm11A) {
 }
 
 
-void Pdp1140KM11State::inputsFromKM11BResponse(ResponseKM11Signals* respKm11B)
+void Pdp1140KM11BState::inputsFromKM11BResponse(ResponseKM11Signals* respKm11B)
 {
     if (respKm11B->channel != 'B')
         LOGERROR("Pdp1140KM11Signals::inputsFromKM11B: channel B expected, is %c", respKm11B->channel);
@@ -132,13 +140,13 @@ void Pdp1140KM11State::inputsFromKM11BResponse(ResponseKM11Signals* respKm11B)
     eps_n = setbit(respKm11B->L2, 0);
 }
 
-void Pdp1140KM11State::inputsToKM11BResponse(ResponseKM11Signals* respKm11B) {
+void Pdp1140KM11BState::inputsToKM11BResponse(ResponseKM11Signals* respKm11B) {
 	UNREFERENCED_PARAMETER(respKm11B) ;
-    LOGERROR("Pdp1140KM11State::inputsToKM11BResponse NOT YET IMPLEMENTED %s!", "");
+    LOGERROR("Pdp1140KM11AState::inputsToKM11BResponse NOT YET IMPLEMENTED %s!", "");
 }
 
 
-void Pdp1140KM11State::outputsToKM11AWriteRequest(RequestKM11SignalsWrite* reqKm11A)
+void Pdp1140KM11AState::outputsToKM11AWriteRequest(RequestKM11SignalsWrite* reqKm11A)
 {
     reqKm11A->channel = 'A';
     // Compare 11/40 KM11 overlay paper with "OUT" signals  in messages.txt
@@ -151,7 +159,7 @@ void Pdp1140KM11State::outputsToKM11AWriteRequest(RequestKM11SignalsWrite* reqKm
     reqKm11A->setVal03FromFlipchipSignals();
 }
 
-void Pdp1140KM11State::outputsFromKM11AWriteRequest(RequestKM11SignalsWrite* reqKm11A) {
+void Pdp1140KM11AState::outputsFromKM11AWriteRequest(RequestKM11SignalsWrite* reqKm11A) {
     reqKm11A->getFlipchipSignalsFromVal03();
     mstop = reqKm11A->B2 ;
     mclk = reqKm11A->U1 ; // "mclk_l" in fpms

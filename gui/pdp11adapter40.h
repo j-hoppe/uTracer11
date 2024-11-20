@@ -23,7 +23,8 @@ public:
     virtual void setupGui(wxFileName _resourceDir) override;
 	virtual void updateGui(State state) override;
 
-    Pdp1140KM11State km11State; // CPU internal signals. not clear wether used in simulator ?
+    Pdp1140KM11AState km11AState; // CPU KD11-A internal signals. also used in simulaotr
+    Pdp1140KM11BState km11BState; // MMU/FPU internal signals
 
     virtual unsigned getMpcFetch() override { return 016; }
 

@@ -42,6 +42,8 @@ class Pdp11Simulator40 : public Pdp11Simulator {
     void onRequestUnibusSignalWrite(RequestUnibusSignalWrite* requestUnibusSignalWrite) override;
     void onCpuUnibusCycle(uint8_t c1c0, uint32_t addr, uint16_t data, bool nxm) override;
 
+	void respondKm11ASignals() ;
+
     void setMicroClockEnable(bool state) override; // 0 = single micro step, 1 = running
     void microStep() override;
 public:

@@ -20,7 +20,6 @@ From M9312 Field Maintenance Print Set (Oct 1978, MP00617).pdf
      ba=165524
      udata=
 */
-
 #include <cctype>
 #include "utils.h"
 #include "pdp11simulator40.h"
@@ -90,49 +89,53 @@ Interface to the KM11 diagnostic board.
 */
 
 void Pdp11Simulator40::onRequestKM11SignalsWrite(RequestKM11SignalsWrite* requestKM11SignalWrite) {
-	Pdp1140KM11State km11State ;
+    Pdp1140KM11AState km11AState ;
 
-	// all signals written together
-	km11State.outputsFromKM11AWriteRequest(requestKM11SignalWrite) ;
-	//1) enable/disable micro clock
-	// KM11: m_clk = "manual clock" == !microClockEnabled,
-	bool requestedMicroClockEnabled = !km11State.mclk_enab ;
-	if ( requestedMicroClockEnabled != microClockEnabled)
-		setMicroClockEnable(requestedMicroClockEnabled);
+    // all signals written together
+    km11AState.outputsFromKM11AWriteRequest(requestKM11SignalWrite) ;
+    //1) enable/disable micro clock
+    // KM11: m_clk = "manual clock" == !microClockEnabled,
+    bool requestedMicroClockEnabled = !km11AState.mclk_enab ;
+    if ( requestedMicroClockEnabled != microClockEnabled)
+        setMicroClockEnable(requestedMicroClockEnabled);
 
-	// 2) single step?
-	bool requestedMicroClockLevel = km11State.mclk;
-	if (requestedMicroClockLevel != currentMicroClockLevel) {
-		// low to high edge?
-		if (requestedMicroClockLevel && !microClockEnabled) {
-			// single step if stopped
-			mpc = nextMpc ;
-			microStep();
-		}
-		currentMicroClockLevel = requestedMicroClockLevel;
-	}
-	// send new micro pc
-	auto respKm11A = new ResponseKM11Signals() ;
-	km11State.inputsToKM11AResponse(respKm11A) ;
+    // 2) single step?
+    bool requestedMicroClockLevel = km11AState.mclk;
+    if (requestedMicroClockLevel != currentMicroClockLevel) {
+        // low to high edge?
+        if (requestedMicroClockLevel && !microClockEnabled) {
+            // single step if stopped
+            mpc = nextMpc ;
+            microStep();
+        }
+        currentMicroClockLevel = requestedMicroClockLevel;
+    }
+
+    // send new micro pc
+    respondKm11ASignals() ;
+}
+
+// convert CPU state to KM11A/B state, send send that state encoded as message
+void Pdp11Simulator40::respondKm11ASignals() {
+    // 1. set state
+    Pdp1140KM11AState km11AState ;
+    // PUPP is the "Previous Microprogram Pointer, address of current uword
+    km11AState.pupp =  mpc ;
+    // BUPP is the "Basic Microprogram Pointer, address of next uword including branches
+    km11AState.bupp = nextMpc ;
+    // a real simulator must set all the other km11State signals here!!
+
+    // 2. convert state to message and send
+    auto respKm11A = new ResponseKM11Signals() ;
+    km11AState.inputsToKM11AResponse(respKm11A) ;
     respond(respKm11A);
 }
 
-
 void Pdp11Simulator40::onRequestKM11SignalsRead(RequestKM11SignalsRead* requestKM11SignalsRead) {
-	Pdp1140KM11State km11State ;
-	if (toupper(requestKM11SignalsRead->channel) == 'A') {
-		// not clear what
-		km11State.pupp =  mpc ;
-		// bupp is the next step to execute
-		km11State.bupp = mpc ;
-		km11State.pupp = nextMpc ;
-		// a real simulator must set all the other km11State signals here!!
-
-		// convert state to message and send
-		auto respKm11A = new ResponseKM11Signals() ;
-		km11State.inputsToKM11AResponse(respKm11A) ;
-		respond(respKm11A);
-		}
+    if (toupper(requestKM11SignalsRead->channel) == 'A') {
+        respondKm11ASignals() ;
+    }
+    // no KM11B implemented currently
 }
 
 void  Pdp11Simulator40::onRequestUnibusDeposit(RequestUnibusDeposit* requestUnibusDeposit) {
@@ -191,12 +194,12 @@ void Pdp11Simulator40::onRequestUnibusSignalWrite(RequestUnibusSignalWrite* requ
 }
 
 // override for locking
-void Pdp11Simulator40::onCpuUnibusCycle(uint8_t c1c0, uint32_t addr, uint16_t data, bool nxm) 
+void Pdp11Simulator40::onCpuUnibusCycle(uint8_t c1c0, uint32_t addr, uint16_t data, bool nxm)
 {
-	if (!microClockEnabled)	
-		console->printf("UNIBUS cycle C1C0=%d addr=%0.6o, data=%0.6o\n", c1c0, addr, data) ;
-	// call base
-	Pdp11Simulator::onCpuUnibusCycle(c1c0, addr, data, nxm) ;
+    if (!microClockEnabled)
+        console->printf("UNIBUS cycle C1C0=%d addr=%0.6o, data=%0.6o\n", c1c0, addr, data) ;
+    // call base
+    Pdp11Simulator::onCpuUnibusCycle(c1c0, addr, data, nxm) ;
 }
 
 
@@ -278,7 +281,7 @@ void Pdp11Simulator40::microStep() {
         state = 0 ; // loop
         break;
 
-        // execute tstb	@#dl11.rcsr
+    // execute tstb	@#dl11.rcsr
     case 2: // mpc = 016 fetch next instr
         unibusSignals.addr = ba = 0765524 ;
         onCpuUnibusCycle(/*DATI*/0, 0765524, 0105737, false);
@@ -397,13 +400,13 @@ void Pdp11Simulator40::setup() {
 
 // called repeatedly for non-preemptive multitasking
 void Pdp11Simulator40::service() {
-        // if micro machine is running: execute steps in high speed,
-        // ignore "singleStep command" in messages->process()
-        if (microClockEnabled) {
-			mpc = nextMpc ;
-            microStep() ;
-        }
-        processPendingRequests() ;
+    // if micro machine is running: execute steps in high speed,
+    // ignore "singleStep command" in messages->process()
+    if (microClockEnabled) {
+        mpc = nextMpc ;
+        microStep() ;
+    }
+    processPendingRequests() ;
 }
 
 
