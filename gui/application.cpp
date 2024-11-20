@@ -261,7 +261,7 @@ bool Application::OnInit()
         // instantiate a pdp11 and setup GUI
         setPdp11Type(cmdLinePdp11Type, cmdLineResourceRootDir); // can not be done in cmd line parser, no app there
 
-        //mainFrame->Show(true);
+        mainFrame->Show(true);
         mainFrame->ShowFullScreen(true, 0); // with menubars, caption an all other decoration
         mainFrame->topHorizontalSizer->Layout(); // arrange subwindows
 
