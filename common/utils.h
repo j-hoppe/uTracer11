@@ -69,6 +69,14 @@ inline void trim(std::string& s) {
     ltrim(s);
 }
 
+
+inline std::string uppercase(std::string &s) {
+	std::string result = s ;
+	transform(result.begin(), result.end(), result.begin(), ::toupper) ;
+	return result ;
+}
+
+
 #endif // PLATFORM_ARDUINO
 
 #if !defined(UNREFERENCED_PARAMETER)

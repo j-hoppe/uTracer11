@@ -120,7 +120,7 @@ public:
     memoryimage_c   memoryimage; // buffer for 256KB RAM
     codelabel_map_c codelabels; // for disas
 
-    std::vector<MessagesStateVar> cpuStateVars; // internal simualtor vars, if any
+    std::vector<Variable> cpuStateVars; // internal simualtor vars, if any
 
 
     Pdp11Adapter(); // directory parsed by application

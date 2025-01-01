@@ -757,9 +757,8 @@ const char *ResponseStateDef::initFromArgToken(int startTokenIdx) {
         if (bitCount <= 0)
             return "illegal bitcount in name:bitcount pair" ;
         // add to definition list
-        MessagesStateVar stateVar ;
-        strncpy(stateVar.name, name, stateVar.nameSize-1) ;
-        stateVar.name[stateVar.nameSize] = 0 ; // terminate when trunced
+        Variable stateVar ;
+        stateVar.name = name ;
         stateVar.bitCount = bitCount;
         stateVars.push_back(stateVar) ;
     }
@@ -782,8 +781,8 @@ const char *ResponseStateVals::initFromArgToken(int startTokenIdx) {
     int argTokenCount = tokenCount - startTokenIdx ; // argument tokens
     // each token is name:size
     for (int i=0 ; i < argTokenCount ; i++) {
-        MessagesStateVar stateVar ; // add entry
-        stateVar.value = (uint32_t)strtol(token[startTokenIdx+i], nullptr, 16);
+        Variable stateVar ; // add entry
+        stateVar.setValue((uint32_t)strtol(token[startTokenIdx+i], nullptr, 16));
         stateVars.push_back(stateVar);
     }
     return nullptr ; // ok

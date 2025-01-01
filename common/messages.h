@@ -587,29 +587,11 @@ public:
 };
 
 #if !defined(PLATFORM_ARDUINO)
+// only to be implemented on host PC and remote emulator
+// M93x2 probe 
 
 #include <vector>
-// only to be implemented on host PC and remote emulator
-
-// needs variable directory
-class MessagesStateVar {
-public:
-    static const int nameSize = 32 ;
-    char name[nameSize+1] ; // ResponseStateDef: short name, like "R0,PC,BA".
-    int		bitCount = 0 ; // ResponseStateDef: size in bits, > 1
-    // !! integer width deri
-    void	*object = nullptr  ; // data source in producing emulator
-    // displaying control in GUI
-    int	objectSizeof=0 ; // size of pointer in byte: uint8=1, uint16=2, uint32=4
-    // objectSizeof only needed intern in emulator, neither rendered nor parsed
-    uint32_t value = 0 ; // RequestStateVal
-    MessagesStateVar() {
-        name[0] = 0;
-        bitCount = 0 ;
-        object = nullptr ;
-        value = 0;
-    }
-} ;
+#include "variables.h" // class Variable
 
 
 // R STATEDEF
@@ -630,15 +612,15 @@ public:
 // stateVars: name and bitwidth filled
 class ResponseStateDef : public Message {
 public:
-    std::vector<MessagesStateVar> stateVars;
+    std::vector<Variable> stateVars;
     const char *initFromArgToken(int startTokenIdx) override ;
     const char* render() override {
         strcpy(txtBuffer, "STATEDEF");
         for (auto it = stateVars.begin() ; it != stateVars.end() ; it++) {
-            if (strlen(txtBuffer) +  strlen(it->name) + 5 > txtBufferSize)
+            if (strlen(txtBuffer) +  strlen(it->name.c_str()) + 5 > txtBufferSize)
                 return "ERROR BUFFER OVERFLOW" ;
             strcat(txtBuffer, " ") ; // mount " name:size"
-            strcat(txtBuffer, it->name) ;
+            strcat(txtBuffer, it->name.c_str()) ;
             strcat(txtBuffer, ":") ;
             char numBuffer[20] ;
             sprintf(numBuffer, "%d", it->bitCount) ;  // decimal
@@ -668,12 +650,12 @@ public:
 // stateVars: only value field filled
 class ResponseStateVals : public Message {
 public:
-    std::vector<MessagesStateVar> stateVars;
+    std::vector<Variable> stateVars;
     const char *initFromArgToken(int startTokenIdx) override ;
     const char* render() override {
         strcpy(txtBuffer, "STATEVAL");
         for (auto it = stateVars.begin() ; it != stateVars.end() ; it++) {
-            if (strlen(txtBuffer) +  strlen(it->name) + 5 > txtBufferSize)
+            if (strlen(txtBuffer) +  strlen(it->name.c_str()) + 5 > txtBufferSize)
                 return "ERROR BUFFER OVERFLOW" ;
             char numBuffer[20] ;
             sprintf(numBuffer, " %x", it->value) ;  // hex

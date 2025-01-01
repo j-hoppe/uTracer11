@@ -11,6 +11,7 @@
 
 
 #include <vector>
+#include "variables.h"
 #include "messages.h"
 #include "messagequeue.h"
 #include "tcpmessageinterface.h"
@@ -59,7 +60,7 @@ public:
 
     // emulator tells the message interface about its visibile internal state
     // state to be published by STEDEF/VAL messages
-    std::vector<MessagesStateVar> stateVars;
+    std::vector<Variable> stateVars;
 
     void stateVarRegisterClear() {
         stateVars.clear() ;
@@ -67,13 +68,13 @@ public:
 
     // name, width, and internal location of a emulator internal variable
     void stateVarRegister(const char *name, void *varPointer, int varSize, int bitCount) {
-        MessagesStateVar stateVar;
-        strncpy(stateVar.name, name, stateVar.nameSize-1) ;
-        stateVar.name[stateVar.nameSize] = 0 ;
+        Variable stateVar;
+        stateVar.name = name ;
         stateVar.bitCount = bitCount ;
-        stateVar.object = varPointer ;
-        stateVar.objectSizeof = varSize;
+        stateVar.endpoint = varPointer ;
+        stateVar.endpointSizeof = varSize;
         stateVar.value = 0 ; // not used here
+        stateVar.prevValue = 0 ; // not used here
         stateVars.push_back(stateVar);
     }
 

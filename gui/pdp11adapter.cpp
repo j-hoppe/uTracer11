@@ -228,7 +228,7 @@ void Pdp11Adapter::evalInternalStateDefinition(ResponseStateDef* responseStateDe
         tmpVarValStaticText->Wrap(-1);
         // tmpVarValStaticText->SetFont(wxFont(14, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, wxT("Courier New")));
         parentSizer->Add(tmpVarValStaticText, 0, wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT | wxALL, 5);
-        it->object = tmpVarValStaticText;
+        it->endpoint = tmpVarValStaticText;
     }
     // make the panel large enough to hold all added elements
     // if it has less space, scrollbars appear
@@ -247,11 +247,11 @@ void Pdp11Adapter::evalInternalStateValues(ResponseStateVals* responseStateVals)
     for (unsigned i = 0; i < cpuStateVars.size(); i++) {
         auto stateVar = &cpuStateVars[i];
         auto value = responseStateVals->stateVars[i].value;
-        stateVar->value = value;
+        stateVar->setValue(value);
         // make display dependend on # of bits
         int digitCount = (stateVar->bitCount + 2) / 3; // num of octal digits
         wxString valText = wxString::Format("%0*o", digitCount, value);
-        wxStaticText* tmpVarValStaticText = static_cast<wxStaticText*>(stateVar->object);
+        wxStaticText* tmpVarValStaticText = static_cast<wxStaticText*>(stateVar->endpoint);
         tmpVarValStaticText->SetLabel(valText);
     }
     // display

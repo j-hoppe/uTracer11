@@ -182,15 +182,15 @@ void *RequestStateVal::process() {
 	auto stateVars = &Pdp11Simulator::instance->stateVars ; // alias to emulator state
 	// for all variables: eval registered pointer
 	for (auto it = stateVars->begin() ; it != stateVars->end() ; it++) {
-		switch(it->objectSizeof) {
+		switch(it->endpointSizeof) {
 		case 1: // pointer to byte var
-			it->value = * ( (uint8_t *)it->object ) ;
+			it->setValue(* ( (uint8_t *)it->endpoint )) ;
 			break ;
 		case 2: // pointer to word var
-			it->value = * ( (uint16_t *)it->object ) ;
+			it->setValue(* ( (uint16_t *)it->endpoint )) ;
 			break ;
 		case 4: // pointer to long var
-			it->value = * ( (uint32_t *)it->object ) ;
+			it->setValue (* ( (uint32_t *)it->endpoint)) ;
 			break ;
 		default:
 			assert(false); // definition error

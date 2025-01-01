@@ -148,6 +148,7 @@
     <ClInclude Include="..\common\messages.h" />
     <ClInclude Include="..\common\pdp1140km11state.h" />
     <ClInclude Include="..\common\utils.h" />
+    <ClInclude Include="..\common\variables.h" />
     <ClInclude Include="autostepcontroller.h" />
     <ClInclude Include="documentpageannotations.h" />
     <ClInclude Include="application.h" />
