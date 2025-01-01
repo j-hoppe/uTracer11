@@ -1,4 +1,4 @@
-/* tracecontroller - manages the upstep/UNIBUS /disasassembly form and disassembly
+/* tracecontroller - manages the ustep/UNIBUS/disassembly form and disassembly
 */
 #ifndef __TRACECONTROLLER_H__
 #define __TRACECONTROLLER_H__
