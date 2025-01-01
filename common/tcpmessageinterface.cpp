@@ -128,7 +128,7 @@ void TcpMessageInterface::transmitResponses() {
         Message *msg = transmitQueue.pop(true) ; // wait blocking until filled
         std::string msgTxt(msg->render());
         delete msg ;
-        msgTxt.append("\n") ; // separator
+        msgTxt.append("\r\n") ; // separator, CR LF to work under Windows telnet client
         // send and clear, thread unsafe
         int bytesSend = send(tcpSocket, msgTxt.c_str(), msgTxt.length(), 0);
         if (bytesSend <= 0) {
