@@ -1,4 +1,5 @@
-EXE=bin-cygwin\pdp1134sim.exe
+# start under Linux
+EXE=bin-linux/pdp1134sim
 PORT=65392
 
 $EXE $PORT
