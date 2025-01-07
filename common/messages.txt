@@ -177,24 +177,24 @@ R MCP <group> <addr> <half>
         response: MCP<group><addr><half> "IODIR=.. IPOL= .... OLAT=.."
         (long string!)
 
-R STATEDEF
+R REGDEF
 		request definitions of internal registers, used for emulators which deliver more data
 		than visibile over KM11/KY11-LB/UNIBUS.
-        response: STATEDEF
+        response: REGDEF
 
-STATEDEF list of <name:bitCount> pairs
+REGDEF list of <name:bitCount> pairs
 		a list of internal registers, names and bit widths. 'bitcount' decimal
 		max bitcount is 32.
 		Static, needs to be queried only once
 		long string
  	    Example: "R0:16 R1:16 R2:16 R3:16 R4:16 R5:16 R6:16 PC:16 ALEG:16 BLEG:16 BA:18 SERVICE:1"
 
-R STATEVAL
+R REGVAL
 		request data of internal registers, used for emulators which deliver more data
 		than visibile over KM11/KY11-LB/UNIBUS.
-		response: STATEVAL
+		response: REGVAL
 
-STATEVAL
-		list of current values for internal registers, ordered as in STATEDEF
+REGVAL
+		list of current values for internal registers, ordered as in REGDEF
         Example: "0 732a 0 0 0 0 affe cafe dead 2ffff 1"
 

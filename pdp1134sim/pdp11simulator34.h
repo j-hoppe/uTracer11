@@ -16,8 +16,8 @@ private:
     unsigned state; // position in predefined faked activity sequence
     uint16_t mpc; // current micro program counter
     uint16_t	memory[0x20000]; // 18 bit addresses = 128kwords
-    uint32_t	opcodecount ; // processed opcodes
-    uint32_t	mcyclecount ; // processed microsteps
+    uint32_t	opcodeCount ; // processed opcodes
+    uint32_t	mcycleCount ; // processed microsteps
 
     // same internal registers, to be published via messages
     uint16_t	r[16] ;

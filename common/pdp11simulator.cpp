@@ -85,10 +85,10 @@ void* ResponseVersion::process() {
 void* ResponseMcp23017Registers::process() {
     return nullptr;
 }
-void* ResponseStateDef::process() {
+void* ResponseRegDef::process() {
     return nullptr;
 }
-void* ResponseStateVals::process() {
+void* ResponseRegVals::process() {
     return nullptr;
 }
 
@@ -168,17 +168,17 @@ void *RequestUnibusSignalWrite::process() {
     return nullptr;
 }
 
-// return the defintion list for internal state variables
-void *RequestStateDef::process() {
-	ResponseStateDef *response = new ResponseStateDef() ;
-	response->stateVars = Pdp11Simulator::instance->stateVars ; //
+// return the definition list for internal state variables
+void *RequestRegDef::process() {
+	ResponseRegDef *response = new ResponseRegDef() ;
+	response->registers = Pdp11Simulator::instance->stateVars ; //
     Pdp11Simulator::instance->respond(response);
     // will render and delete
     return nullptr;
 }
 
 // return the internal state variables, with values updated
-void *RequestStateVal::process() {
+void *RequestRegVal::process() {
 	auto stateVars = &Pdp11Simulator::instance->stateVars ; // alias to emulator state
 	// for all variables: eval registered pointer
 	for (auto it = stateVars->begin() ; it != stateVars->end() ; it++) {
@@ -193,12 +193,14 @@ void *RequestStateVal::process() {
 			it->setValue (* ( (uint32_t *)it->endpoint)) ;
 			break ;
 		default:
+			fprintf(stderr, "RequestRegVal::process(): var %s ill endpointsize %d",
+					it->name.c_str(), it->endpointSizeof) ;
 			assert(false); // definition error
 		}
 	}
 
-	ResponseStateVals *response = new ResponseStateVals() ;
-	response->stateVars = *stateVars ;
+	ResponseRegVals *response = new ResponseRegVals() ;
+	response->registers = *stateVars ;
     Pdp11Simulator::instance->respond(response);
     // will render and delete
     return nullptr;

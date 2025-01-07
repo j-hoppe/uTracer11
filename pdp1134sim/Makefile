@@ -19,6 +19,7 @@ endif
 
 OBJS = $(OUTPUT_DIR)/application.o	\
 	$(OUTPUT_DIR)/messages.o \
+	$(OUTPUT_DIR)/messagequeue.o	\
 	$(OUTPUT_DIR)/tcpmessageinterface.o	\
 	$(OUTPUT_DIR)/pdp11simulator.o \
 	$(OUTPUT_DIR)/pdp11simulator34.o
@@ -33,6 +34,9 @@ $(OUTPUT_DIR)/pdp1134sim:	$(OBJS)
 	$(EXTRA_CMDS)
 
 $(OUTPUT_DIR)/messages.o:	$(PROJECT_ROOT)../common/messages.cpp
+	$(CXX) -c $(CFLAGS) $(CXXFLAGS) $(CPPFLAGS) -o $@ $<
+
+$(OUTPUT_DIR)/messagequeue.o:	$(PROJECT_ROOT)../common/messagequeue.cpp
 	$(CXX) -c $(CFLAGS) $(CXXFLAGS) $(CPPFLAGS) -o $@ $<
 
 $(OUTPUT_DIR)/tcpmessageinterface.o:	$(PROJECT_ROOT)../common/tcpmessageinterface.cpp

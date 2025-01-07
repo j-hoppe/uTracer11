@@ -37,26 +37,39 @@ The MACRO PLATFORM_ARDUINO controls buffer size and implemented messages
 #pragma warning(disable:4996)   // no strcpy_s on Arduino?
 #endif
 
+// class helper for parsing and rendering.
+class TokenList
+{
+public:
+    char *txtBuffer ; // pointer to external persistent char buffer
+
+    static const int maxCount = 36; // csvlists max 32
+    int count;
+    char* token[maxCount]; // args to opcode
+
+    TokenList(char *_txtBuffer) {
+        txtBuffer = _txtBuffer ;
+    }
+
+
+    // compare argv[i] with value
+    bool is(int argIdx, const char* val) ;
+    // split buffer text line into token, buffer is modifed and must stay persistent
+    void tokenize(const char* line) ;
+    uint8_t parseUniBusCycleArg0() ;
+} ;
+
+
 // base class for Requests and Responses from Host PC to PCB
 class Message {
-    /// class static parser/render  helper
 public:
     // limits for fields and sizes
 
     // message borders in parsed textstreams. CR, LF and ';'
     static const char* separatorChars; // "\n\r;";
 
-    // class helper for parsing and rendering.
     // define the static vars in the .cpp for the linker
-    static const int maxTokenCount = 36; // csvlists max 32
-    static int tokenCount;
-    static char* token[maxTokenCount]; // args to opcode
-    // split into token
-
-    // compare argv[i] with value
-    static void tokenize(const char* line);
-    static bool isToken(int tokenIdx, const char* val);
-    static void buildSyntaxError(const char* syntax, const char* msg);
+    static void buildSyntaxError(TokenList *tokenList, const char* syntax, const char* msg);
 
     // eval parsed tokenlist.
     // argTokenIdx = first token after opcodes
@@ -66,25 +79,32 @@ public:
     //				argString = "error fixed"
     // returns nullptr on success or error message
     // one of those both is used by messages to parse the commandline params
-    virtual const char* initFromArgString(const char* argString) ;
+    virtual const char* initFromArgString(TokenList *tokenList, const char* argString) ;
     //virtual const char* initFromArgString(const char* argString) { return nullptr;}
-    virtual const char* initFromArgToken(int startTokenIdx) ;
-    // virtual const char* initFromArgToken(int startTokenIdx) {return nullptr;}
+    virtual const char* initFromArgToken(TokenList *tokenList, int startTokenIdx) ;
+    // virtual const char* initFromArgToken(TokenList *tokenList, int startTokenIdx) {return nullptr;}
 
+#if defined(PLATFORM_ARDUINO)
+    // Arduino has almost no RAM: global short buffer for rende()&parse()
+    // Not thread save!
     // fix class buffer len for all purposes, higly insecure!
     // caller must allocate via Messages::bufferINit()
-#if defined(PLATFORM_ARDUINO)
     static const int txtBufferSize = 120;
+    static char sharedTxtBuffer[txtBufferSize];
+    static char *renderTxtBuffer ; // = sharedTxtBuffer ;
 #else
+    // thread save: multiple messages can render() in parallel
     static const int txtBufferSize = 1050; // 1k payload plus some header space
+    char renderTxtBuffer[txtBufferSize] ;
 #endif
-    static char txtBuffer[txtBufferSize];
     // fix class error buffer
     static const int errorBufferSize = 120;
     static char errorBuffer[errorBufferSize];
 
-    static uint8_t parseUniBusCycleArg0();
-    static Message* parse(const char* buffer);  // factory, return one subclass
+    // factory, return one subclass
+    static Message* parse(const char* line); // uses pasreBuffer Local stack
+
+    static uint8_t parseUniBusCycleArg0(TokenList *tokenList);
 
     // instances
 public:
@@ -102,10 +122,10 @@ public:
         return nullptr;
     }
 
-	// data consistency check
-	virtual bool isValid() {
-		return true ;
-	}
+    // data consistency check
+    virtual bool isValid() {
+        return true ;
+    }
 };
 
 // just "OK", or optional OK <msg>
@@ -122,14 +142,14 @@ public:
         vsnprintf(msg, bufflen, _fmt, argptr);
         msg[bufflen - 1] = 0; // terminate on trunc
     }
-    const char *initFromArgString(const char *argString) override ;
+    const char *initFromArgString(TokenList *tokenList, const char *argString) override ;
 
     const char* render() override {
         if (strlen(msg))
-            snprintf(txtBuffer, txtBufferSize, "OK %s", msg);
+            snprintf(renderTxtBuffer, txtBufferSize, "OK %s", msg);
         else
-            strcpy(txtBuffer, "OK");
-        return txtBuffer;
+            strcpy(renderTxtBuffer, "OK");
+        return renderTxtBuffer;
     }
     void* process() override; // to be defined differently in M93X2 PCB and PC host
 };
@@ -148,13 +168,13 @@ public:
         vsnprintf(errormsg, bufflen, _fmt, argptr);
         errormsg[bufflen - 1] = 0; // terminate on trunc
     }
-    const char *initFromArgString(const char *argString) override ;
+    const char *initFromArgString(TokenList *tokenList, const char *argString) override ;
     const char* render() override {
         if (strlen(errormsg))
-            snprintf(txtBuffer, txtBufferSize, "ERROR %s", errormsg);
+            snprintf(renderTxtBuffer, txtBufferSize, "ERROR %s", errormsg);
         else
-            strcpy(txtBuffer, "ERROR");
-        return txtBuffer;
+            strcpy(renderTxtBuffer, "ERROR");
+        return renderTxtBuffer;
     }
     void* process() override; // to be defined differently in M93X2 PCB and PC host
 };
@@ -163,7 +183,7 @@ class RequestReset : public Message {
     const char* render() override {
         return "RESET";
     }
-    const char *initFromArgToken(int startTokenIdx) override ;
+    const char *initFromArgToken(TokenList *tokenList, int startTokenIdx) override ;
     void* process() override; // to be defined differently in M93X2 PCB and PC host
 };
 
@@ -202,7 +222,7 @@ class RequestUnibusSignalsRead : public Message {
     const char* render() override {
         return "R US";
     }
-    const char *initFromArgToken(int startTokenIdx) override ;
+    const char *initFromArgToken(TokenList *tokenList, int startTokenIdx) override ;
     void* process() override; // to be defined differently in M93X2 PCB and PC host
 };
 
@@ -218,9 +238,9 @@ public:
         signals(_addr, _data, _c1c0, _msyn, _ssyn,
                 _pbpa, _intr, _br74, _bg74, _npr, _npg, _sack, _bbsy,
                 _init, _aclo, _dclo) {}
-    const char *initFromArgToken(int startTokenIdx) override ;
+    const char *initFromArgToken(TokenList *tokenList, int startTokenIdx) override ;
     const char* render() override {
-        snprintf(txtBuffer, txtBufferSize,
+        snprintf(renderTxtBuffer, txtBufferSize,
                  "US %05lx %04x %d %d %d %d" 			 //
                  " %d %x %x %d %d %d %d"				 //
                  " %d %d %d",							 //
@@ -228,7 +248,7 @@ public:
                  signals.intr, signals.br74, signals.bg74, signals.npr, signals.npg, signals.sack, signals.bbsy, //
                  signals.init, signals.aclo, signals.dclo						 //
                 );
-        return txtBuffer;
+        return renderTxtBuffer;
     }
     void* process() override; // to be defined differently in M93X2 PCB and PC host
 };
@@ -242,17 +262,17 @@ public:
         strcpy(signalName, _signalName);
         val = _val;
     }
-    const char *initFromArgToken(int startTokenIdx) override ;
+    const char *initFromArgToken(TokenList *tokenList, int startTokenIdx) override ;
     const char* render() override {
-        snprintf(txtBuffer, txtBufferSize, "W US %s %x", signalName, val);
-        return txtBuffer;
+        snprintf(renderTxtBuffer, txtBufferSize, "W US %s %x", signalName, val);
+        return renderTxtBuffer;
     }
     void* process() override; // to be defined differently in M93X2 PCB and PC host
 };
 
 class RequestKY11LBSignalsRead : public Message {
 public:
-    const char *initFromArgToken(int startTokenIdx) override ;
+    const char *initFromArgToken(TokenList *tokenList, int startTokenIdx) override ;
     const char* render() override {
         return "R Y";
     }
@@ -270,10 +290,10 @@ public:
     ResponseKY11LBSignals() {}
     ResponseKY11LBSignals(uint16_t _mpc, uint8_t _fp11, uint8_t _sbf, uint8_t _lir, uint8_t _pbp) :
         mpc(_mpc), fp11(_fp11), sbf(_sbf), lir(_lir), pbp(_pbp) {}
-    const char *initFromArgToken(int startTokenIdx) override ;
+    const char *initFromArgToken(TokenList *tokenList, int startTokenIdx) override ;
     const char* render() override {
-        snprintf(txtBuffer, txtBufferSize, "Y %x %d %d %d %d", mpc, fp11, sbf, lir, pbp);
-        return txtBuffer;
+        snprintf(renderTxtBuffer, txtBufferSize, "Y %x %d %d %d %d", mpc, fp11, sbf, lir, pbp);
+        return renderTxtBuffer;
     }
     void* process() override; // to be defined differently in M93X2 PCB and PC host
 };
@@ -287,13 +307,13 @@ public:
         strcpy(signalName, _signalName);
         val = _val;
     }
-    const char *initFromArgToken(int startTokenIdx) override ;
+    const char *initFromArgToken(TokenList *tokenList, int startTokenIdx) override ;
     const char* render() override {
         if (val <= 1)
-            snprintf(txtBuffer, txtBufferSize, "W Y %s %x", signalName, val);
+            snprintf(renderTxtBuffer, txtBufferSize, "W Y %s %x", signalName, val);
         else
-            snprintf(txtBuffer, txtBufferSize, "W Y %s P", signalName);
-        return txtBuffer;
+            snprintf(renderTxtBuffer, txtBufferSize, "W Y %s P", signalName);
+        return renderTxtBuffer;
     }
     void* process() override; // to be defined differently in M93X2 PCB and PC host
 };
@@ -303,10 +323,10 @@ public:
     char	channel;  // A, B
     RequestKM11SignalsRead() {}
     RequestKM11SignalsRead(char _channel) : channel(_channel) {}
-    const char *initFromArgToken(int startTokenIdx) override ;
+    const char *initFromArgToken(TokenList *tokenList, int startTokenIdx) override ;
     const char* render() override {
-        snprintf(txtBuffer, txtBufferSize, "R M %c", channel);
-        return txtBuffer;
+        snprintf(renderTxtBuffer, txtBufferSize, "R M %c", channel);
+        return renderTxtBuffer;
     }
     void* process() override; // to be defined differently in M93X2 PCB and PC host
 };
@@ -320,22 +340,22 @@ public:
     ResponseKM11Signals() {}
     ResponseKM11Signals(char _channel, uint8_t _gpio0a, uint8_t _gpio0b, uint8_t _gpio1a, uint8_t _gpio1b) :
         channel(_channel), gpio0a(_gpio0a), gpio0b(_gpio0b), gpio1a(_gpio1a), gpio1b(_gpio1b) {}
-    const char *initFromArgToken(int startTokenIdx) override ;
+    const char *initFromArgToken(TokenList *tokenList, int startTokenIdx) override ;
     const char* render() override {
-        snprintf(txtBuffer, txtBufferSize, "M %c %x %x %x %x", channel, gpio0a, gpio0b, gpio1a, gpio1b);
-        return txtBuffer;
+        snprintf(renderTxtBuffer, txtBufferSize, "M %c %x %x %x %x", channel, gpio0a, gpio0b, gpio1a, gpio1b);
+        return renderTxtBuffer;
     }
 
 #if !defined(PLATFORM_ARDUINO)
-	// GUI packs/unpacks GPIO registers values to/from FlipChip pin signals
+    // GUI packs/unpacks GPIO registers values to/from FlipChip pin signals
     bool K2,N1,V1,P2,J1,C1,T2 ; // gpio0a
-	bool U2,P1,L1,F1,D1,R1,K1 ; // gpio0b
-	bool S2,M1,S1,M2,F2,E1,N2 ; // gpio1a
+    bool U2,P1,L1,F1,D1,R1,K1 ; // gpio0b
+    bool S2,M1,S1,M2,F2,E1,N2 ; // gpio1a
     bool D2,H2,J2,R2,E2,H1,L2 ; // gpio1b
     void getFlipchipSignalsFromGpioVals();
-	void setGpioValsFromFlipchipSignals() ;
+    void setGpioValsFromFlipchipSignals() ;
 #endif
-	
+
     void* process() override; // to be defined differently in M93X2 PCB and PC host
 };
 
@@ -347,18 +367,18 @@ public:
     RequestKM11SignalsWrite() {}
     RequestKM11SignalsWrite(char _channel, uint8_t _val03) :
         channel(_channel), val03(_val03) {}
-    const char *initFromArgToken(int startTokenIdx) override ;
+    const char *initFromArgToken(TokenList *tokenList, int startTokenIdx) override ;
     const char* render() override {
-        snprintf(txtBuffer, txtBufferSize, "W M %c %x", channel, val03);
-        return txtBuffer;
+        snprintf(renderTxtBuffer, txtBufferSize, "W M %c %x", channel, val03);
+        return renderTxtBuffer;
     }
 #if !defined(PLATFORM_ARDUINO)
     bool A1,B2,U1,V2;
-	void setVal03FromFlipchipSignals() ;
-	void getFlipchipSignalsFromVal03() ;
+    void setVal03FromFlipchipSignals() ;
+    void getFlipchipSignalsFromVal03() ;
 #endif
 
-	
+
     void* process() override; // to be defined differently in M93X2 PCB and PC host
 };
 
@@ -371,10 +391,10 @@ public:
     RequestMcp23017RegistersRead() {}
     RequestMcp23017RegistersRead(uint8_t _group, uint8_t _addr, char _half) :
         group(_group), addr(_addr), half(_half) {}
-    const char *initFromArgToken(int startTokenIdx) override ;
+    const char *initFromArgToken(TokenList *tokenList, int startTokenIdx) override ;
     const char* render() override {
-        snprintf(txtBuffer, txtBufferSize, "R MCP %d %d %c", group, addr, half);
-        return txtBuffer;
+        snprintf(renderTxtBuffer, txtBufferSize, "R MCP %d %d %c", group, addr, half);
+        return renderTxtBuffer;
     }
     void* process() override; // to be defined differently in M93X2 PCB and PC host
 };
@@ -397,12 +417,12 @@ public:
         iodir(_iodir), ipol(_ipol), gpinten(_gpinten), defval(_defval),
         intcon(_intcon), iocon(_iocon), gppu(_gppu), intf(_intf),
         intcap(_intcap), gpio(_gpio), olat(_olat) {}
-    const char *initFromArgToken(int startTokenIdx) override ;
+    const char *initFromArgToken(TokenList *tokenList, int startTokenIdx) override ;
     const char* render() override {
         const char* fmt = "MCP%d%d%c: IODIR=%02x IPOL=%02x GPINTEN=%02x DEFVAL=%02x INTCON=%02x IOCON=%02x GPPU=%02x INTF=%02x INTCAP=%02x GPIO=%02x OLAT=%02x";
-        snprintf(txtBuffer, txtBufferSize, fmt, (int)group, (int)addr,
+        snprintf(renderTxtBuffer, txtBufferSize, fmt, (int)group, (int)addr,
                  half, iodir, ipol, gpinten, defval, intcon, iocon, gppu, intf, intcap, gpio, olat);
-        return txtBuffer;
+        return renderTxtBuffer;
     }
     void* process() override; // to be defined differently in M93X2 PCB and PC host
 };
@@ -422,10 +442,10 @@ public:
     RequestLedWrite() {}
     RequestLedWrite(uint8_t _unit, uint32_t _off_period_millis, uint32_t _on_period_millis) :
         unit(_unit), off_period_millis(_off_period_millis), on_period_millis(_on_period_millis) {}
-    const char *initFromArgToken(int startTokenIdx) override ;
+    const char *initFromArgToken(TokenList *tokenList, int startTokenIdx) override ;
     const char* render() override {
-        snprintf(txtBuffer, txtBufferSize, "W LED %d %lu %lu", unit, (long unsigned) off_period_millis, (long unsigned) on_period_millis);
-        return txtBuffer;
+        snprintf(renderTxtBuffer, txtBufferSize, "W LED %d %lu %lu", unit, (long unsigned) off_period_millis, (long unsigned) on_period_millis);
+        return renderTxtBuffer;
     }
     void* process() override; // to be defined differently in M93X2 PCB and PC host
 };
@@ -434,7 +454,7 @@ public:
 // R SW	  read option switch state as hex string
 class RequestSwitchesRead : public Message {
 public:
-    const char *initFromArgToken(int startTokenIdx) override ;
+    const char *initFromArgToken(TokenList *tokenList, int startTokenIdx) override ;
     const char* render() override {
         return "R SW";
     }
@@ -447,10 +467,10 @@ public:
     uint8_t val05 = 0;  // 6bits
     ResponseSwitches() {}
     ResponseSwitches(uint8_t _val05) : val05(_val05) {}
-    const char *initFromArgToken(int startTokenIdx) override ;
+    const char *initFromArgToken(TokenList *tokenList, int startTokenIdx) override ;
     const char* render() override {
-        snprintf(txtBuffer, txtBufferSize, "SW %x", val05);
-        return txtBuffer;
+        snprintf(renderTxtBuffer, txtBufferSize, "SW %x", val05);
+        return renderTxtBuffer;
     }
     void* process() override; // to be defined differently in M93X2 PCB and PC host
 };
@@ -458,7 +478,7 @@ public:
 // R VERSION	  read versionstring
 class RequestVersionRead : public Message {
 public:
-    const char *initFromArgToken(int startTokenIdx) override ;
+    const char *initFromArgToken(TokenList *tokenList, int startTokenIdx) override ;
     const char* render() override {
         return "R VERSION";
     }
@@ -477,10 +497,10 @@ public:
         vsnprintf(version, bufflen, _fmt, argptr);
         version[bufflen - 1] = 0; // terminate on trunc
     }
-    const char *initFromArgString(const char *argString) override ;
+    const char *initFromArgString(TokenList *tokenList, const char *argString) override ;
     const char* render() override {
-        snprintf(txtBuffer, txtBufferSize, "VERSION %s", version);
-        return txtBuffer;
+        snprintf(renderTxtBuffer, txtBufferSize, "VERSION %s", version);
+        return renderTxtBuffer;
     }
     void* process() override; // to be defined differently in M93X2 PCB and PC host
 };
@@ -493,10 +513,10 @@ public:
     uint32_t addr;
     RequestUnibusExam() {}
     RequestUnibusExam(uint32_t _addr) : addr(_addr) {}
-    const char *initFromArgToken(int startTokenIdx) override ;
+    const char *initFromArgToken(TokenList *tokenList, int startTokenIdx) override ;
     const char* render() override {
-        snprintf(txtBuffer, txtBufferSize, "E %lo", (long unsigned) addr);
-        return txtBuffer;
+        snprintf(renderTxtBuffer, txtBufferSize, "E %lo", (long unsigned) addr);
+        return renderTxtBuffer;
     }
     void* process() override; // to be defined differently in M93X2 PCB and PC host
 };
@@ -514,15 +534,15 @@ public:
     ResponseUnibusCycle() {}
     ResponseUnibusCycle(uint8_t _c1c0, uint32_t _addr, uint16_t _data, bool _nxm, bool _requested) :
         c1c0(_c1c0), addr(_addr), data(_data), nxm(_nxm), requested(_requested) {}
-    const char *initFromArgToken(int startTokenIdx) override ;
+    const char *initFromArgToken(TokenList *tokenList, int startTokenIdx) override ;
     const char* render() override {
         if (nxm)
-            snprintf(txtBuffer, txtBufferSize - 2, "%s %lo NXM", cycleText[c1c0], (unsigned long) addr);
+            snprintf(renderTxtBuffer, txtBufferSize - 2, "%s %lo NXM", cycleText[c1c0], (unsigned long) addr);
         else
-            snprintf(txtBuffer, txtBufferSize - 2, "%s %lo %o", cycleText[c1c0], (unsigned long) addr, data);
+            snprintf(renderTxtBuffer, txtBufferSize - 2, "%s %lo %o", cycleText[c1c0], (unsigned long) addr, data);
         if (!requested)
-            strcat(txtBuffer, " !");
-        return txtBuffer;
+            strcat(renderTxtBuffer, " !");
+        return renderTxtBuffer;
     }
     void* process() override; // to be defined differently in M93X2 PCB and PC host
     bool isValid() override ;
@@ -537,10 +557,10 @@ public:
     uint16_t data;
     RequestUnibusDeposit() {}
     RequestUnibusDeposit(uint32_t _addr, uint16_t _data) : addr(_addr), data(_data) {}
-    const char *initFromArgToken(int startTokenIdx) override ;
+    const char *initFromArgToken(TokenList *tokenList, int startTokenIdx) override ;
     const char* render() override {
-        snprintf(txtBuffer, txtBufferSize, "D %lo %o", (unsigned long) addr, data);
-        return txtBuffer;
+        snprintf(renderTxtBuffer, txtBufferSize, "D %lo %o", (unsigned long) addr, data);
+        return renderTxtBuffer;
     }
     void* process() override; // to be defined differently in M93X2 PCB and PC host
 };
@@ -549,7 +569,7 @@ public:
 // response: > DATI <first octal NXM address> NXM
 class RequestUnibusSize : public Message {
 public:
-    const char *initFromArgToken(int startTokenIdx) override ;
+    const char *initFromArgToken(TokenList *tokenList, int startTokenIdx) override ;
     const char* render() override {
         return "UBSIZE";
     }
@@ -563,10 +583,10 @@ public:
     uint32_t seed;
     RequestUnibusTest() {}
     RequestUnibusTest(uint32_t _seed) : seed(_seed) {}
-    const char *initFromArgToken(int startTokenIdx) override ;
+    const char *initFromArgToken(TokenList *tokenList, int startTokenIdx) override ;
     const char* render() override {
-        snprintf(txtBuffer, txtBufferSize, "UBTEST %x", seed);
-        return txtBuffer;
+        snprintf(renderTxtBuffer, txtBufferSize, "UBTEST %x", seed);
+        return renderTxtBuffer;
     }
     void* process() override; // to be defined differently in M93X2 PCB and PC host
 };
@@ -578,90 +598,89 @@ public:
     uint16_t fileNr ;
     RequestBoot() {}
     RequestBoot(uint16_t _fileNr) : fileNr(_fileNr) {}
-    const char *initFromArgToken(int startTokenIdx) override ;
+    const char *initFromArgToken(TokenList *tokenList, int startTokenIdx) override ;
     const char* render() override {
-        snprintf(txtBuffer, txtBufferSize, "BOOT %ld", (unsigned long) fileNr);
-        return txtBuffer;
+        snprintf(renderTxtBuffer, txtBufferSize, "BOOT %ld", (unsigned long) fileNr);
+        return renderTxtBuffer;
     }
     void* process() override; // to be defined differently in M93X2 PCB and PC host
 };
 
 #if !defined(PLATFORM_ARDUINO)
 // only to be implemented on host PC and remote emulator
-// M93x2 probe 
+// M93x2 probe
 
 #include <vector>
 #include "variables.h" // class Variable
 
 
-// R STATEDEF
+// R REGDEF
 // request definition of internal registers, used for emulators which deliver more data
-// response: STATEDEF
-class RequestStateDef : public Message {
+// response: REGDEF
+class RequestRegDef : public Message {
 public:
-    const char *initFromArgToken(int startTokenIdx) override ;
+    const char *initFromArgToken(TokenList *tokenList, int startTokenIdx) override ;
     const char* render() override {
-        snprintf(txtBuffer, txtBufferSize, "R STATEDEF");
-        return txtBuffer;
+        snprintf(renderTxtBuffer, txtBufferSize, "R REGDEF");
+        return renderTxtBuffer;
     }
     void* process() override; // to be defined differently in M93X2 PCB and PC host
 };
 
-// parsing instantiates the name and size fields of stateVars
+// parsing instantiates the name and size fields of registers
 // text representation: "name:size name:bitcount ....", bitcount decimal
-// stateVars: name and bitwidth filled
-class ResponseStateDef : public Message {
+// registers: name and bitwidth filled
+class ResponseRegDef : public Message {
 public:
-    std::vector<Variable> stateVars;
-    const char *initFromArgToken(int startTokenIdx) override ;
+    std::vector<Variable> registers;
+    const char *initFromArgToken(TokenList *tokenList, int startTokenIdx) override ;
     const char* render() override {
-        strcpy(txtBuffer, "STATEDEF");
-        for (auto it = stateVars.begin() ; it != stateVars.end() ; it++) {
-            if (strlen(txtBuffer) +  strlen(it->name.c_str()) + 5 > txtBufferSize)
+        strcpy(renderTxtBuffer, "REGDEF");
+        for (auto it = registers.begin() ; it != registers.end() ; it++) {
+            if (strlen(renderTxtBuffer) +  strlen(it->name.c_str()) + 5 > txtBufferSize)
                 return "ERROR BUFFER OVERFLOW" ;
-            strcat(txtBuffer, " ") ; // mount " name:size"
-            strcat(txtBuffer, it->name.c_str()) ;
-            strcat(txtBuffer, ":") ;
+            strcat(renderTxtBuffer, " ") ; // mount " name:size"
+            strcat(renderTxtBuffer, it->name.c_str()) ;
+            strcat(renderTxtBuffer, ":") ;
             char numBuffer[20] ;
             sprintf(numBuffer, "%d", it->bitCount) ;  // decimal
-            strcat(txtBuffer, numBuffer) ;
+            strcat(renderTxtBuffer, numBuffer) ;
         }
-        return txtBuffer;
+        return renderTxtBuffer;
     }
     void* process() override; // to be defined differently in M93X2 PCB and PC host
 };
 
-// R STATEVAL
+// R REGVAL
 // request values of internal registers, used for emulators which deliver more data
-// response: STATEVAL
-class RequestStateVal : public Message {
+// response: REGVAL
+class RequestRegVal : public Message {
 public:
-    const char *initFromArgToken(int startTokenIdx) override ;
+    const char *initFromArgToken(TokenList *tokenList, int startTokenIdx) override ;
     const char* render() override {
-        snprintf(txtBuffer, txtBufferSize, "R STATEVAL");
-        return txtBuffer;
+        snprintf(renderTxtBuffer, txtBufferSize, "R REGVAL");
+        return renderTxtBuffer;
     }
     void* process() override; // to be defined differently in M93X2 PCB and PC host
 };
 
 // data of internal registers
-// data delivered in stateVars vector, "value" field
+// data delivered in registers vector, only "value" field filled
 // list of hex values
-// stateVars: only value field filled
-class ResponseStateVals : public Message {
+class ResponseRegVals : public Message {
 public:
-    std::vector<Variable> stateVars;
-    const char *initFromArgToken(int startTokenIdx) override ;
+    std::vector<Variable> registers;
+    const char *initFromArgToken(TokenList *tokenList, int startTokenIdx) override ;
     const char* render() override {
-        strcpy(txtBuffer, "STATEVAL");
-        for (auto it = stateVars.begin() ; it != stateVars.end() ; it++) {
-            if (strlen(txtBuffer) +  strlen(it->name.c_str()) + 5 > txtBufferSize)
+        strcpy(renderTxtBuffer, "REGVAL");
+        for (auto it = registers.begin() ; it != registers.end() ; it++) {
+            if (strlen(renderTxtBuffer) +  strlen(it->name.c_str()) + 5 > txtBufferSize)
                 return "ERROR BUFFER OVERFLOW" ;
             char numBuffer[20] ;
             sprintf(numBuffer, " %x", it->value) ;  // hex
-            strcat(txtBuffer, numBuffer) ;
+            strcat(renderTxtBuffer, numBuffer) ;
         }
-        return txtBuffer;
+        return renderTxtBuffer;
     }
     void* process() override; // to be defined differently in M93X2 PCB and PC host
 };

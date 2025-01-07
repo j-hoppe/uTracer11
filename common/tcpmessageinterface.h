@@ -13,10 +13,6 @@
 
 class TcpMessageInterface {
 private:
-
-	std::string receiveRingBuffer ;
-
-
 	void receiveRequests() ; // receiver thread
 	void transmitResponses() ; // transmitter thread
 	

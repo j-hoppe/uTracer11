@@ -299,7 +299,8 @@ bool Application::OnInit()
 	mainFrame->SetLabel("uTracer11 - waiting for connection"); // default if ResponseVersion fails
 
 	// query internal state panel, if PDP11 exposes any	
-	messageInterface->xmtRequest(new RequestStateDef());
+	// response adds vars to stateVars
+	messageInterface->xmtRequest(new RequestRegDef());
 
     }
     catch (const std::exception& e) {

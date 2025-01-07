@@ -21,6 +21,7 @@ Abstract base class
 #include <stdint.h>
 #include "utils.h" // linux/vs macros
 #include "binary.h"
+#include "variables.h"
 #include "messages.h" // from M93X2 probe project
 #include "memoryimage.h" // UNIBUS memory, clone from QUniBone
 #include "memorygridcontroller.h"
@@ -36,7 +37,7 @@ public:
     unsigned bitFrom; //
     unsigned bitTo;
     unsigned normalValue; // from DEC doc for "normal" (= inactive?) values
-    wxString fieldLabel; // like in XMLs, used for optical annotation 
+    wxString fieldLabel; // like in XMLs, used for optical annotation
 
     ControlWordField(unsigned _bitFrom, unsigned _bitTo, unsigned _normalValue, wxString _fieldLabel) :
         bitFrom(_bitFrom), bitTo(_bitTo), normalValue(_normalValue), fieldLabel(_fieldLabel) {}
@@ -45,11 +46,11 @@ public:
         return bitTo - bitFrom + 1;
     }
 
-	// return 
-	int bitIdx(unsigned controlwordBitIdx) {
-		return controlwordBitIdx - bitFrom ;
-	}
-	
+    // return
+    int bitIdx(unsigned controlwordBitIdx) {
+        return controlwordBitIdx - bitFrom ;
+    }
+
     unsigned extract(uint64_t controlword) {
         unsigned result = 0;
         unsigned iDst, iSrc;
@@ -120,7 +121,16 @@ public:
     memoryimage_c   memoryimage; // buffer for 256KB RAM
     codelabel_map_c codelabels; // for disas
 
-    std::vector<Variable> cpuStateVars; // internal simualtor vars, if any
+    // state variables: Definitions constructed from 3 sources
+    //  - basic (built in)
+    // - from M93X2 probe behaviour (static in Pdp11adapterxxx.onInit()), (physical, perhaps simulators)
+    // - ResponseRegisterDef (simulators only)
+    // Values:
+    // - from M93x2 probe signals (onResponseXXXXSignals)
+    // - ResponseRegVals (simulators only)
+    VariableMap	stateVars ;
+    std::map <unsigned,unsigned>	stateVarIndexOfRegister ; // REGDEF/REGVAL position in stateVars
+    //Defunsigned stateVarsFirstRegisterIndex; // for evalResponseRegisterValues
 
 
     Pdp11Adapter(); // directory parsed by application
@@ -144,8 +154,8 @@ public:
 
     void onResponseVersion(ResponseVersion* responseVersion);
 
-    void evalInternalStateDefinition(ResponseStateDef* responseStateDef);
-    void evalInternalStateValues(ResponseStateVals* responseStateVals);
+    void evalResponseRegisterDefinition(ResponseRegDef* responseRegDef);
+    void evalResponseRegisterValues(ResponseRegVals* responseRegVals);
 
     virtual void onTimer(unsigned periodMs) {
         UNREFERENCED_PARAMETER(periodMs);
@@ -216,6 +226,9 @@ public:
         UNREFERENCED_PARAMETER(unibusCycle);
         wxLogFatalError("Abstract Pdp11::evalUnibusCycle() called");
     }
+
+    void displayStateVarsDefinition() ;
+    void displayStateVarsValues() ;
 
     // 2 grid for memory and iopage
     MemoryGridController memoryGridController;

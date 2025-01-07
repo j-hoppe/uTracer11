@@ -16,6 +16,7 @@ Abstract base class
 
 #include <map> // std headers after wx.h, else tons of C4996 strcpy()
 #include <vector>
+#include <string>
 
 #include "binary.h"
 #include "pdp11adapter.h"
@@ -29,11 +30,11 @@ Abstract base class
 
 // class factory, generate Pdp11 instance by class name via type enum
 static std::map<std::string, enum Pdp11Adapter::Type> typeNames{
-{"none", Pdp11Adapter::Type::none},
-{"pdp1134phys", Pdp11Adapter::Type::pdp1134phys},
-{"pdp1134sim", Pdp11Adapter::Type::pdp1134sim},
-{"pdp1140phys", Pdp11Adapter::Type::pdp1140phys},
-{"pdp1140sim", Pdp11Adapter::Type::pdp1140sim}
+    {"none", Pdp11Adapter::Type::none},
+    {"pdp1134phys", Pdp11Adapter::Type::pdp1134phys},
+    {"pdp1134sim", Pdp11Adapter::Type::pdp1134sim},
+    {"pdp1140phys", Pdp11Adapter::Type::pdp1140phys},
+    {"pdp1140sim", Pdp11Adapter::Type::pdp1140sim}
 };
 
 // string->enum
@@ -163,6 +164,18 @@ void Pdp11Adapter::updateGui(State newState) {
 
 // all Pdp11 models must init their GUI
 void Pdp11Adapter::onInit() {
+
+    stateVars.clear() ;
+    stateVarIndexOfRegister.clear() ;
+
+    // indepedent of PDP11 model
+    // all evaluated/shown by software, no additional tracing needed
+    stateVars.add(Variable("MPC", "Micro Program Counter", 12, VariableType::basic));
+    stateVars.add(Variable("UBADDR", "Last UNIBUS address", 18, VariableType::basic));
+    stateVars.add(Variable("UBCYCLE", "Last UNIBUS cycle", 2, VariableType::basic));
+    stateVars.add(Variable("UBDATA", "Last UNIBUS data", 16, VariableType::basic));
+    displayStateVarsDefinition() ;
+
     lastUnibusCycle.c1c0 = 0xff; // invalidate
 
     updateGui(State::init); // first state change
@@ -186,49 +199,73 @@ void Pdp11Adapter::onInit() {
 void Pdp11Adapter::onResponseVersion(ResponseVersion* responseVersion) {
     //wxString title = wxString::Format("uTracer11 - %s, connected to %s", pdp11Adapter->getTypeLabel(), messageInterface->name);
     wxString title = wxString::Format("uTracer11 - %s, connected to \"%s\" via %s", getTypeLabel(),
-        responseVersion->version,
-        wxGetApp().messageInterface->name);
+                                      responseVersion->version,
+                                      wxGetApp().messageInterface->name);
     wxGetApp().mainFrame->SetLabel(title);
 }
 
 
 
 // enable panel with "internal state",
-// arragne controls for "variable = value" display
+// arrange controls for "variable = value" display
 // make panel visible
-// stateVars[].object is the text control displaying the value
+// registers[].object is the text control displaying the value
 // !! Expected to be called only ONCE in lifetime !!
-void Pdp11Adapter::evalInternalStateDefinition(ResponseStateDef* responseStateDef) {
-    //    wxGetApp().pdp11Adapter->evalInternalStateDefinition(this);
-    cpuStateVars = responseStateDef->stateVars; // save new variable list
-    if (cpuStateVars.size() == 0)
+void Pdp11Adapter::evalResponseRegisterDefinition(ResponseRegDef* responseRegDef) {
+    //    wxGetApp().pdp11Adapter->evalResponseStateDefinition(this);
+    if (responseRegDef->registers.size() == 0)
         return; // empty answer?
 
-    // preallocated hierachry like Pdp1134CpuKY11LBStatusPanelFB
-    // internalStatePanel
-    //   -> statixBoxSizer      (title and frame)
-    //      -> panel
-    //          -> internalStateFlexGridSizerFB (2 columns), growing vertically
-    // for each variable:
-    // add a wxStaticText with var name
-    // add a wxStaticText for variable value ... because of 2 columns var an value appear in one line
-    // the
+    // add to state vars.
+    // ingore REGDEEFS already added (basic, M93X2)
+    // build std::map <int,int>	stateVarIndexOfRegister
+    // responseDef index ->  stateVar index, use that index in onResponseRegisterVal()
+    for (unsigned regIndex=0 ; regIndex < responseRegDef->registers.size() ; regIndex++) {
+        Variable *reg = &responseRegDef->registers[regIndex] ;
+        if (! stateVars.exists(reg->name))  {// already known?
+            reg->info = "" ; // no info available from probe/simulator
+            reg->type = (VariableType::reg | VariableType::trace) ;
+            stateVars.add(*reg) ;
+            Variable *stateVar = stateVars.get(reg->name) ; // reload
+            stateVarIndexOfRegister[regIndex] = stateVar->index ;
+        }
+    }
+	displayStateVarsDefinition() ;
+}
+
+
+// add new stateVars to the panel.
+// "new" stateVars are not yet visible and have "enpoint" == nullptr,
+// these are assigned to a new wxStaticText.
+// GUI preallocated hierarchy like Pdp1134CpuKY11LBStatusPanelFB:
+// internalStatePanel
+//	 -> staticBoxSizer		(title and frame)
+//		-> panel
+//			-> internalStateFlexGridSizerFB (2 columns), growing vertically
+// for each new variable:
+// add a wxStaticText with var name
+// add a wxStaticText for variable value ... because of 2 columns var an value appear in one line
+void Pdp11Adapter::displayStateVarsDefinition() {
+    assert(stateVars.size() > 0); // call only after some Vars where added
     auto parentPanel = internalStatePanel->internalStateFlexGridSizerPanelFB;
     auto parentSizer = internalStatePanel->internalStateFlexGridSizerFB;
-    for (auto it = cpuStateVars.begin(); it != cpuStateVars.end(); it++) {
-        // do not save the allocated wxStaticText for the variable names.
-        wxStaticText* tmpVarNameStaticText = new wxStaticText(parentPanel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0);
-        wxString varLabel = wxString::Format("%s:", it->name);
-        tmpVarNameStaticText->SetLabel(varLabel);
-        tmpVarNameStaticText->Wrap(-1);
-        parentSizer->Add(tmpVarNameStaticText, 0, wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT | wxALL, 5);
+    for (unsigned i=0 ; i < stateVars.size() ; ++i) {
+        Variable* stateVar = stateVars.get(i) ;
+        if (stateVar->endpoint == nullptr) {
+            // do not save the allocated wxStaticText for the variable names.
+            wxStaticText* tmpVarNameStaticText = new wxStaticText(parentPanel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0);
+            wxString varLabel = wxString::Format("%s:", stateVar->name);
+            tmpVarNameStaticText->SetLabel(varLabel);
+            tmpVarNameStaticText->Wrap(-1);
+            parentSizer->Add(tmpVarNameStaticText, 0, wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT | wxALL, 5);
 
-        // register do not save the allocated wxStaticText for the variable val with the stateDefintion
-        wxStaticText* tmpVarValStaticText = new wxStaticText(parentPanel, wxID_ANY, "-", wxDefaultPosition, wxDefaultSize, 0);
-        tmpVarValStaticText->Wrap(-1);
-        // tmpVarValStaticText->SetFont(wxFont(14, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, wxT("Courier New")));
-        parentSizer->Add(tmpVarValStaticText, 0, wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT | wxALL, 5);
-        it->endpoint = tmpVarValStaticText;
+            // register do not save the allocated wxStaticText for the variable val with the stateDefinition
+            wxStaticText* tmpVarValStaticText = new wxStaticText(parentPanel, wxID_ANY, "-", wxDefaultPosition, wxDefaultSize, 0);
+            tmpVarValStaticText->Wrap(-1);
+            // tmpVarValStaticText->SetFont(wxFont(14, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, wxT("Courier New")));
+            parentSizer->Add(tmpVarValStaticText, 0, wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT | wxALL, 5);
+            stateVar->endpoint = tmpVarValStaticText;
+        }
     }
     // make the panel large enough to hold all added elements
     // if it has less space, scrollbars appear
@@ -240,23 +277,41 @@ void Pdp11Adapter::evalInternalStateDefinition(ResponseStateDef* responseStateDe
 }
 
 
-// display list of values
-void Pdp11Adapter::evalInternalStateValues(ResponseStateVals* responseStateVals) {
-    // value list must fit previously received variable list
-    assert(cpuStateVars.size() == responseStateVals->stateVars.size());
-    for (unsigned i = 0; i < cpuStateVars.size(); i++) {
-        auto stateVar = &cpuStateVars[i];
-        auto value = responseStateVals->stateVars[i].value;
-        stateVar->setValue(value);
-        // make display dependend on # of bits
-        int digitCount = (stateVar->bitCount + 2) / 3; // num of octal digits
-        wxString valText = wxString::Format("%0*o", digitCount, value);
-        wxStaticText* tmpVarValStaticText = static_cast<wxStaticText*>(stateVar->endpoint);
-        tmpVarValStaticText->SetLabel(valText);
+// display values of stateVars in associated control in the wxPanel
+// and in the trace panel
+void Pdp11Adapter::displayStateVarsValues() {
+    for (unsigned stateVarIndex = 0; stateVarIndex < stateVars.size() ; ++stateVarIndex)	{
+        Variable *stateVar = stateVars.get(stateVarIndex) ;
+        // to panel. enpoint = textControl,
+        if (stateVar->endpoint != nullptr) {
+            // if nullptr: not yet associated control in the wxPanel
+            wxStaticText* tmpVarValStaticText = static_cast<wxStaticText*>(stateVar->endpoint);
+            tmpVarValStaticText->SetLabel(stateVar->valueText());
+        }
     }
-    // display
+	traceController.displayStateVars() ;
 }
 
+// update and display list of values
+void Pdp11Adapter::evalResponseRegisterValues(ResponseRegVals* responseRegVals) {
+    // value list must fit previously received variable list
+    assert(stateVars.size() >= responseRegVals->registers.size());
+
+    // problem: here come in values 0..i-1, which are to be mapped to the
+    // variables added in evalResponseStateDefinition()
+    // stateVarsFirstRegisterIndex
+    for (unsigned regIndex = 0; regIndex < responseRegVals->registers.size() ; ++regIndex)  {
+        // find state for for this register value. Ignored?
+        if (stateVarIndexOfRegister.find(regIndex) != stateVarIndexOfRegister.end()) {
+            unsigned stateVarIndex = stateVarIndexOfRegister[regIndex];
+            Variable* stateVar = stateVars.get(stateVarIndex) ; // var for the value
+            uint32_t regval = responseRegVals->registers[regIndex].value;
+            assert(stateVar != nullptr) ;
+            stateVar->setValue(regval) ;
+        }
+    }
+    displayStateVarsValues() ;
+}
 
 /*
 Power ON
@@ -295,22 +350,22 @@ void Pdp11Adapter::powerDown() { // actions same for all pdp11s
 void Pdp11Adapter::setManClkEnable(bool _manClkEnable) {
     manClkEnable = _manClkEnable;
     if (_manClkEnable) {
+		traceController.evalUClockSingle() ;
         doLogEvent("Manual Micro Clock enabled"); // same for all pdp11's
         updateGui(State::uMachineManualStepping);
     }
     else {
+		traceController.evalUClockRun() ;
         doLogEvent("Manual Micro Clock disabled");
         updateGui(State::uMachineRunning);
     }
-    // inhibit cycle disassembly whenf micro engine is free running,
-    // or single stepping  did not yet passed a "opcode fetch"
-    traceController.syncronizedWithMicroMachine = false;
-
 }
 
 
 // operation after initation of single ustep, same for all PDP11's
+// called before respones for signals and registers are received
 void Pdp11Adapter::uStepStart() {
+	stateVars.resetChange();
     receivedUnibusCycleAfterUstep = false;
 }
 
@@ -369,6 +424,10 @@ void Pdp11Adapter::doAutoStepping(uint32_t stopUpc, int stopUnibusCycle, uint32_
 void Pdp11Adapter::doEvalMpc(uint16_t newMpc) {
     microProgramCounter = newMpc;
     doLogEvent("mpc = %0.3o", microProgramCounter);
+
+    stateVars.get("MPC")->setValue(newMpc) ;
+    displayStateVarsValues() ;
+
     // repaint document pages only on change
     paintDocumentAnnotations();
     uStepComplete(microProgramCounter);
@@ -394,14 +453,14 @@ void Pdp11Adapter::doEvalUnibusSignals(ResponseUnibusSignals* unibusSignals)
     s = wxString::Format("%d", unibusSignals->signals.intr);
     panel->unibusSignalIntrText->SetLabel(s);
     s = wxString::Format("%d,%d,%d,%d", unibusSignals->signals.br74 & 1,
-        (unibusSignals->signals.br74 >> 1) & 1,
-        (unibusSignals->signals.br74 >> 2) & 1,
-        (unibusSignals->signals.br74 >> 3) & 1);  //4,5,6,7
+                         (unibusSignals->signals.br74 >> 1) & 1,
+                         (unibusSignals->signals.br74 >> 2) & 1,
+                         (unibusSignals->signals.br74 >> 3) & 1);  //4,5,6,7
     panel->unibusSignalBr4567Text->SetLabel(s);
     s = wxString::Format("%d,%d,%d,%d", unibusSignals->signals.bg74 & 1,
-        (unibusSignals->signals.bg74 >> 1) & 1,
-        (unibusSignals->signals.bg74 >> 2) & 1,
-        (unibusSignals->signals.bg74 >> 3) & 1);  //4,5,6,7
+                         (unibusSignals->signals.bg74 >> 1) & 1,
+                         (unibusSignals->signals.bg74 >> 2) & 1,
+                         (unibusSignals->signals.bg74 >> 3) & 1);  //4,5,6,7
     panel->unibusSignalBg4567Text->SetLabel(s);
     s = wxString::Format("%d", unibusSignals->signals.npr);
     panel->unibusSignalNprText->SetLabel(s);
@@ -458,6 +517,11 @@ void Pdp11Adapter::doEvalUnibusCycle(ResponseUnibusCycle* unibusCycle)
         s = wxString::Format("%s addr=%0.6o data=%0.6o", ResponseUnibusCycle::cycleText[unibusCycle->c1c0], unibusCycle->addr, unibusCycle->data);
     doLogEvent(s.ToStdString().c_str());
 
+    // to state vars
+    stateVars.get("UBADDR")->setValue( unibusCycle->addr) ;
+    stateVars.get("UBCYCLE")->setValue( unibusCycle->c1c0) ;
+    stateVars.get("UBDATA")->setValue( unibusCycle->data) ;
+    displayStateVarsValues() ;
 
     // to memory windows
     if (updateManualMemoryExamData) {

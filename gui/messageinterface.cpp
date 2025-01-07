@@ -93,15 +93,15 @@ void* ResponseUnibusCycle::process() {
     return nullptr;
 }
 
-void* ResponseStateDef::process() { 
-    wxGetApp().pdp11Adapter->evalInternalStateDefinition(this);
+void* ResponseRegDef::process() { 
+    wxGetApp().pdp11Adapter->evalResponseRegisterDefinition(this);
     return nullptr; 
     // todo: enable panel with "internal state", paint list of variables
 }
 
 
-void* ResponseStateVals::process() { 
-		wxGetApp().pdp11Adapter->evalInternalStateValues(this);
+void* ResponseRegVals::process() { 
+		wxGetApp().pdp11Adapter->evalResponseRegisterValues(this);
 		return nullptr; 
 		return nullptr; 
     // todo: update panel with "internal state"
@@ -130,6 +130,5 @@ void* RequestLedWrite::process() { return nullptr; }
 void* RequestSwitchesRead::process() { return nullptr; }
 void* RequestVersionRead::process() { return nullptr; }
 void* RequestBoot::process() { return nullptr; }
-void* RequestStateDef::process() { return nullptr; }
-void* RequestStateVal::process() { return nullptr; }
-
+void* RequestRegDef::process() { return nullptr; }
+void* RequestRegVal::process() { return nullptr; }

@@ -22,8 +22,8 @@ class Pdp11Simulator40 : public Pdp11Simulator {
     uint16_t mpc; // current micro program counter
     uint16_t nextMpc; // next micro program counter, as result of BUTs
     uint16_t    memory[0x20000]; // 18 bit addresses = 128kwords
-    uint32_t    opcodecount ; // processed opcodes
-    uint32_t    mcyclecount ; // processed microsteps
+    uint32_t    opcodeCount ; // processed opcodes
+    uint32_t    mcycleCount ; // processed microsteps
 
     // same internal registers, to be published via messages
     uint16_t    r[16] ;

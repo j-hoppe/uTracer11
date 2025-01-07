@@ -41,12 +41,42 @@ void Pdp11Adapter40::updateGui(State state) {
         break ;
     }
     //uFlowPanel->GetParent()->Layout() ;
-	Pdp11Adapter::updateGui(state); // base
+    Pdp11Adapter::updateGui(state); // base
 }
 
 
 void Pdp11Adapter40::onInit() {
     Pdp11Adapter::onInit(); // stuff same for all models
+
+    // add KM11A/B signals to stateVars
+    // mpc already registered, but tune length
+    stateVars.get("MPC")->bitCount = 9 ; // 0..511
+    stateVars.add(Variable("PUPP", "Prev MPC", 9, VariableType::signal | VariableType::trace)) ;
+    stateVars.add(Variable("BUPP", "Basic MPC", 9, VariableType::signal | VariableType::trace)) ;
+    stateVars.add(Variable("TRAP", "", 1, VariableType::signal | VariableType::trace)) ;
+    stateVars.add(Variable("SSYN", "", 1, VariableType::signal | VariableType::trace)) ;
+    stateVars.add(Variable("MSYN", "", 1, VariableType::signal | VariableType::trace)) ;
+    stateVars.add(Variable("T", "PSW Trace", 1, VariableType::signal | VariableType::trace)) ;
+    stateVars.add(Variable("C", "PSW Carry", 1, VariableType::signal | VariableType::trace)) ;
+    stateVars.add(Variable("V", "PSW Overflow", 1, VariableType::signal | VariableType::trace)) ;
+    stateVars.add(Variable("Z", "PSW Zero", 1, VariableType::signal | VariableType::trace)) ;
+    stateVars.add(Variable("N", "PSW Negative", 1, VariableType::signal | VariableType::trace)) ;
+
+    // do not trace the KM11B stuff until needed
+    stateVars.add(Variable("PBA", "MMU Base Addr", 18, VariableType::signal | VariableType::trace)) ;
+    stateVars.add(Variable("ROM_ABCD", "", 4, VariableType::signal | VariableType::trace)) ;
+    stateVars.add(Variable("ECIN00", "", 1, VariableType::signal | VariableType::trace)) ;
+    stateVars.add(Variable("EXP_UNFL", "", 1, VariableType::signal | VariableType::trace)) ;
+    stateVars.add(Variable("EXP_OVFL", "", 1, VariableType::signal | VariableType::trace)) ;
+    stateVars.add(Variable("DR00", "", 1, VariableType::signal | VariableType::trace)) ;
+    stateVars.add(Variable("DR09", "", 1, VariableType::signal | VariableType::trace)) ;
+    stateVars.add(Variable("MSR00", "", 1, VariableType::signal | VariableType::trace)) ;
+    stateVars.add(Variable("MSR01", "", 1, VariableType::signal | VariableType::trace)) ;
+    stateVars.add(Variable("EPS_C", "", 1, VariableType::signal | VariableType::trace)) ;
+    stateVars.add(Variable("EPS_V", "", 1, VariableType::signal | VariableType::trace)) ;
+    stateVars.add(Variable("EPS_Z", "", 1, VariableType::signal | VariableType::trace)) ;
+    stateVars.add(Variable("EPS_N", "", 1, VariableType::signal | VariableType::trace)) ;
+	displayStateVarsDefinition() ;
 
     // generate messages to init gui, until first status updates comes in
     // clear CPU state
@@ -99,7 +129,7 @@ void Pdp11Adapter40::onTimer(unsigned periodMs) {
     // do not pollSlow data when pdp11 is running at own speed
     if (state == State::init || state == State::uMachineRunning)
         pollSlow = false ;
-	
+
     if (pollSlow) {
         // request KM11 & unibussignals
         // response from M93X2probe is ResponseKM11Signals,ResponseUnibusSignals
@@ -151,8 +181,8 @@ void Pdp11Adapter40::setManClkEnable(bool _manClkEnable)
 
 void Pdp11Adapter40::uStep()
 {
-	// Momentary switch S4 on KM11 produces 1-0-1 on MCLK_L
-	// -> 0-1-0 on positive km11State.mclk
+    // Momentary switch S4 on KM11 produces 1-0-1 on MCLK_L
+    // -> 0-1-0 on positive km11State.mclk
     km11AState.mclk = 1; // assume 0 already set
     auto msg = new RequestKM11SignalsWrite();
     km11AState.outputsToKM11AWriteRequest(msg);  // encode
@@ -208,6 +238,18 @@ void Pdp11Adapter40::onResponseKM11Signals(ResponseKM11Signals* km11Signals) {
         // parse
         km11AState.inputsFromKM11AResponse(km11Signals);
 
+        // to state vars
+        stateVars.get("PUPP")->setValue( km11AState.pupp) ;
+        stateVars.get("BUPP")->setValue( km11AState.bupp) ;
+        stateVars.get("TRAP")->setValue( km11AState.trap) ;
+        stateVars.get("SSYN")->setValue( km11AState.ssyn) ;
+        stateVars.get("MSYN")->setValue( km11AState.msyn) ;
+        stateVars.get("T")->setValue( km11AState.t) ;
+        stateVars.get("C")->setValue( km11AState.c) ;
+        stateVars.get("V")->setValue( km11AState.v) ;
+        stateVars.get("Z")->setValue( km11AState.z) ;
+        stateVars.get("N")->setValue( km11AState.n) ;
+
         // process MPC events only for change
         if (microProgramCounter != km11AState.pupp) {
             // MPC changed => new value, => event + display update
@@ -215,65 +257,93 @@ void Pdp11Adapter40::onResponseKM11Signals(ResponseKM11Signals* km11Signals) {
         }
 
         if (km11StatusPanel) { // not for simulation ?
-            // display
-            s = wxString::Format("%0.3o", km11AState.pupp);
-            km11StatusPanel->pdp1140Km11aPuppText->SetLabel(s);
-            s = wxString::Format("%0.3o", km11AState.bupp);
+            // to panel
+            s = stateVars.get("BUPP")->valueText();
             km11StatusPanel->pdp1140Km11aBuppText->SetLabel(s);
-            s = wxString::Format("%d", km11AState.trap);
+            s = stateVars.get("PUPP")->valueText();
+            km11StatusPanel->pdp1140Km11aPuppText->SetLabel(s);
+            s = stateVars.get("TRAP")->valueText();
             km11StatusPanel->pdp1140Km11aTrapText->SetLabel(s);
-            s = wxString::Format("%d", km11AState.ssyn);
+            s = stateVars.get("SSYN")->valueText();
             km11StatusPanel->pdp1140Km11aSsynText->SetLabel(s);
-            s = wxString::Format("%d", km11AState.msyn);
+            s = stateVars.get("MSYN")->valueText();
             km11StatusPanel->pdp1140Km11aMsynText->SetLabel(s);
-            s = wxString::Format("%d", km11AState.c);
+            s = stateVars.get("C")->valueText();
             km11StatusPanel->pdp1140Km11aCText->SetLabel(s);
-            s = wxString::Format("%d", km11AState.v);
+            s = stateVars.get("V")->valueText();
             km11StatusPanel->pdp1140Km11aVText->SetLabel(s);
-            s = wxString::Format("%d", km11AState.z);
+            s = stateVars.get("Z")->valueText();
             km11StatusPanel->pdp1140Km11aZText->SetLabel(s);
-            s = wxString::Format("%d", km11AState.n);
+            s = stateVars.get("N")->valueText();
             km11StatusPanel->pdp1140Km11aNText->SetLabel(s);
-            s = wxString::Format("%d", km11AState.t);
+            s = stateVars.get("T")->valueText();
             km11StatusPanel->pdp1140Km11aTText->SetLabel(s);
         }
     }
     else if (km11Signals->channel == 'B') {
         // parse
         km11BState.inputsFromKM11BResponse(km11Signals);
+
+        // to state vars
+        stateVars.get("PBA")->setValue(km11BState.pba) ;
+        int rom_abcd = 0 ; // bits->digits
+        if (km11BState.rom_a)
+            rom_abcd |= 010 ;
+        if (km11BState.rom_b)
+            rom_abcd |= 04 ;
+        if (km11BState.rom_c)
+            rom_abcd |= 02 ;
+        if (km11BState.rom_d)
+            rom_abcd |= 01 ;
+        stateVars.get("ROM_ABCD")->setValue(rom_abcd);
+        stateVars.get("ECIN00")->setValue( km11BState.ecin_00) ;
+        stateVars.get("EXP_UNFL")->setValue( km11BState.exp_unfl) ;
+        stateVars.get("EXP_OVFL")->setValue( km11BState.exp_ovfl) ;
+        stateVars.get("DR00")->setValue( km11BState.dr00) ;
+        stateVars.get("DR09")->setValue( km11BState.dr09) ;
+        stateVars.get("MSR00")->setValue( km11BState.msr00) ;
+        stateVars.get("MSR01")->setValue( km11BState.msr01) ;
+        stateVars.get("EPS_C")->setValue( km11BState.eps_c) ;
+        stateVars.get("EPS_V")->setValue( km11BState.eps_c) ;
+        stateVars.get("EPS_Z")->setValue( km11BState.eps_c) ;
+        stateVars.get("EPS_N")->setValue( km11BState.eps_c) ;
+		displayStateVarsValues() ;
+
         if (km11StatusPanel) { // not for simulation ?
             // display
-            s = wxString::Format("%0.6o", km11BState.pba);
+            s = stateVars.get("PBA")->valueText() ;
             km11StatusPanel->pdp1140Km11bPbaText->SetLabel(s);
+            // ROM A-D!!!
             s = wxString::Format("%d%d", km11BState.rom_a, km11BState.rom_b);
             km11StatusPanel->pdp1140Km11bRomAbText->SetLabel(s);
             s = wxString::Format("%d", km11BState.rom_c);
             km11StatusPanel->pdp1140Km11bRomCText->SetLabel(s);
             s = wxString::Format("%d", km11BState.rom_d);
             km11StatusPanel->pdp1140Km11bRomDText->SetLabel(s);
-            s = wxString::Format("%d", km11BState.b_15);
+            s = stateVars.get("B15")->valueText() ;
             km11StatusPanel->pdp1140Km11bB15Text->SetLabel(s);
-            s = wxString::Format("%d", km11BState.ecin_00);
+            s = stateVars.get("ECIN00")->valueText() ;
             km11StatusPanel->pdp1140Km11bEcin00Text->SetLabel(s);
-            s = wxString::Format("%d", km11BState.exp_unfl);
+            s = stateVars.get("EXP_UNFL")->valueText() ;
             km11StatusPanel->pdp1140Km11bExpUnflText->SetLabel(s);
-            s = wxString::Format("%d", km11BState.exp_ovfl);
+            s = stateVars.get("EXP_OVFL")->valueText() ;
             km11StatusPanel->pdp1140Km11bExpOvflText->SetLabel(s);
-            s = wxString::Format("%d", km11BState.dr00);
+            s = stateVars.get("DR00")->valueText() ;
             km11StatusPanel->pdp1140Km11bDr00Text->SetLabel(s);
-            s = wxString::Format("%d", km11BState.dr09);
+            s = stateVars.get("DR09")->valueText() ;
             km11StatusPanel->pdp1140Km11bDr09Text->SetLabel(s);
+            s = stateVars.get("MSR00")->valueText() ;
             s = wxString::Format("%d", km11BState.msr00);
             km11StatusPanel->pdp1140Km11bMsr00Text->SetLabel(s);
-            s = wxString::Format("%d", km11BState.msr01);
+            s = stateVars.get("MSR01")->valueText() ;
             km11StatusPanel->pdp1140Km11bMsr01Text->SetLabel(s);
-            s = wxString::Format("%d", km11BState.eps_c);
+            s = stateVars.get("EPS_C")->valueText() ;
             km11StatusPanel->pdp1140Km11bEpsCText->SetLabel(s);
-            s = wxString::Format("%d", km11BState.eps_v);
+            s = stateVars.get("EPS_V")->valueText() ;
             km11StatusPanel->pdp1140Km11bEpsVText->SetLabel(s);
-            s = wxString::Format("%d", km11BState.eps_z);
+            s = stateVars.get("EPS_Z")->valueText() ;
             km11StatusPanel->pdp1140Km11bEpsZText->SetLabel(s);
-            s = wxString::Format("%d", km11BState.eps_n);
+            s = stateVars.get("EPS_N")->valueText() ;
             km11StatusPanel->pdp1140Km11bEpsNText->SetLabel(s);
         }
     }
@@ -291,9 +361,9 @@ void Pdp11Adapter40::onResponseKM11Signals(ResponseKM11Signals* km11Signals) {
         paintDocumentAnnotations();
 
         doUStepComplete(ky11Signals->mpc);
-        }
-#endif
     }
+#endif
+}
 
 // 11/40 has no KY11 diag header, so this should never be called
 void Pdp11Adapter40::onResponseKY11LBSignals(ResponseKY11LBSignals* ky11Signals) {

@@ -69,6 +69,8 @@ inline void trim(std::string& s) {
     ltrim(s);
 }
 
+// all args "char *" !
+std::string format_string(const char* fmt, ...) ;
 
 inline std::string uppercase(std::string &s) {
 	std::string result = s ;

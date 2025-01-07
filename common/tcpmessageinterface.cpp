@@ -17,6 +17,8 @@
 #include "tcpmessageinterface.h"
 
 TcpMessageInterface::TcpMessageInterface() {
+	receiverThreadRunning = false ;
+	transmitterThreadRunning = false ;
     tcpPort = 0; // TCP/IP port number
     tcpSocket = 0; // file handle for TCP/IP socket
 }
@@ -37,6 +39,7 @@ void TcpMessageInterface::connectToClient() {
     // Creating socket file descriptor
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
         perror("socket() failed");
+//fprintf(stderr,"POS1\n");
         exit(EXIT_FAILURE);
     }
 
@@ -46,6 +49,7 @@ void TcpMessageInterface::connectToClient() {
     // Forcefully attaching socket to the port 8080
     if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt))) {
         perror("setsockopt() failed");
+		//fprintf(stderr,"POS2\n");
         exit(EXIT_FAILURE);
     }
     address.sin_family = AF_INET;
@@ -55,10 +59,12 @@ void TcpMessageInterface::connectToClient() {
     // Forcefully attaching socket to the port 8080
     if (bind(server_fd, (struct sockaddr*) &address, sizeof(address)) < 0) {
         perror("bind() failed");
+		//fprintf(stderr,"POS3\n");
         exit(EXIT_FAILURE);
     }
     if (listen(server_fd, 3) < 0) {
         perror("listen");
+		//fprintf(stderr,"POS4\n");
         exit(EXIT_FAILURE);
     }
     fprintf(stderr, "Server is listening on port %d for client to connect ...\n", tcpPort);
@@ -66,6 +72,7 @@ void TcpMessageInterface::connectToClient() {
     if ((tcpSocket = accept(server_fd, (struct sockaddr*) &address,
                             (socklen_t*) &addrlen)) < 0) {
         perror("accept");
+	//fprintf(stderr,"POS5\n");
         exit(EXIT_FAILURE);
     }
     fprintf(stderr, "Client connected\n");
@@ -76,9 +83,10 @@ void TcpMessageInterface::connectToClient() {
 // split into text lines, parse and queue
 // terminates only on connection loss
 void TcpMessageInterface::receiveRequests() {
-    char buffer[1024] = { 0 };
+    std::string receiveRingBuffer = "";
 	receiverThreadRunning = true ;
     while (true) {
+		char buffer[1024] = { 0 };
         memset(buffer, 0, sizeof(buffer));
         int bytesRead = read(tcpSocket, buffer, 1024);
         if (bytesRead <= 0) {
@@ -87,6 +95,7 @@ void TcpMessageInterface::receiveRequests() {
 			receiverThreadRunning = false ; // signal
 			return ;
         }
+        // fprintf(stderr, "RCV: %s\n", buffer) ;
         receiveRingBuffer.append(buffer);
         const std::string separators = "\n\r;" ; // cr, lf or ;
         // extract leading lines at \n and \r and ;
@@ -98,6 +107,7 @@ void TcpMessageInterface::receiveRequests() {
             separatorPos = receiveRingBuffer.find_first_of(separators); // find next
             if (line != "") {
                 // add message to queue
+				//fprintf(stderr, "rcv line = %s\n", line.c_str());
                 Message* msg = Message::parse(line.c_str());
                 if (msg == nullptr) {
 					// parse error
@@ -106,7 +116,7 @@ void TcpMessageInterface::receiveRequests() {
 					transmitQueue.push(msg) ; // direct response, only valid msg go to simulator
                 } else {
 					// do not flood console with traffic
-                    //fprintf(stderr, "Message from client: %s\n", msg->render());
+// fprintf(stderr, "Message from client: %s\n", msg->render());
                     receiveQueue.push(msg) ; // do be deleted by pop()-caller
                 }
             }
@@ -138,17 +148,18 @@ void TcpMessageInterface::transmitResponses() {
 			return ;
         }
 		// do not flood console
-		// fprintf(stderr, "Message to client: %s\n", msgTxt.c_str());
+// fprintf(stderr, "Message to client: %s\n", msgTxt.c_str());
         nanosleep(&waitTimespec10ms, nullptr) ;
     }
 }
 
 // already connected, setup threads and wait for completion
 void TcpMessageInterface::start() {
+    receiveQueue.name = "RCV" ; // dbg
+    transmitQueue.name = "XMT" ;
+
     receiveQueue.clear() ;
     transmitQueue.clear() ;
-
-    receiveRingBuffer = "";
 
     receiverThread = new std::thread(&TcpMessageInterface::receiveRequests, this);
     transmitterThread = new std::thread(&TcpMessageInterface::transmitResponses,

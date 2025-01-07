@@ -46,15 +46,21 @@ int main(int argc, char *argv[]) {
 
     app.console.start() ;
 
+	app.console.printf("%s build " __DATE__ " " __TIME__ ".\n", argv[0]) ;
+
     // instantiate a simulator, 11/34 or 11/40 or whatever
 
     Pdp11Simulator34 simulator(&app.console, &app.messageInterface);
 
     app.processCmdline(argc, argv);
 
-
     app.messageInterface.connectToClient();
     app.messageInterface.start(); // start receiver/transmitter threads
+
+    // wait until they're up
+    while(!app.messageInterface.receiverThreadRunning) ;
+    while(!app.messageInterface.transmitterThreadRunning) ;
+
     // messages now waiting in queues
 
     // start simulator in main thread
@@ -63,17 +69,22 @@ int main(int argc, char *argv[]) {
 	// stop on user console menu input or connection loss
 	bool connectionsGood = true ;
 	while(connectionsGood) {
-
 	    simulator.service() ;
-
 		// interface still working?
-		connectionsGood &= app.messageInterface.receiverThreadRunning ;
-		connectionsGood &= app.messageInterface.transmitterThreadRunning ;
+		if (!app.messageInterface.receiverThreadRunning) {
+			app.console.printf("Receiver terminated.\n") ;
+			connectionsGood = false ;	
+		}
+		if (!app.messageInterface.transmitterThreadRunning) {
+			app.console.printf("Transmitter terminated.\n") ;
+			connectionsGood = false ;	
+		}
 	}
 	if (app.messageInterface.receiverThread->joinable())
 		app.messageInterface.receiverThread->join() ;
-	if (app.messageInterface.transmitterThread->joinable())
+	 if (app.messageInterface.transmitterThread->joinable())
 		app.messageInterface.transmitterThread->join() ;
 
 	app.console.printf("Simulator terminated.\n") ;
+	exit(0) ;
 }

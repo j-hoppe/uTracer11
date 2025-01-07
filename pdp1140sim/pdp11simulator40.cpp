@@ -260,7 +260,7 @@ void Pdp11Simulator40::setMicroClockEnable(bool state)
 
 // sets nextMpc
 void Pdp11Simulator40::microStep() {
-    mcyclecount++ ;
+    mcycleCount++ ;
     // execute the M9312 terminal loop:
     // 1$: tstb	@#177560
     //	   bpl 1$
@@ -287,7 +287,7 @@ void Pdp11Simulator40::microStep() {
         onCpuUnibusCycle(/*DATI*/0, 0765524, 0105737, false);
         nextMpc = 0015;
         state++;
-        opcodecount++ ; // execution starts
+        opcodeCount++ ; // execution starts
         break;
     case 3: // mpc = 015    incr pc
         unibusSignals.addr = ba = 0 ;
@@ -367,8 +367,8 @@ void Pdp11Simulator40::setup() {
     Pdp11Simulator::setup();
     mpc = nextMpc = 0;
 
-    opcodecount = 0;
-    mcyclecount = 0 ;
+    opcodeCount = 0;
+    mcycleCount = 0 ;
     state = 0;
     unibusSignals = UnibusSignals(); // re-init with all 0s
     r[0] = r[1] = r[2]= r[3]= r[4]= r[5]= r[6]= r[7] = 0 ;
@@ -388,8 +388,8 @@ void Pdp11Simulator40::setup() {
     stateVarRegister("SP", &(r[6]), sizeof(r[6]), 16 );
     stateVarRegister("PC", &(r[7]), sizeof(r[7]), 16 );
     stateVarRegister("BA", &ba, sizeof(ba), 18 );
-    stateVarRegister("OPCODES", &opcodecount, sizeof(opcodecount), 32);
-    stateVarRegister("CYCLES", &mcyclecount, sizeof(mcyclecount), 32);
+    stateVarRegister("OPCODES", &opcodeCount, sizeof(opcodeCount), 32);
+    stateVarRegister("CYCLES", &mcycleCount, sizeof(mcycleCount), 32);
 
     // micro machine start running, but macro CPU starts halted
     setMicroClockEnable(true);

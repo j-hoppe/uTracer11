@@ -58,11 +58,20 @@ void Pdp11Adapter34::updateGui(State state) {
 void Pdp11Adapter34::onInit() {
     Pdp11Adapter::onInit(); // stuff same for all models
 
+	// add KY11LB signals to stateVars
+	// mpc already registered, but tune length
+		stateVars.get("MPC")->bitCount = 9 ; // 0..511
+		stateVars.add(Variable("FP11", "FP11 present?", 1, VariableType::signal)) ; // static, do not trace
+		stateVars.add(Variable("SBF", "SERVICE BR FAIL", 1, VariableType::signal | VariableType::trace)) ;
+		stateVars.add(Variable("LIR", "LOAD IR", 1, VariableType::signal | VariableType::trace)) ;
+		stateVars.add(Variable("PBP", "PFAIL BR PEND", 1, VariableType::signal | VariableType::trace)) ;
+	displayStateVarsDefinition() ;
+
     // generate messages to init gui, until first status updates comes in
     auto cpuSignals = ResponseKY11LBSignals(0, 0, 0, 0, 0);
     cpuSignals.process(); // calls virtual onRcvMessageFromPdp11() and updates GUI
 
-    // convert "LSB-first" bianry string to value
+    // convert "LSB-first" binary string to value
 #define LSB1ST(s) (BinaryString((s), /*msbfirst*/false).value)
 
     // setup bit fields. "normal" bit string like in DEC doc, LSB 1st, fieldnames like markers in XML! 
@@ -145,11 +154,11 @@ void Pdp11Adapter34::onTimer(unsigned periodMs) {
         auto reqUnibus = new RequestUnibusSignalsRead();
         wxGetApp().messageInterface->xmtRequest(reqUnibus); // send+delete
 
-        bool updateCpuStateVars = (state == State::uMachineManualStepping) || (state == State::uMachineAutoStepping);
-        if (updateCpuStateVars && cpuStateVars.size() > 0) {
+        bool updateStateVars = (state == State::uMachineManualStepping) || (state == State::uMachineAutoStepping);
+        if (updateStateVars && stateVars.size() > 0) {
             // singlestepping: the pdp11 publishes its internal state, update it
-            auto reqState = new RequestStateVal();
-            wxGetApp().messageInterface->xmtRequest(reqState); // send+delete
+            auto reqRegVal = new RequestRegVal();
+            wxGetApp().messageInterface->xmtRequest(reqRegVal); // send+delete
         }
     }
 }
@@ -333,21 +342,29 @@ void Pdp11Adapter34::onResponseKY11LBSignals(ResponseKY11LBSignals* ky11Signals)
 
     if (ignoreKY11)
         return;
+	
+    ky11Signals->mpc &= 0x1ff; // strip off bit 10, to 0..511
+	stateVars.get("MPC")->setValue(ky11Signals->mpc);
+	stateVars.get("FP11")->setValue(ky11Signals->fp11);
+	stateVars.get("SBF")->setValue(ky11Signals->sbf);
+	stateVars.get("LIR")->setValue(ky11Signals->lir);
+	stateVars.get("PBP")->setValue(ky11Signals->pbp);
+	displayStateVarsValues() ;
+
     if (ky11StatusPanel) {
         wxString s;
-        s = wxString::Format("%0.3o", ky11Signals->mpc);
+		s = stateVars.get("MPC")->valueText() ;
         ky11StatusPanel->pdp1134Ky11MpcText->SetLabel(s);
-        s = wxString::Format("%d", ky11Signals->fp11);
+        s = stateVars.get("FP11")->valueText();
         ky11StatusPanel->pdp1134Ky11FpText->SetLabel(s);
-        s = wxString::Format("%d", ky11Signals->sbf);
+        s = stateVars.get("SBF")->valueText();
         ky11StatusPanel->pdp1134Ky11SbfText->SetLabel(s);
-        s = wxString::Format("%d", ky11Signals->lir);
+        s = stateVars.get("LIR")->valueText();
         ky11StatusPanel->pdp1134Ky11LirText->SetLabel(s);
-        s = wxString::Format("%d", ky11Signals->pbp);
+        s = stateVars.get("PBP")->valueText();
         ky11StatusPanel->pdp1134Ky11PbpText->SetLabel(s);
     }
     // process MPC events only for change
-    ky11Signals->mpc &= 0x1ff; // strip off bit 10, to 0..511
     if (microProgramCounter != ky11Signals->mpc) {
         // MPC changed => new value, => event + display update
         doEvalMpc(ky11Signals->mpc);
