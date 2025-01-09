@@ -3,10 +3,15 @@ Modification to put in MUD slot / M9312
 
 Errata
 -----------
+Silk: J16 "PWR +5V=USB":
+(connect wenn only USB cable connected, OR only +5V
+disconnect when both +5V and USB.)
+
+
 Silk: "KY11" -> "KY11-LB"
 
 Share KY11 MSCP23017 with KM11
-use additional inputs to monitor inputs from KY11-LB controller 
+use additional inputs to monitor inputs from KY11-LB controller
 
 
 2024-08
