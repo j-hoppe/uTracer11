@@ -142,7 +142,7 @@ void TcpMessageInterface::transmitResponses() {
         // send and clear, thread unsafe
         int bytesSend = send(tcpSocket, msgTxt.c_str(), msgTxt.length(), 0);
         if (bytesSend <= 0) {
-            fprintf(stderr, "Send() error, client disconnected or error occurred\n");
+//            fprintf(stderr, "Send() error, client disconnected or error occurred\n");
             close(tcpSocket);
 			transmitterThreadRunning = false ; // signal
 			return ;

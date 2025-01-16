@@ -20,7 +20,7 @@ void MessageQueue::push(Message *msg) {
     // Acquire lock by constructor
     std::unique_lock<std::mutex> lock(m_mutex);
     // Add item
-	// fprintf(stderr, "[%lx] %s.push() mgs = %s\n", (long)pthread_self(), name, msg->render()) ;
+//fprintf(stderr, "[%lx] %s.push() mgs = %s\n", (long)pthread_self(), name, msg->render()) ;
     m_queue.push(msg);
     // Notify one thread that is waiting
     m_cond.notify_one();
@@ -43,7 +43,7 @@ Message *MessageQueue::pop(bool wait) {
     if (!m_queue.empty()) {
         // retrieve item, return nullptr if empty
         msg = m_queue.front();
-		// fprintf(stderr, "[%lx] %s.pop() mgs = %s\n", (long)pthread_self(), name, msg->render()) ;
+//fprintf(stderr, "[%lx] %s.pop() mgs = %s\n", (long)pthread_self(), name, msg->render()) ;
         m_queue.pop();
     }
     // return item

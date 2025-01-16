@@ -173,6 +173,7 @@ void *RequestRegDef::process() {
 	ResponseRegDef *response = new ResponseRegDef() ;
 	response->registers = Pdp11Simulator::instance->stateVars ; //
     Pdp11Simulator::instance->respond(response);
+//	fprintf(stderr, "RequestRegDef::process()\n") ;
     // will render and delete
     return nullptr;
 }
