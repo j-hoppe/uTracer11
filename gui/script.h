@@ -29,6 +29,7 @@
 #ifndef __SCRIPT_H__
 #define __SCRIPT_H__
 
+#include <string>
 #include "duktape.h"
 //#include "application.h"
 
@@ -47,6 +48,9 @@ public:
 
 	// config Jscript engine
 	void init(Application* app) ;
+	
+	void eval(std::string js_code);  // run interpreter on code
+
 		
 
 	// interface to GUI

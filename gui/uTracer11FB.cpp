@@ -1149,7 +1149,11 @@ MainFrameFB::MainFrameFB( wxWindow* parent, wxWindowID id, const wxString& title
 	topHorizontalSizer->Add( toolsNotebook, 0, wxEXPAND | wxALL, 5 );
 
 	documentsNotebookFB = new wxNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
-	EventPanelFB = new wxPanel( documentsNotebookFB, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	m_panel23 = new wxPanel( documentsNotebookFB, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* bSizer141;
+	bSizer141 = new wxBoxSizer( wxVERTICAL );
+
+	EventPanelFB = new wxPanel( m_panel23, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxStaticBoxSizer* sbSizer6;
 	sbSizer6 = new wxStaticBoxSizer( new wxStaticBox( EventPanelFB, wxID_ANY, wxT("Events") ), wxVERTICAL );
 
@@ -1162,7 +1166,28 @@ MainFrameFB::MainFrameFB( wxWindow* parent, wxWindowID id, const wxString& title
 	EventPanelFB->SetSizer( sbSizer6 );
 	EventPanelFB->Layout();
 	sbSizer6->Fit( EventPanelFB );
-	documentsNotebookFB->AddPage( EventPanelFB, wxT("Events"), false );
+	bSizer141->Add( EventPanelFB, 1, wxEXPAND | wxALL, 5 );
+
+	ScriptPanelFB = new wxPanel( m_panel23, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxStaticBoxSizer* sbSizer14;
+	sbSizer14 = new wxStaticBoxSizer( new wxStaticBox( ScriptPanelFB, wxID_ANY, wxT("Script") ), wxVERTICAL );
+
+	scriptTextCtrlFB = new wxTextCtrl( sbSizer14->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxHSCROLL|wxTE_MULTILINE );
+	scriptTextCtrlFB->SetFont( wxFont( 9, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("Courier New") ) );
+
+	sbSizer14->Add( scriptTextCtrlFB, 1, wxALL|wxEXPAND, 5 );
+
+
+	ScriptPanelFB->SetSizer( sbSizer14 );
+	ScriptPanelFB->Layout();
+	sbSizer14->Fit( ScriptPanelFB );
+	bSizer141->Add( ScriptPanelFB, 1, wxEXPAND | wxALL, 5 );
+
+
+	m_panel23->SetSizer( bSizer141 );
+	m_panel23->Layout();
+	bSizer141->Fit( m_panel23 );
+	documentsNotebookFB->AddPage( m_panel23, wxT("Events, Script"), false );
 	pdp11StatusPanelFB = new wxPanel( documentsNotebookFB, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	pdp11StatusSizerFB = new wxBoxSizer( wxHORIZONTAL );
 

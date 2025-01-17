@@ -80,7 +80,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;__WXMSW__;__UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\include\msvc;..\CSerialPort\include;..\common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\include\msvc;..\duktape;..\CSerialPort\include;..\common</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
     </ClCompile>
     <Link>
@@ -97,7 +97,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;__WXMSW__;_UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\include\msvc;..\CSerialPort\include;..\common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\include\msvc;..\duktape;..\CSerialPort\include;..\common</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
     </ClCompile>
     <Link>
@@ -114,7 +114,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;__WXMSW__;__UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\include\msvc;..\CSerialPort\include;..\common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\include\msvc;..\duktape;..\CSerialPort\include;..\common</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -132,7 +132,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;__WXMSW__;_UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\include\msvc;..\CSerialPort\include;..\common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\include\msvc;..\duktape;..\CSerialPort\include;..\common</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -149,6 +149,8 @@
     <ClInclude Include="..\common\pdp1140km11state.h" />
     <ClInclude Include="..\common\utils.h" />
     <ClInclude Include="..\common\variables.h" />
+    <ClInclude Include="..\duktape\duktape.h" />
+    <ClInclude Include="..\duktape\duk_config.h" />
     <ClInclude Include="autostepcontroller.h" />
     <ClInclude Include="documentpageannotations.h" />
     <ClInclude Include="application.h" />
@@ -166,6 +168,7 @@
     <ClInclude Include="pdp11adapter40.h" />
     <ClInclude Include="pdp11adapter40phys.h" />
     <ClInclude Include="pdp11adapter40sim.h" />
+    <ClInclude Include="script.h" />
     <ClInclude Include="tracecontroller.h" />
     <ClInclude Include="uTracer11FB.h" />
   </ItemGroup>
@@ -184,6 +187,7 @@
     <ClCompile Include="..\CSerialPort\src\SerialPortInfoUnixBase.cpp" />
     <ClCompile Include="..\CSerialPort\src\SerialPortInfoWinBase.cpp" />
     <ClCompile Include="..\CSerialPort\src\SerialPortWinBase.cpp" />
+    <ClCompile Include="..\duktape\duktape.c" />
     <ClCompile Include="application.cpp" />
     <ClCompile Include="autostepcontroller.cpp" />
     <ClCompile Include="documentpageannotations.cpp" />
@@ -200,6 +204,7 @@
     <ClCompile Include="pdp11adapter40.cpp" />
     <ClCompile Include="pdp11adapter40phys.cpp" />
     <ClCompile Include="pdp11adapter40sim.cpp" />
+    <ClCompile Include="script.cpp" />
     <ClCompile Include="tracecontroller.cpp" />
     <ClCompile Include="uTracer11FB.cpp" />
   </ItemGroup>

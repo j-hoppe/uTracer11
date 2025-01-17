@@ -372,6 +372,8 @@ class MainFrameFB : public wxFrame
 		wxPanel* m_panel21;
 		wxStaticText* m_staticText211;
 		wxTextCtrl* stopRepeatCountTextCtrl;
+		wxPanel* m_panel23;
+		wxPanel* ScriptPanelFB;
 		wxStatusBar* statusBar;
 
 		// Virtual event handlers, override them in your derived class
@@ -400,6 +402,7 @@ class MainFrameFB : public wxFrame
 		wxNotebook* documentsNotebookFB;
 		wxPanel* EventPanelFB;
 		wxTextCtrl* eventsTextCtrl;
+		wxTextCtrl* scriptTextCtrlFB;
 		wxPanel* pdp11StatusPanelFB;
 		wxBoxSizer* pdp11StatusSizerFB;
 		wxTimer updateTimer;

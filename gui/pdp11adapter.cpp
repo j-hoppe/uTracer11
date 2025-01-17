@@ -164,7 +164,6 @@ void Pdp11Adapter::updateGui(State newState) {
 
 // all Pdp11 models must init their GUI
 void Pdp11Adapter::onInit() {
-
     stateVars.clear() ;
     stateVarIndexOfRegister.clear() ;
 

@@ -256,6 +256,9 @@ bool Application::OnInit()
 
         mainFrame->toolsNotebook->SetSelection(0);
 
+        script = new Script();
+        script->init(this);
+
         connectToMessageInterface();
 
         // instantiate a pdp11 and setup GUI
