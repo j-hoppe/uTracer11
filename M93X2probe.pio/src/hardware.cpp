@@ -109,7 +109,6 @@ uint8_t OptionSwitch::getVal() {
 void Hardware::setupMcpKY11LBRegisters() {
 
     // First define outpt pin levels, the switch pins to OUTPUT
-
     // KY11LB
     // Levels depend on the PDP-11 we're plugged in!
     theHardware.mcpWriteOptimization = false;      // force setup

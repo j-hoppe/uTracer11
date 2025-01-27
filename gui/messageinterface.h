@@ -21,6 +21,10 @@ public:
     unsigned long rcvMessageCount = 0;
     unsigned long xmtMessageCount = 0;
 
+    // produce cyclic sequence of message tags
+    MsgTag currentTag = 0;
+    MsgTag nextTag();
+
     // endpoint = abstract endpoint address to probe or simualtor
     // like  "COM1", "/dev/ttyS0" or "localhost:49152"
     virtual bool connect(std::string endpoint); // abstract warning
@@ -31,7 +35,8 @@ public:
     virtual void receiveAndProcessResponses(); // abstract warning
 
     // send a single request to target PDP11
-    virtual void xmtRequest(Message* msg); // abstract warning
+    // and frees it. Return assigned tag.
+    virtual MsgTag xmtRequest(Message* msg); // abstract warning
 };
 
 #endif // __MESSAGEINTERFACE_H__

@@ -52,9 +52,7 @@ public:
     int	endpointSizeof=0 ; // size of pointer in byte: uint8=1, uint16=2, uint32=4
     // endpointSizeof only needed intern in emulator, neither rendered nor parsed
     uint32_t value = 0 ; // RequestStateVal
-    uint32_t prevValue = 0 ; // for change detectionhasChanged()
     unsigned	index ; // linear position, insertion order in VariableMap.v[]
-    bool hasChanged ;
 
     Variable() {}
 
@@ -67,12 +65,9 @@ public:
         endpointSizeof = 0;
         index = 0 ; // set by map.add()
         value = 0;
-        resetChange() ;
     }
 
     void setValue(uint32_t newValue) {
-        if (value != newValue)
-            hasChanged = true ;
         value = newValue ;
     }
 
@@ -96,12 +91,7 @@ public:
         return valueText(value) ;
     }
 
-    // reset change detection logic
-    void resetChange() {
-        prevValue = value ;
-        hasChanged = false ;
-    }
-
+   
 } ;
 
 // registers variables, access by name, hold pointers
@@ -157,11 +147,7 @@ public:
         return v[index] ;
     }
 
-    // reset change detection logic for all vars
-    void resetChange() {
-        for(auto it = m.begin() ; it != m.end() ; ++it)
-            it->second.resetChange() ;
-    }
+   
 } ;
 
 #endif // PLATFORM_ARDUINO

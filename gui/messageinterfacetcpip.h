@@ -21,7 +21,7 @@ public:
     void disconnect() override;
 
     void receiveAndProcessResponses() override;
-    void xmtRequest(Message* msg) override;
+    MsgTag xmtRequest(Message* msg) override;
 
 private:
     wxSocketClient  socketClient;

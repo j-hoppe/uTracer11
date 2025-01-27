@@ -11,6 +11,7 @@ See: https://www.retrocmp.com/tools/utracer11
 ## Directory structure:
 * common - C++ sources needed for M93X2 Arduino and GUI ... message protocol
 * CSerialPort - C++ sources for RS232 interface Linux/Windows
+* duktape - embedded JScript engine
 
 * gui - main user interface, WxWidgets project Linux/Windows
 

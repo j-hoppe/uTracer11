@@ -78,6 +78,9 @@ inline std::string uppercase(std::string &s) {
 	return result ;
 }
 
+// make integer to decimal string, historic K&R
+ void itoa10(int n, char s[]) ;
+
 
 #endif // PLATFORM_ARDUINO
 
@@ -87,8 +90,10 @@ inline std::string uppercase(std::string &s) {
 
 
 // get a KM11 signal bit from the matrix andd shift it
-#define getbit(val,shift) (!!( (val) & (1 << (shift) ) ) )  // extract a bit as bool
-#define setbit(bitmask,shift) ( (bitmask) ? 1 << (shift):0 )
+#define GETBIT(val,shift) (!!( (val) & (1 << (shift) ) ) )  // extract a bit as bool
+#define SETBIT(bitmask,shift) ( (bitmask) ? 1 << (shift):0 )
+
+
 
 #endif // __UTILS_H__
 

@@ -1,18 +1,18 @@
-/* script - execute Jscript code to control uStepping
+/* script - execute JavaScript code to control uStepping
 
 
-	A Jscript program could look like:
+	A JavaScript program could look like:
 
 	function fetchFrom(addr) {
 		// DATI fetch occurs in ustep 15
-		if ( equals("BAADDR", addr) 
+		if ( equals("BAADDR", addr)
 			&& equals(BACYCLE, 0) // DATI
 			&& equals("MPC", o(015) )
 			return true ;
-		else 
+		else
 			return false ;
 	}
-	
+
 	man_clk_enable() ; // stop u machine
 	log("now stepping to error point") ;
 	while (!fetchFrom( o(165020) )
@@ -24,51 +24,55 @@
 	log("reached ASL R0 failure point") ;
 
 
-	
+
 */
 #ifndef __SCRIPT_H__
 #define __SCRIPT_H__
 
 #include <string>
 #include "duktape.h"
-//#include "application.h"
 
-class Application;
+//#include "pdp11adapter.h"
+class Pdp11Adapter; // cross-include
 
 class Script {
 private:
-	duk_context* ctx ;
+    duk_context* ctx ;
 public:
-	// this is what wie control.
-	// Global single instance, as Jscript call back functions are pre "C", notcalss membes
-	static Application *app ; // 
 
-	Script();
-	~Script() ;
+    enum class RunState {
+        executing,
+        userAbortPending, // button press signal
+        userAbort,
+        complete, // run to end without errors
+        javaScriptError, // invalid JavaScript, syntax
+        semanticError // error in access to pdp11adapter
+    } ;
 
-	// config Jscript engine
-	void init(Application* app) ;
-	
-	void eval(std::string js_code);  // run interpreter on code
 
-		
+    // this is what we control.
+    // global var, as must be accessed by context free C functions
+    // Global single instance, as JavaScript call back functions are pre "C", not class members
+    static Pdp11Adapter* pdp11Adapter;
+    static volatile RunState runState ;
 
-	// interface to GUI
-	// catch errors and route to log textControl
-		
-	void execute() ; // run
 
-	// functions accessible under JScript
-	
-	// ! every interface functions must call this 
-	// - to give wxYield() to the GUI
-	// - to check for abort condition from GUI ABORT button press
-	// - maybe highlight the code line executed? Compile with Debugger support!
-	bool userAbort() ;
-	
-	// interpret decimal written numebr as ocatl
-	// o(100) => 0100 = decimal 64.
-	
+    Script();
+    ~Script() ;
+
+    // config JavaScript engine
+    void init(Pdp11Adapter *pdp11Adapter) ;
+
+    /* interface to GUI */
+
+    // run interpreter on code
+    // catch errors and route to log textControl
+    void execute(std::string js_code) ; // run
+
+    void abort() ; // from GUI
+
+    std::string helpText() ;
+
 };
 
 #endif // __SCRIPT_H__

@@ -3,7 +3,6 @@
 #define __APPLICATION_H__
 
 #include <wx/cmdline.h>
-#include "script.h"
 #include "messageinterface.h"
 #include "pdp11adapter.h"
 
@@ -24,7 +23,6 @@ class MessageInterface;
 class Application : public wxApp
 {
 	public:
-    Script *script;
     MessageInterface* messageInterface = nullptr;
     MainFrame* mainFrame = nullptr;
     // no notebook pages yet, document noteboks are empty

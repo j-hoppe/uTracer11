@@ -57,45 +57,45 @@ void Pdp1140KM11AState::inputsFromKM11AResponse(ResponseKM11Signals* respKm11A)
     respKm11A->getFlipchipSignalsFromGpioVals();
 
     // compose state vars fom bits, different for all KM11s
-    pupp = setbit(respKm11A->K2, 6) | setbit(respKm11A->N1, 7) | setbit(respKm11A->V1, 8)
-           | setbit(respKm11A->J1, 3) | setbit(respKm11A->C1, 4) | setbit(respKm11A->T2, 5)
-           | setbit(respKm11A->P1, 0) | setbit(respKm11A->L1, 1) | setbit(respKm11A->F1, 2);
-    bupp = setbit(respKm11A->R1, 6) | setbit(respKm11A->K1, 7) | setbit(respKm11A->S2, 8)
-           | setbit(respKm11A->S1, 3) | setbit(respKm11A->M2, 4) | setbit(respKm11A->F2, 5)
-           | setbit(respKm11A->N2, 0) | setbit(respKm11A->D2, 1) | setbit(respKm11A->H2, 2);
-    trap = setbit(respKm11A->D1, 0);
-    ssyn = setbit(respKm11A->M1, 0);
-    msyn = setbit(respKm11A->E1, 0);
-    t = setbit(respKm11A->J2, 0);
-    c = setbit(respKm11A->R2, 0);
-    v = setbit(respKm11A->E2, 0);
-    z = setbit(respKm11A->H1, 0);
-    n = setbit(respKm11A->L2, 0);
+    pupp = SETBIT(respKm11A->K2, 6) | SETBIT(respKm11A->N1, 7) | SETBIT(respKm11A->V1, 8)
+           | SETBIT(respKm11A->J1, 3) | SETBIT(respKm11A->C1, 4) | SETBIT(respKm11A->T2, 5)
+           | SETBIT(respKm11A->P1, 0) | SETBIT(respKm11A->L1, 1) | SETBIT(respKm11A->F1, 2);
+    bupp = SETBIT(respKm11A->R1, 6) | SETBIT(respKm11A->K1, 7) | SETBIT(respKm11A->S2, 8)
+           | SETBIT(respKm11A->S1, 3) | SETBIT(respKm11A->M2, 4) | SETBIT(respKm11A->F2, 5)
+           | SETBIT(respKm11A->N2, 0) | SETBIT(respKm11A->D2, 1) | SETBIT(respKm11A->H2, 2);
+    trap = SETBIT(respKm11A->D1, 0);
+    ssyn = SETBIT(respKm11A->M1, 0);
+    msyn = SETBIT(respKm11A->E1, 0);
+    t = SETBIT(respKm11A->J2, 0);
+    c = SETBIT(respKm11A->R2, 0);
+    v = SETBIT(respKm11A->E2, 0);
+    z = SETBIT(respKm11A->H1, 0);
+    n = SETBIT(respKm11A->L2, 0);
 }
 
 
 void Pdp1140KM11AState::inputsToKM11AResponse(ResponseKM11Signals* respKm11A) {
     // get bits from state vars, different for all KM11s
-    respKm11A->K2 = getbit(pupp, 6);
-    respKm11A->N1 = getbit(pupp, 7);
-    respKm11A->V1 = getbit(pupp, 8);
+    respKm11A->K2 = GETBIT(pupp, 6);
+    respKm11A->N1 = GETBIT(pupp, 7);
+    respKm11A->V1 = GETBIT(pupp, 8);
     respKm11A->P2 = 0;
-    respKm11A->J1 = getbit(pupp, 3);
-    respKm11A->C1 = getbit(pupp, 4);
-    respKm11A->T2 = getbit(pupp, 5);
+    respKm11A->J1 = GETBIT(pupp, 3);
+    respKm11A->C1 = GETBIT(pupp, 4);
+    respKm11A->T2 = GETBIT(pupp, 5);
     respKm11A->U2 = 0;
-    respKm11A->P1 = getbit(pupp, 0);
-    respKm11A->L1 = getbit(pupp, 1);
-    respKm11A->F1 = getbit(pupp, 2);
-    respKm11A->R1 = getbit(bupp, 6);
-    respKm11A->K1 = getbit(bupp, 7);
-    respKm11A->S2 = getbit(bupp, 8);
-    respKm11A->S1 = getbit(bupp, 3);
-    respKm11A->M2 = getbit(bupp, 4);
-    respKm11A->F2 = getbit(bupp, 5);
-    respKm11A->N2 = getbit(bupp, 0);
-    respKm11A->D2 = getbit(bupp, 1);
-    respKm11A->H2 = getbit(bupp, 2);
+    respKm11A->P1 = GETBIT(pupp, 0);
+    respKm11A->L1 = GETBIT(pupp, 1);
+    respKm11A->F1 = GETBIT(pupp, 2);
+    respKm11A->R1 = GETBIT(bupp, 6);
+    respKm11A->K1 = GETBIT(bupp, 7);
+    respKm11A->S2 = GETBIT(bupp, 8);
+    respKm11A->S1 = GETBIT(bupp, 3);
+    respKm11A->M2 = GETBIT(bupp, 4);
+    respKm11A->F2 = GETBIT(bupp, 5);
+    respKm11A->N2 = GETBIT(bupp, 0);
+    respKm11A->D2 = GETBIT(bupp, 1);
+    respKm11A->H2 = GETBIT(bupp, 2);
     respKm11A->D1 = trap ;
     respKm11A->M1 = ssyn;
     respKm11A->E1 = msyn;
@@ -118,26 +118,26 @@ void Pdp1140KM11BState::inputsFromKM11BResponse(ResponseKM11Signals* respKm11B)
     // let the compiler do all the demuxing
     respKm11B->getFlipchipSignalsFromGpioVals();
 
-    pba = setbit(respKm11B->K2, 15) | setbit(respKm11B->N1, 16) | setbit(respKm11B->V1, 17)
-          | setbit(respKm11B->J1, 12) | setbit(respKm11B->C1, 13) | setbit(respKm11B->T2, 14)
-          | setbit(respKm11B->P1, 9) | setbit(respKm11B->L1, 10) | setbit(respKm11B->F1, 11)
-          | setbit(respKm11B->R1, 6) | setbit(respKm11B->K1, 7) | setbit(respKm11B->S2, 8);
-    rom_a = setbit(respKm11B->P2, 0);
-    rom_b = setbit(respKm11B->U2, 0);
-    rom_c = setbit(respKm11B->D1, 0);
-    rom_d = setbit(respKm11B->M1, 0);
-    b_15 = setbit(respKm11B->S1, 0);
-    ecin_00 = setbit(respKm11B->M2, 0);
-    exp_unfl = setbit(respKm11B->F2, 0);
-    exp_ovfl = setbit(respKm11B->E1, 0);
-    dr00 = setbit(respKm11B->N2, 0);
-    dr09 = setbit(respKm11B->D2, 0);
-    msr00 = setbit(respKm11B->H2, 0);
-    msr01 = setbit(respKm11B->J2, 0);
-    eps_c = setbit(respKm11B->R2, 0);
-    eps_v = setbit(respKm11B->E2, 0);
-    eps_z = setbit(respKm11B->H1, 0);
-    eps_n = setbit(respKm11B->L2, 0);
+    pba = SETBIT(respKm11B->K2, 15) | SETBIT(respKm11B->N1, 16) | SETBIT(respKm11B->V1, 17)
+          | SETBIT(respKm11B->J1, 12) | SETBIT(respKm11B->C1, 13) | SETBIT(respKm11B->T2, 14)
+          | SETBIT(respKm11B->P1, 9) | SETBIT(respKm11B->L1, 10) | SETBIT(respKm11B->F1, 11)
+          | SETBIT(respKm11B->R1, 6) | SETBIT(respKm11B->K1, 7) | SETBIT(respKm11B->S2, 8);
+    rom_a = SETBIT(respKm11B->P2, 0);
+    rom_b = SETBIT(respKm11B->U2, 0);
+    rom_c = SETBIT(respKm11B->D1, 0);
+    rom_d = SETBIT(respKm11B->M1, 0);
+    b_15 = SETBIT(respKm11B->S1, 0);
+    ecin_00 = SETBIT(respKm11B->M2, 0);
+    exp_unfl = SETBIT(respKm11B->F2, 0);
+    exp_ovfl = SETBIT(respKm11B->E1, 0);
+    dr00 = SETBIT(respKm11B->N2, 0);
+    dr09 = SETBIT(respKm11B->D2, 0);
+    msr00 = SETBIT(respKm11B->H2, 0);
+    msr01 = SETBIT(respKm11B->J2, 0);
+    eps_c = SETBIT(respKm11B->R2, 0);
+    eps_v = SETBIT(respKm11B->E2, 0);
+    eps_z = SETBIT(respKm11B->H1, 0);
+    eps_n = SETBIT(respKm11B->L2, 0);
 }
 
 void Pdp1140KM11BState::inputsToKM11BResponse(ResponseKM11Signals* respKm11B) {

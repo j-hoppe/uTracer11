@@ -20,22 +20,29 @@ bool parseUInt(int base, char* str, uint32_t* val) {
 #endif
 
 
-bool TokenList::is(int argIdx, const char* val) {
-	if (argIdx >= count)
-		return false;
-	return !strcasecmp(token[argIdx], val);
+bool TokenList::is(int argIdx, const char* val) const {
+    if (argIdx >= count)
+        return false;
+    return !strcasecmp(token[argIdx], val);
 }
 
+// generates/processes also special tag prefix
+// "123R VERSION" => tag=123, [0]="R", [2] = "VERSION"
+// "R VERSION" => tag=0, [0]="R", [2] = "VERSION"
 void TokenList::tokenize(const char* line) {
-	strcpy(txtBuffer, line); // save input text in external persistent buffer
+    strcpy(txtBuffer, line); // save input text in external persistent buffer
+
+    // token prefix?
+    char *textStart ; // position of text after tag
+    tag  = strtol(txtBuffer, &textStart, 10);
 
     // build vector of arguments
     char* curToken;
-    // Keep printing tokens while one of the delimiters present in str[].
-	count = 0 ;
+    // Keep parsing tokens while one of the delimiters present in str[].
+    count = 0 ;
     do {
         if (count == 0)
-            curToken = strtok(txtBuffer, " ");
+            curToken = strtok(textStart, " ");
         else
             curToken = strtok(NULL, " ");
         if (curToken != nullptr)
@@ -43,10 +50,35 @@ void TokenList::tokenize(const char* line) {
     } while (count < maxCount && curToken != nullptr);
 }
 
+// merge tokens from startIdx into a string, tokens separated by " "
+// "hello", "world" => "hello world"
+char *TokenList::asString(char *result, int resultSize, int startTokenIdx) const {
+    if (result == nullptr || resultSize <= 0)
+        return result;
+    resultSize-- ; // leave space for final 0
+    int resultWriteIndex = 0 ; // next write position into buffer
+    for (int tokenIdx = startTokenIdx; tokenIdx < count ; tokenIdx++) {
+        // add a single token
+        if (tokenIdx != startTokenIdx)
+            result[resultWriteIndex++] = ' ' ; // separator between tokens
+        if (resultWriteIndex >= resultSize)
+            break ; // result full
+        // add token
+        char c ;
+        char *t = token[tokenIdx] ;
+        for (int i=0 ; (c = t[i]) ; i++) {
+            if (resultWriteIndex >= resultSize)
+                break ; // result full
+            result[resultWriteIndex++] = c ; // separator
+        }
+    }
+    result[resultWriteIndex] = 0 ; // terminate
+    return result;
+}
 
 
 // Name of UNIBUS Cycle to two bits C1,C0
-uint8_t TokenList::parseUniBusCycleArg0() {
+uint8_t TokenList::parseUniBusCycleArg0() const {
     if (is(0, "DATI"))
         return 0;
     else if (is(0, "DATIP"))
@@ -125,23 +157,47 @@ const char* Message::separatorChars = "\n\r;";
 
 #if defined(PLATFORM_ARDUINO)
 // statics
-char Message::sharedTxtBuffer[txtBufferSize]; 
+char Message::sharedTxtBuffer[txtBufferSize];
 char *Message::renderTxtBuffer = Message::sharedTxtBuffer ;
 #endif
 
 // fix class error buffer
 char Message::errorBuffer[errorBufferSize];
+MsgTag Message::errorTag ;
 
 // access only if isValid()
 const char* const ResponseUnibusCycle::cycleText[4] = { "DATI", "DATIP", "DATO", "DATOB" };
 
 
+// formats a message, with optional prefixed tag,
+// to renderTxtBuffer
+// Example "123R VERSION" for tag=123, or "R VERSION" for tag=0
+char *Message::renderFormat(const char* _fmt, ...) {
+    char *textStart ; // position of text after tag
+    int maxTextLen ;
+    if (tag == NOTAG|| tag > MAXTAG) {
+        // no tag prefix
+        textStart = renderTxtBuffer ;
+        maxTextLen = txtBufferSize ; // no chars used for tag
+    } else {
+        // prefix renderTxtBuffer with numeric tag, max 5 digits
+        sprintf(renderTxtBuffer, "%u", tag) ;
+        int tagLen = strlen(renderTxtBuffer) ;
+        // point to next char after written tag
+        textStart = renderTxtBuffer + tagLen ;
+        maxTextLen = txtBufferSize - tagLen; // some chars used for tag
+    }
+    va_list argptr;
+    va_start(argptr, _fmt);
+    vsnprintf(textStart, maxTextLen, _fmt, argptr);
+    renderTxtBuffer[txtBufferSize - 1] = 0; // terminate on trunc
+    return renderTxtBuffer ;
+}
 
 
-
-// syntax nullptr: <msg>  folowwed by input
+// syntax nullptr: <msg>  folowed by input
 // else
-void Message::buildSyntaxError(TokenList *tokenList, const char* syntax, const char* msg)
+void Message::buildSyntaxError(const TokenList *tokenList, const char* syntax, const char* msg)
 {
     errorBuffer[0] = 0;
     if (syntax == nullptr) {
@@ -171,13 +227,15 @@ void Message::buildSyntaxError(TokenList *tokenList, const char* syntax, const c
 // parseTxtBuffer: modified, persistant
 Message* Message::parse(const char* line) {
 #if defined(PLATFORM_ARDUINO)
-	TokenList tokenList(Message::sharedTxtBuffer) ;
+    TokenList tokenList(Message::sharedTxtBuffer) ;
 #else
-	char parseTxtBuffer[txtBufferSize] ; // thread save, local stack
-	TokenList tokenList(parseTxtBuffer) ;
+    char parseTxtBuffer[txtBufferSize] ; // thread save, local stack
+    TokenList tokenList(parseTxtBuffer) ;
 #endif
     const char* curSyntaxInfo = "";
     const char* errormsg = "";
+    errorTag = 0;
+
     Message* result = nullptr;
     uint8_t _c1c0;
 
@@ -186,7 +244,6 @@ Message* Message::parse(const char* line) {
         strcpy(errorBuffer, "Message::parse() input overflow");
         return nullptr;
     }
-    // first char = '#' -> simple text
     tokenList.tokenize(line);
 
     if (tokenList.count < 1) {
@@ -197,155 +254,155 @@ Message* Message::parse(const char* line) {
     // just "OK"
     if (tokenList.is(0, "OK")) {
         curSyntaxInfo = "OK [<string>]";
-        result = new ResponseOK();
+        result = new ResponseOK(tokenList.tag);
         // strip off prefix "OK " from raw input
-        errormsg = result->initFromArgString(&tokenList, &(line[3])) ;
+        errormsg = result->initFromArgString(&tokenList, 1) ; // strip off "OK"
     }
     else if (tokenList.is(0, "ERROR")) {
         curSyntaxInfo = "ERROR [<string>]";
-        result = new ResponseError();
+        result = new ResponseError(tokenList.tag);
         // strip off prefix "ERROR " from raw input
-        errormsg = result->initFromArgString(&tokenList, &(line[6])) ;
+        errormsg = result->initFromArgString(&tokenList, 1) ; // strip off "ERROR"
     }
     else if (tokenList.is(0, "RESET")) {
         curSyntaxInfo = "RESET";
-        result = new RequestReset();
+        result = new RequestReset(tokenList.tag);
         errormsg = result->initFromArgToken(&tokenList, 1);
 
 
     }
     else if (tokenList.is(0, "R") && tokenList.is(1, "US")) {
         curSyntaxInfo = "R US";
-        result = new RequestUnibusSignalsRead();
+        result = new RequestUnibusSignalsRead(tokenList.tag);
         errormsg = result->initFromArgToken(&tokenList, 2);
     }
     else if (tokenList.is(0, "US")) {
         curSyntaxInfo = "US <addr> <data> <c1c0> <msyn> <ssyn> <pbba> <intr> <br74> <bg74> <npr> <npg> <sack> <bbsy> <init> <aclo> <dclo>";
-        result = new ResponseUnibusSignals();
+        result = new ResponseUnibusSignals(tokenList.tag);
         errormsg = result->initFromArgToken(&tokenList, 1);
     }
     else if (tokenList.is(0, "W") && tokenList.is(1, "US")) {
         curSyntaxInfo = "W US <signal> <val>";
-        result = new RequestUnibusSignalWrite();
+        result = new RequestUnibusSignalWrite(tokenList.tag);
         errormsg = result->initFromArgToken(&tokenList, 2);
     }
     else if (tokenList.is(0, "R") && tokenList.is(1, "Y")) {
         curSyntaxInfo = "R Y";
-        result = new RequestKY11LBSignalsRead();
+        result = new RequestKY11LBSignalsRead(tokenList.tag);
         errormsg = result->initFromArgToken(&tokenList, 2);
     }
     else if (tokenList.is(0, "Y")) {
         curSyntaxInfo = "Y <mpc> <fp11> <sbf> <lir> <pbp>";
-        result = new ResponseKY11LBSignals();
+        result = new ResponseKY11LBSignals(tokenList.tag);
         errormsg = result->initFromArgToken(&tokenList, 1);
     }
     else if (tokenList.is(0, "W") && tokenList.is(1, "Y")) {
         curSyntaxInfo = "W Y <signal=MC,MCE> <val=0,1,P>";
-        result = new RequestKY11LBSignalWrite();
+        result = new RequestKY11LBSignalWrite(tokenList.tag);
         errormsg = result->initFromArgToken(&tokenList, 2);
     }
     else if (tokenList.is(0, "R") && tokenList.is(1, "M")) {
         curSyntaxInfo = "R M A|B";
-        result = new RequestKM11SignalsRead();
+        result = new RequestKM11SignalsRead(tokenList.tag);
         errormsg = result->initFromArgToken(&tokenList, 2);
     }
     else if (tokenList.is(0, "M")) {
         curSyntaxInfo = "M A|B <mscp30|32.gpioa> <mscp30|32.gpiob> <mscp31|33.gpioa> <mscp31|33.gpiob>";
-        result = new ResponseKM11Signals();
+        result = new ResponseKM11Signals(tokenList.tag);
         errormsg = result->initFromArgToken(&tokenList, 1);
         // response: >hex byte string, encodes <mscp30.gpioa> <mscp30.gpiob> <mscp31.gpioa> <mscp31.gpiob>
     }
     else if (tokenList.is(0, "W") && tokenList.is(1, "M")) {
         curSyntaxInfo = "W M A|B <val0-3>";
-        result = new RequestKM11SignalsWrite();
+        result = new RequestKM11SignalsWrite(tokenList.tag);
         errormsg = result->initFromArgToken(&tokenList, 2);
     }
     else if (tokenList.is(0, "W") && tokenList.is(1, "LED")) {
         curSyntaxInfo = "W LED <unit> <off_period_millis> <on_period_millis>";
-        result = new RequestLedWrite();
+        result = new RequestLedWrite(tokenList.tag);
         errormsg = result->initFromArgToken(&tokenList, 2);
     }
     else if (tokenList.is(0, "R") && tokenList.is(1, "SW")) {
         curSyntaxInfo = "R SW";
-        result = new RequestLedWrite();
+        result = new RequestLedWrite(tokenList.tag);
         errormsg = result->initFromArgToken(&tokenList, 2);
     }
     else if (tokenList.is(0, "SW")) {
         curSyntaxInfo = "SW <val0-5>";
-        result = new ResponseSwitches();
+        result = new ResponseSwitches(tokenList.tag);
         errormsg = result->initFromArgToken(&tokenList, 1);
     }
     else if (tokenList.is(0, "R") && tokenList.is(1, "MCP")) {
         curSyntaxInfo = "R MCP <group> <addr> <half>";
-        result = new RequestMcp23017RegistersRead();
+        result = new RequestMcp23017RegistersRead(tokenList.tag);
         errormsg = result->initFromArgToken(&tokenList, 2);
     }
     else if (toupper(tokenList.token[0][0]) == 'M' && toupper(tokenList.token[0][1]) == 'C' && toupper(tokenList.token[0][2]) == 'P') {
         // hope the PC host never tries to read this
         curSyntaxInfo = "MCP<group><addr><half> IODIR=<iodir> IPOL=<ipol> GPINTEN=<gpinten> DEFVAL=<defval> INTCON=<intcon> IOCON=<iocon> GPPU=<gppu> INTF=<intf> INTCAP=<intcap> GPIO=<gpio> OLAT=<olat>";
-        result = new ResponseMcp23017Registers();
+        result = new ResponseMcp23017Registers(tokenList.tag);
         errormsg = result->initFromArgToken(&tokenList, 0); // params also in opcode
     }
     else if (tokenList.is(0, "R") && tokenList.is(1, "VERSION")) {
         curSyntaxInfo = "R VERSION";
-        result = new RequestVersionRead();
+        result = new RequestVersionRead(tokenList.tag);
         errormsg = result->initFromArgToken(&tokenList, 2);
     }
     else if (tokenList.is(0, "VERSION")) {
         //	VERSION <string>
         curSyntaxInfo = "VERSION <string>";
-        result = new ResponseVersion();
-        errormsg = result->initFromArgString(&tokenList, &(line[7])) ; // strip off "version "
+        result = new ResponseVersion(tokenList.tag);
+        errormsg = result->initFromArgString(&tokenList, 1) ; // strip off "version "
     }
     else if (tokenList.is(0, "E")) {
         curSyntaxInfo = "E <addr>";
-        result = new RequestUnibusExam();
+        result = new RequestUnibusExam(tokenList.tag);
         errormsg = result->initFromArgToken(&tokenList, 1) ;
     }
     else if ((_c1c0 = tokenList.parseUniBusCycleArg0()) < 4) {
         curSyntaxInfo = "DATI|DATO|DATOB <addr> <data>|NXM [!]";
-        result = new ResponseUnibusCycle();
+        result = new ResponseUnibusCycle(tokenList.tag);
         errormsg = result->initFromArgToken(&tokenList, 0) ; // opcode = 1st arg
     }
     else if (tokenList.is(0, "D")) {
         curSyntaxInfo = "D <addr> <data>";
-        result = new RequestUnibusDeposit();
+        result = new RequestUnibusDeposit(tokenList.tag);
         errormsg = result->initFromArgToken(&tokenList, 1) ;
     }
     else if (tokenList.is(0, "UBSIZE")) {
         curSyntaxInfo = "UBSIZE";
-        result = new RequestUnibusSize();
+        result = new RequestUnibusSize(tokenList.tag);
         errormsg = result->initFromArgToken(&tokenList, 1) ;
     }
     else if (tokenList.is(0, "UBTEST")) {
         curSyntaxInfo = "UBTEST <seed>";
-        result = new RequestUnibusTest();
+        result = new RequestUnibusTest(tokenList.tag);
         errormsg = result->initFromArgToken(&tokenList, 1) ;
     }
     else if (tokenList.is(0, "BOOT")) {
         curSyntaxInfo = "BOOT 0 | <fileNr>";
-        result = new RequestBoot();
+        result = new RequestBoot(tokenList.tag);
         errormsg = result->initFromArgToken(&tokenList, 1) ;
     }
 #if !defined(PLATFORM_ARDUINO)
     else if (tokenList.is(0, "R") && tokenList.is(1, "REGDEF")) {
         curSyntaxInfo = "R REGDEF";
-        result = new RequestRegDef();
+        result = new RequestRegDef(tokenList.tag);
         errormsg = result->initFromArgToken(&tokenList, 2) ;
     }
     else if (tokenList.is(0, "REGDEF")) {
         curSyntaxInfo = "REGDEF <name:size> pairs";
-        result = new ResponseRegDef();
+        result = new ResponseRegDef(tokenList.tag);
         errormsg = result->initFromArgToken(&tokenList, 1) ;
     }
     else if (tokenList.is(0, "R") && tokenList.is(1, "REGVAL")) {
         curSyntaxInfo = "R REGVAL";
-        result = new RequestRegVal();
+        result = new RequestRegVal(tokenList.tag);
         errormsg = result->initFromArgToken(&tokenList, 2) ;
     }
     else if (tokenList.is(0, "REGVAL")) {
         curSyntaxInfo = "REGVAL <value> ...";
-        result = new ResponseRegVals();
+        result = new ResponseRegVals(tokenList.tag);
         errormsg = result->initFromArgToken(&tokenList, 1) ;
     }
 #endif // !defined(PLATFORM_ARDUINO)
@@ -363,54 +420,50 @@ Message* Message::parse(const char* line) {
 syntaxError:
     if (result != nullptr)
         delete result ;
+    errorTag = tokenList.tag ;
     buildSyntaxError(&tokenList, curSyntaxInfo, errormsg);
     return nullptr;
 }
 
-const char* Message::initFromArgString(TokenList *tokenList, const char* argString) {
-    UNREFERENCED_PARAMETER(tokenList);
-    UNREFERENCED_PARAMETER(argString);
-    return "virtual initFromArgString()";
-};
-
-const char* Message::initFromArgToken(TokenList *tokenList, int startTokenIdx) {
+const char* Message::initFromArgToken(const TokenList *tokenList, int startTokenIdx) {
     UNREFERENCED_PARAMETER(tokenList);
     UNREFERENCED_PARAMETER(startTokenIdx);
     return "virtual initFromArgToken()";
 };
 
+const char* Message::initFromArgString(const TokenList *tokenList, int startTokenIdx) {
+    UNREFERENCED_PARAMETER(tokenList);
+    UNREFERENCED_PARAMETER(startTokenIdx);
+    return "virtual initFromArgString()";
+};
 
-const char *ResponseOK::initFromArgString(TokenList *tokenList, const char *argString) {
-    if (tokenList->count > 1) {
-        // strip off prefix "OK " from raw input
-        strcpy(msg, argString);
-    }
+
+
+const char *ResponseOK::initFromArgString(const TokenList *tokenList, int startTokenIdx) {
+    tokenList->asString(msg, sizeof(msg), startTokenIdx);
     return nullptr ; // no error possible
 }
 
-const char *ResponseError::initFromArgString(TokenList *tokenList, const char *argString) {
-    if (tokenList->count > 1) {
-        // strip off prefix "ERROR " from raw input
-        strcpy(errormsg, argString);
-    }
+const char *ResponseError::initFromArgString(const TokenList *tokenList, int startTokenIdx) {
+    tokenList->asString(errormsg, sizeof(errormsg), startTokenIdx);
     return nullptr ; // no error possible
 }
 
-const char *RequestReset::initFromArgToken(TokenList *tokenList, int startTokenIdx) {
+const char *RequestReset::initFromArgToken(const TokenList *tokenList, int startTokenIdx) {
     int argTokenCount = tokenList->count - startTokenIdx ; // argument tokens
     if (argTokenCount > 0)
         return "argC != 0"; // no args allowed
     return nullptr ; // else ok
 }
 
-const char *RequestUnibusSignalsRead::initFromArgToken(TokenList *tokenList, int startTokenIdx) {
+const char *RequestUnibusSignalsRead::initFromArgToken(const TokenList *tokenList, int startTokenIdx) {
     int argTokenCount = tokenList->count - startTokenIdx ; // argument tokens
     if (argTokenCount != 0)
         return "argC != 0"; // R US
     return nullptr ; // else ok
 }
 
-const char *ResponseUnibusSignals::initFromArgToken(TokenList *tokenList, int startTokenIdx) {
+const char *ResponseUnibusSignals::initFromArgToken(const TokenList *tokenList, int startTokenIdx) {
     int argTokenCount = tokenList->count - startTokenIdx ; // argument tokens
     if (argTokenCount != 16)
         return "argC != 16";
@@ -433,7 +486,7 @@ const char *ResponseUnibusSignals::initFromArgToken(TokenList *tokenList, int st
     return nullptr ; // else ok
 }
 
-const char* RequestUnibusSignalWrite::initFromArgToken(TokenList *tokenList, int startTokenIdx) {
+const char* RequestUnibusSignalWrite::initFromArgToken(const TokenList *tokenList, int startTokenIdx) {
     int argTokenCount = tokenList->count - startTokenIdx; // argument tokens
     if (argTokenCount != 2)
         return "argC != 2";
@@ -449,7 +502,7 @@ const char* RequestUnibusSignalWrite::initFromArgToken(TokenList *tokenList, int
     return nullptr;
 }
 
-const char *RequestKY11LBSignalsRead::initFromArgToken(TokenList *tokenList, int startTokenIdx) {
+const char *RequestKY11LBSignalsRead::initFromArgToken(const TokenList *tokenList, int startTokenIdx) {
     int argTokenCount = tokenList->count - startTokenIdx ; // argument tokens
     if (argTokenCount != 0)
         return "argC != 0";
@@ -457,7 +510,7 @@ const char *RequestKY11LBSignalsRead::initFromArgToken(TokenList *tokenList, int
 }
 
 
-const char *ResponseKY11LBSignals::initFromArgToken(TokenList *tokenList, int startTokenIdx) {
+const char *ResponseKY11LBSignals::initFromArgToken(const TokenList *tokenList, int startTokenIdx) {
     int argTokenCount = tokenList->count - startTokenIdx ; // argument tokens
     if (argTokenCount != 5)
         return "argC != 5";
@@ -469,7 +522,7 @@ const char *ResponseKY11LBSignals::initFromArgToken(TokenList *tokenList, int st
     return nullptr ; // ok
 }
 
-const char *RequestKY11LBSignalWrite::initFromArgToken(TokenList *tokenList, int startTokenIdx) {
+const char *RequestKY11LBSignalWrite::initFromArgToken(const TokenList *tokenList, int startTokenIdx) {
     int argTokenCount = tokenList->count - startTokenIdx ; // argument tokens
     if (argTokenCount != 2)
         return "argC != 2";
@@ -491,7 +544,7 @@ const char *RequestKY11LBSignalWrite::initFromArgToken(TokenList *tokenList, int
     return nullptr ; // ok
 }
 
-const char *RequestKM11SignalsRead::initFromArgToken(TokenList *tokenList, int startTokenIdx) {
+const char *RequestKM11SignalsRead::initFromArgToken(const TokenList *tokenList, int startTokenIdx) {
     int argTokenCount = tokenList->count - startTokenIdx ; // argument tokens
     if (argTokenCount != 1)
         return "argC != 1";
@@ -501,7 +554,7 @@ const char *RequestKM11SignalsRead::initFromArgToken(TokenList *tokenList, int s
     return nullptr ; // ok
 }
 
-const char *ResponseKM11Signals::initFromArgToken(TokenList *tokenList, int startTokenIdx) {
+const char *ResponseKM11Signals::initFromArgToken(const TokenList *tokenList, int startTokenIdx) {
     int argTokenCount = tokenList->count - startTokenIdx ; // argument tokens
     if (argTokenCount != 5)
         return "argC != 5";
@@ -518,53 +571,53 @@ const char *ResponseKM11Signals::initFromArgToken(TokenList *tokenList, int star
 
 #if !defined(PLATFORM_ARDUINO)
 void ResponseKM11Signals::getFlipchipSignalsFromGpioVals() {
-    K2 = getbit(gpio0a, 0);
-    N1 = getbit(gpio0a, 1);
-    V1 = getbit(gpio0a, 2);
-    P2 = getbit(gpio0a, 3);
-    J1 = getbit(gpio0a, 4);
-    C1 = getbit(gpio0a, 5);
-    T2 = getbit(gpio0a, 6);
+    K2 = GETBIT(gpio0a, 0);
+    N1 = GETBIT(gpio0a, 1);
+    V1 = GETBIT(gpio0a, 2);
+    P2 = GETBIT(gpio0a, 3);
+    J1 = GETBIT(gpio0a, 4);
+    C1 = GETBIT(gpio0a, 5);
+    T2 = GETBIT(gpio0a, 6);
 
-    U2 = getbit(gpio0b, 0);
-    P1 = getbit(gpio0b, 1);
-    L1 = getbit(gpio0b, 2);
-    F1 = getbit(gpio0b, 3);
-    D1 = getbit(gpio0b, 4);
-    R1 = getbit(gpio0b, 5);
-    K1 = getbit(gpio0b, 6);
+    U2 = GETBIT(gpio0b, 0);
+    P1 = GETBIT(gpio0b, 1);
+    L1 = GETBIT(gpio0b, 2);
+    F1 = GETBIT(gpio0b, 3);
+    D1 = GETBIT(gpio0b, 4);
+    R1 = GETBIT(gpio0b, 5);
+    K1 = GETBIT(gpio0b, 6);
 
-    S2 = getbit(gpio1a, 0);
-    M1 = getbit(gpio1a, 1);
-    S1 = getbit(gpio1a, 2);
-    M2 = getbit(gpio1a, 3);
-    F2 = getbit(gpio1a, 4);
-    E1 = getbit(gpio1a, 5);
-    N2 = getbit(gpio1a, 6);
+    S2 = GETBIT(gpio1a, 0);
+    M1 = GETBIT(gpio1a, 1);
+    S1 = GETBIT(gpio1a, 2);
+    M2 = GETBIT(gpio1a, 3);
+    F2 = GETBIT(gpio1a, 4);
+    E1 = GETBIT(gpio1a, 5);
+    N2 = GETBIT(gpio1a, 6);
 
-    D2 = getbit(gpio1b, 0);
-    H2 = getbit(gpio1b, 1);
-    J2 = getbit(gpio1b, 2);
-    R2 = getbit(gpio1b, 3);
-    E2 = getbit(gpio1b, 4);
-    H1 = getbit(gpio1b, 5);
-    L2 = getbit(gpio1b, 6);
+    D2 = GETBIT(gpio1b, 0);
+    H2 = GETBIT(gpio1b, 1);
+    J2 = GETBIT(gpio1b, 2);
+    R2 = GETBIT(gpio1b, 3);
+    E2 = GETBIT(gpio1b, 4);
+    H1 = GETBIT(gpio1b, 5);
+    L2 = GETBIT(gpio1b, 6);
 }
 
 void ResponseKM11Signals::setGpioValsFromFlipchipSignals() {
-    gpio0a = setbit(K2, 0) | setbit(N1, 1) | setbit(V1, 2) | setbit(P2, 3)
-             | setbit(J1, 4) | setbit(C1, 5) | setbit(T2, 6) ;
-    gpio0b = setbit(U2, 0) | setbit(P1, 1) | setbit(L1, 2) | setbit(F1, 3)
-             | setbit(D1, 4) | setbit(R1, 5) | setbit(K1, 6) ;
-    gpio1a = setbit(S2, 0) | setbit(M1, 1) | setbit(S1, 2) | setbit(M2, 3)
-             | setbit(F2, 4) | setbit(E1, 5)	| setbit(N2, 6) ;
-    gpio1b = setbit(D2, 0) | setbit(H2, 1) | setbit(J2, 2) | setbit(R2, 3)
-             | setbit(E2, 4) | setbit(H1, 5)	| setbit(L2, 6) ;
+    gpio0a = SETBIT(K2, 0) | SETBIT(N1, 1) | SETBIT(V1, 2) | SETBIT(P2, 3)
+             | SETBIT(J1, 4) | SETBIT(C1, 5) | SETBIT(T2, 6) ;
+    gpio0b = SETBIT(U2, 0) | SETBIT(P1, 1) | SETBIT(L1, 2) | SETBIT(F1, 3)
+             | SETBIT(D1, 4) | SETBIT(R1, 5) | SETBIT(K1, 6) ;
+    gpio1a = SETBIT(S2, 0) | SETBIT(M1, 1) | SETBIT(S1, 2) | SETBIT(M2, 3)
+             | SETBIT(F2, 4) | SETBIT(E1, 5)	| SETBIT(N2, 6) ;
+    gpio1b = SETBIT(D2, 0) | SETBIT(H2, 1) | SETBIT(J2, 2) | SETBIT(R2, 3)
+             | SETBIT(E2, 4) | SETBIT(H1, 5)	| SETBIT(L2, 6) ;
 }
 
 #endif
 
-const char *RequestKM11SignalsWrite::initFromArgToken(TokenList *tokenList, int startTokenIdx) {
+const char *RequestKM11SignalsWrite::initFromArgToken(const TokenList *tokenList, int startTokenIdx) {
     int argTokenCount = tokenList->count - startTokenIdx ; // argument tokens
     if (argTokenCount != 2)
         return "argC != 2";
@@ -578,7 +631,7 @@ const char *RequestKM11SignalsWrite::initFromArgToken(TokenList *tokenList, int 
     return nullptr ; // ok
 }
 
-const char *RequestLedWrite::initFromArgToken(TokenList *tokenList, int startTokenIdx) {
+const char *RequestLedWrite::initFromArgToken(const TokenList *tokenList, int startTokenIdx) {
     int argTokenCount = tokenList->count - startTokenIdx ; // argument tokens
     if (argTokenCount != 3)
         return "argC != 3";
@@ -592,26 +645,26 @@ const char *RequestLedWrite::initFromArgToken(TokenList *tokenList, int startTok
 
 #if !defined(PLATFORM_ARDUINO)
 void RequestKM11SignalsWrite::setVal03FromFlipchipSignals() {
-    val03 = setbit(A1, 0) | setbit(B2, 1) | setbit(U1, 2) | setbit(V2, 3);
+    val03 = SETBIT(A1, 0) | SETBIT(B2, 1) | SETBIT(U1, 2) | SETBIT(V2, 3);
 }
 
 void RequestKM11SignalsWrite::getFlipchipSignalsFromVal03() {
-    A1 = getbit(val03, 0);
-    B2 = getbit(val03, 1);
-    U1 = getbit(val03, 2);
-    V2 = getbit(val03, 3);
+    A1 = GETBIT(val03, 0);
+    B2 = GETBIT(val03, 1);
+    U1 = GETBIT(val03, 2);
+    V2 = GETBIT(val03, 3);
 }
 
 #endif
 
-const char *RequestSwitchesRead::initFromArgToken(TokenList *tokenList, int startTokenIdx) {
+const char *RequestSwitchesRead::initFromArgToken(const TokenList *tokenList, int startTokenIdx) {
     int argTokenCount = tokenList->count - startTokenIdx ; // argument tokens
     if (argTokenCount != 0)
         return "argC != 0";
     return nullptr ; // ok
 }
 
-const char *ResponseSwitches::initFromArgToken(TokenList *tokenList, int startTokenIdx) {
+const char *ResponseSwitches::initFromArgToken(const TokenList *tokenList, int startTokenIdx) {
     int argTokenCount = tokenList->count - startTokenIdx ; // argument tokens
     if (argTokenCount != 1)
         return "argC != 1";
@@ -619,7 +672,7 @@ const char *ResponseSwitches::initFromArgToken(TokenList *tokenList, int startTo
     return nullptr ; // ok
 }
 
-const char *RequestMcp23017RegistersRead::initFromArgToken(TokenList *tokenList, int startTokenIdx) {
+const char *RequestMcp23017RegistersRead::initFromArgToken(const TokenList *tokenList, int startTokenIdx) {
     int argTokenCount = tokenList->count - startTokenIdx ; // argument tokens
     if (argTokenCount != 3)
         return "argC != 3";
@@ -631,7 +684,7 @@ const char *RequestMcp23017RegistersRead::initFromArgToken(TokenList *tokenList,
     return nullptr ; // ok
 }
 
-const char *ResponseMcp23017Registers::initFromArgToken(TokenList *tokenList, int startTokenIdx) {
+const char *ResponseMcp23017Registers::initFromArgToken(const TokenList *tokenList, int startTokenIdx) {
     int argTokenCount = tokenList->count - startTokenIdx ; // argument tokens
     if (argTokenCount != 12)
         return "argC != 12";
@@ -653,7 +706,7 @@ const char *ResponseMcp23017Registers::initFromArgToken(TokenList *tokenList, in
     return nullptr ; // ok
 }
 
-const char *RequestVersionRead::initFromArgToken(TokenList *tokenList, int startTokenIdx) {
+const char *RequestVersionRead::initFromArgToken(const TokenList *tokenList, int startTokenIdx) {
     UNREFERENCED_PARAMETER(tokenList);
     int argTokenCount = tokenList->count - startTokenIdx ; // argument tokens
     if (argTokenCount != 0)
@@ -661,16 +714,13 @@ const char *RequestVersionRead::initFromArgToken(TokenList *tokenList, int start
     return nullptr ; // ok
 }
 
-const char *ResponseVersion::initFromArgString(TokenList *tokenList, const char *argString) {
-    UNREFERENCED_PARAMETER(tokenList);
-    int size = sizeof(version)-1 ;
-    strncpy(version, argString, size-1);
-    version[size] = 0;
+const char *ResponseVersion::initFromArgString(const TokenList *tokenList, int startTokenIdx) {
+    tokenList->asString(version, sizeof(version), startTokenIdx) ;
     return nullptr ; // ok
 }
 
 
-const char *RequestUnibusExam::initFromArgToken(TokenList *tokenList, int startTokenIdx) {
+const char *RequestUnibusExam::initFromArgToken(const TokenList *tokenList, int startTokenIdx) {
     int argTokenCount = tokenList->count - startTokenIdx ; // argument tokens
     //LOG("tokencount=%d, starttokenidx=%d,argTokenCount=%d\n", tokenList->count,startTokenIdx,argTokenCount);
     if (argTokenCount != 1)
@@ -681,7 +731,7 @@ const char *RequestUnibusExam::initFromArgToken(TokenList *tokenList, int startT
     return nullptr ; // ok
 }
 
-const char *ResponseUnibusCycle::initFromArgToken(TokenList *tokenList, int startTokenIdx) {
+const char *ResponseUnibusCycle::initFromArgToken(const TokenList *tokenList, int startTokenIdx) {
     int argTokenCount = tokenList->count - startTokenIdx ; // argument tokens
     if (argTokenCount < 3)
         return "argC < 3";
@@ -713,7 +763,7 @@ bool ResponseUnibusCycle::isValid() {
 }
 
 
-const char *RequestUnibusDeposit::initFromArgToken(TokenList *tokenList, int startTokenIdx) {
+const char *RequestUnibusDeposit::initFromArgToken(const TokenList *tokenList, int startTokenIdx) {
     int argTokenCount = tokenList->count - startTokenIdx ; // argument tokens
     if (argTokenCount != 2)
         return "argC != 2";
@@ -724,14 +774,14 @@ const char *RequestUnibusDeposit::initFromArgToken(TokenList *tokenList, int sta
     return nullptr ; // ok
 }
 
-const char *RequestUnibusSize::initFromArgToken(TokenList *tokenList, int startTokenIdx) {
+const char *RequestUnibusSize::initFromArgToken(const TokenList *tokenList, int startTokenIdx) {
     int argTokenCount = tokenList->count - startTokenIdx ; // argument tokens
     if (argTokenCount != 0)
         return "argC != 0";
     return nullptr ; // ok
 }
 
-const char *RequestUnibusTest::initFromArgToken(TokenList *tokenList, int startTokenIdx) {
+const char *RequestUnibusTest::initFromArgToken(const TokenList *tokenList, int startTokenIdx) {
     int argTokenCount = tokenList->count - startTokenIdx ; // argument tokens
     if (argTokenCount != 1)
         return "argC != 1";
@@ -739,7 +789,7 @@ const char *RequestUnibusTest::initFromArgToken(TokenList *tokenList, int startT
     return nullptr ; // ok
 }
 
-const char *RequestBoot::initFromArgToken(TokenList *tokenList, int startTokenIdx) {
+const char *RequestBoot::initFromArgToken(const TokenList *tokenList, int startTokenIdx) {
     int argTokenCount = tokenList->count - startTokenIdx ; // argument tokens
     if (argTokenCount != 1)
         return "argC != 1";
@@ -748,7 +798,7 @@ const char *RequestBoot::initFromArgToken(TokenList *tokenList, int startTokenId
 }
 
 #if !defined(PLATFORM_ARDUINO)
-const char *RequestRegDef::initFromArgToken(TokenList *tokenList, int startTokenIdx) {
+const char *RequestRegDef::initFromArgToken(const TokenList *tokenList, int startTokenIdx) {
     int argTokenCount = tokenList->count - startTokenIdx ; // argument tokens
     if (argTokenCount != 0)
         return "argC != 0";
@@ -758,7 +808,7 @@ const char *RequestRegDef::initFromArgToken(TokenList *tokenList, int startToken
 
 // curSyntaxInfo = "REGDEF <name:bitcount> pairs";
 // on exit: vector registers contains names and sizes
-const char *ResponseRegDef::initFromArgToken(TokenList *tokenList, int startTokenIdx) {
+const char *ResponseRegDef::initFromArgToken(const TokenList *tokenList, int startTokenIdx) {
     int argTokenCount = tokenList->count - startTokenIdx ; // argument tokens
     registers.clear() ;
     // each token is name:size
@@ -781,7 +831,7 @@ const char *ResponseRegDef::initFromArgToken(TokenList *tokenList, int startToke
     return nullptr ; // ok
 }
 
-const char *RequestRegVal::initFromArgToken(TokenList *tokenList, int startTokenIdx) {
+const char *RequestRegVal::initFromArgToken(const TokenList *tokenList, int startTokenIdx) {
     int argTokenCount = tokenList->count - startTokenIdx ; // argument tokens
     if (argTokenCount != 0)
         return "argC != 0";
@@ -793,7 +843,7 @@ const char *RequestRegVal::initFromArgToken(TokenList *tokenList, int startToken
 // fill values into newly allocated registers vector.
 // delivers values in the same order as previous REGDEF
 // caller must merge variable values with variable definitions
-const char *ResponseRegVals::initFromArgToken(TokenList *tokenList, int startTokenIdx) {
+const char *ResponseRegVals::initFromArgToken(const TokenList *tokenList, int startTokenIdx) {
     int argTokenCount = tokenList->count - startTokenIdx ; // argument tokens
     // each token is name:size
     for (int i=0 ; i < argTokenCount ; i++) {

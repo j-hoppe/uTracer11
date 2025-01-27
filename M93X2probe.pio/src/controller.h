@@ -16,7 +16,7 @@ class Controller : public Pdp11DataUser {
                   //    bool unibusEventAsResponse(); // check for asynchronous MSYN/SSYN
     ResponseUnibusCycle *unibusEventAsResponse();
 
-    ResponseVersion versionAsResponse();
+    ResponseVersion versionAsResponse(MsgTag _tag);
 
     // command string, result print over RS2323
     char *doHostCommand(char *line);

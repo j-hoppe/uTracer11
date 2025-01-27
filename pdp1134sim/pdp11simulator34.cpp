@@ -54,7 +54,7 @@ void Pdp11Simulator34::onRequestKY11LBSignalWrite(RequestKY11LBSignalWrite* requ
 		}
     }
 
-    respond(new ResponseKY11LBSignals(mpc, 0, 0, 0, 0));
+    respond(new ResponseKY11LBSignals(requestKY11LBSignalWrite->tag, mpc, 0, 0, 0, 0));
 }
 
 
@@ -103,7 +103,7 @@ void Pdp11Simulator34::onConsoleInputline(std::string inputLine)
 void Pdp11Simulator34::onRequestKY11LBSignalsRead(RequestKY11LBSignalsRead* requestKY11LBSignalsRead) {
     UNREFERENCED_PARAMETER(requestKY11LBSignalsRead);
     // GUI wants to see the current upc
-    respond(new ResponseKY11LBSignals(mpc, 0, 0, 0, 0));
+    respond(new ResponseKY11LBSignals(requestKY11LBSignalsRead->tag, mpc, 0, 0, 0, 0));
 }
 
 void  Pdp11Simulator34::onRequestUnibusDeposit(RequestUnibusDeposit* requestUnibusDeposit) {
@@ -112,11 +112,11 @@ void  Pdp11Simulator34::onRequestUnibusDeposit(RequestUnibusDeposit* requestUnib
     uint16_t data = requestUnibusDeposit->data;
     if (addr >= 0x1f000) // not existing memory
         // respond with captured cycle
-        respond(new ResponseUnibusCycle(/*DATO*/2, addr, 0, /*NXM*/true, /*requested*/true));
+        respond(new ResponseUnibusCycle(requestUnibusDeposit->tag, /*DATO*/2, addr, 0, /*NXM*/true, /*requested*/true));
     else {
         memory[requestUnibusDeposit->addr] = data;
         // respond with captured state
-        respond(new ResponseUnibusCycle(/*DATO*/2, addr, data, /*NXM*/false, /*requested*/true));
+        respond(new ResponseUnibusCycle(requestUnibusDeposit->tag, /*DATO*/2, addr, data, /*NXM*/false, /*requested*/true));
     }
 }
 
@@ -125,11 +125,11 @@ void  Pdp11Simulator34::onRequestUnibusExam(RequestUnibusExam* requestUnibusExam
     uint32_t addr = requestUnibusExam->addr;
     if (addr >= 0x1f000) // not existing memory
         // respond with captured cycle
-        respond(new ResponseUnibusCycle(/*DATI*/0, addr, 0, /*NXM*/true, /*requested*/true));
+        respond(new ResponseUnibusCycle(requestUnibusExam->tag, /*DATI*/0, addr, 0, /*NXM*/true, /*requested*/true));
     else {
         uint16_t data = memory[requestUnibusExam->addr];
         // respond with captured state
-        respond(new ResponseUnibusCycle(/*DATI*/0, addr, data, /*NXM*/false, /*requested*/true));
+        respond(new ResponseUnibusCycle(requestUnibusExam->tag, /*DATI*/0, addr, data, /*NXM*/false, /*requested*/true));
     }
 }
 
@@ -157,7 +157,7 @@ void Pdp11Simulator34::onRequestUnibusSignalWrite(RequestUnibusSignalWrite* requ
     // echo UNIBUS state back
     // make a copy, as it is deleted after sending
 
-    auto response = new ResponseUnibusSignals(unibusSignals);
+    auto response = new ResponseUnibusSignals(requestUnibusSignalWrite->tag, unibusSignals);
     respond(response);
 }
 

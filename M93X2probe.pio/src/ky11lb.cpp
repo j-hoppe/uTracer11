@@ -119,7 +119,7 @@ bool KY11LB::writeSignal(Signal signal, bool val) {
 }
 
 // hex digit string: <uPC> <FP11> <SBF> <LIR> <PBP>
-ResponseKY11LBSignals KY11LB::getSignalsAsResponse() {
+ResponseKY11LBSignals KY11LB::getSignalsAsResponse(MsgTag _tag) {
     uint8_t gpio20a, gpio20b;
     gpio20a = theHardware.mcp[2][0].read(Mcp23017::Register::GPIOA);
     gpio20b = theHardware.mcp[2][0].read(Mcp23017::Register::GPIOB);
@@ -128,5 +128,5 @@ ResponseKY11LBSignals KY11LB::getSignalsAsResponse() {
     uint8_t _sbf = !(gpio20b & 0x10);  // gpb4
     uint8_t _lir = !(gpio20b & 0x20);  // gpb5
     uint8_t _pbp = !(gpio20b & 0x40);  // gpb6
-    return ResponseKY11LBSignals(_mpc, _fp11, _sbf, _lir, _pbp);
+    return ResponseKY11LBSignals(_tag, _mpc, _fp11, _sbf, _lir, _pbp);
 }

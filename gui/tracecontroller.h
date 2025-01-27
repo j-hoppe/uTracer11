@@ -6,6 +6,8 @@
 #include <wx/grid.h>
 #include <wx/filename.h>
 #include <vector>
+#include <map>
+#include <string>
 #include "messages.h"
 //#include "pdp11adapter.h"
 #include "../Pdp11BusCycleDisas/libmain.h"
@@ -21,9 +23,16 @@ private:
     int disasBusCyclesCount = 0; // # of valid cycles in current instruction
     //    pdp11bus_cycle_t disasBusCycles[disasBusCyclesBufferSize];
 
-    unsigned singleStepCount ; // > 2: display only changed values
-    // cell where incomung statevars repsones are to be displayed
-    wxGridCellCoords stateVarDisplayGridCoords ;
+    // optimized display of state vars for each ustep
+    // complicated: the statevar cell of the lasp mpc row
+    // can be updated multiple times by differnt incoming resonses
+    unsigned singleStepCount; // > 2: display only changed values
+    // cell where incoming statevars responses are to be displayed
+    wxGridCellCoords stateVarsActiveCellCoords ;
+    // this is what the user sees in grid above active MPC row, (name,value)
+    std::map<std::string, uint32_t> stateVarsGridVisibleVals;
+    // this what is accumulating for the current MPC
+    std::map<std::string, uint32_t> stateVarsActiveCellVals;
 
 
     static const unsigned cycleListFillupAddress = 0777733; // unused PDP-11 address to mark dummy cycles
@@ -37,9 +46,6 @@ private:
     unsigned disasAddrtypeFromText(std::string s);
 
     pdp11bus_cycle_t getFillupCycle();
-
-	std::string stateVarsFullAsText() ;
-		std::string stateVarsChangedAsText();
 
 public:
     Pdp11Adapter* pdp11Adapter;
@@ -61,7 +67,7 @@ public:
 
     void evalUStep(unsigned mpc);
     void displayStateVars() ;
-    void evalUnibusCycle(ResponseUnibusCycle* unibusCycle);
+    void onResponseUnibusCycle(ResponseUnibusCycle* unibusCycle);
 
     void disasReadSymbolFile(wxFileName fullpath);
 };

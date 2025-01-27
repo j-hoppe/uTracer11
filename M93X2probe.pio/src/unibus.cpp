@@ -218,7 +218,7 @@ uint8_t Unibus::readC1C0() {
 // make a multi-token octal/hex string containing all signals
 // order like in UNIBUS spec:
 // <addr> <data> <c1,c0> <msyn> <ssyn> <pb,pa> <intr> <br7..4> <bg7..4> <npr> <npg> <sack> <bbsy> <init> <aclo> <dclo>
-ResponseUnibusSignals Unibus::getSignalsAsResponse() {
+ResponseUnibusSignals Unibus::getSignalsAsResponse(MsgTag _tag) {
     // cache all MCP inputs
     uint8_t gpio00a, gpio00b, gpio01a, gpio01b, gpio02a, gpio02b, gpio03a, gpio03b, gpio10a, gpio10b;
     // force toggle of DATA_LATCH, to latched DATA into 74LS374
@@ -253,7 +253,7 @@ ResponseUnibusSignals Unibus::getSignalsAsResponse() {
     uint8_t _init = !(gpio03b & 0x04);        // init = mcp03.gpb2
     uint8_t _aclo = !(gpio03b & 0x01);        // init = mcp03.gpb0
     uint8_t _dclo = !(gpio03b & 0x02);        // init = mcp03.gpb1
-    return ResponseUnibusSignals(_addr, _data, _c1c0, _msyn, _ssyn,
+    return ResponseUnibusSignals(_tag, _addr, _data, _c1c0, _msyn, _ssyn,
                                 _pbpa, _intr, _br74, _bg74, _npr, _npg, _sack, _bbsy,
                                 _init, _aclo, _dclo) ;
 }
@@ -271,7 +271,7 @@ void Unibus::writeADDR(uint32_t val) {
     theHardware.mcp[0][1].writeBit(Mcp23017::Register::OLATB, 7, regBit);
 }
 
-void Unibus::writeDATA(uint16_t val) {
+void Unibus::writeDATA(MsgTag val) {
     uint8_t regVal;
     regVal = (val & 0xff); // mcp12.GPA = D00..07
     theHardware.mcp[1][2].write(Mcp23017::Register::OLATA, regVal);

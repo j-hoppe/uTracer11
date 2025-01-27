@@ -18,7 +18,11 @@ public:
     virtual void powerCycleButtonOnButtonClick(wxCommandEvent& event) override;
     virtual void manClockEnableButtonOnToggleButton(wxCommandEvent& event) override;
     virtual void microStepButtonOnButtonClick(wxCommandEvent& event) override;
-    virtual void autoStepButtonOnButtonClick(wxCommandEvent& event) override;
+	
+    virtual void scriptLoadButtonOnButtonClick(wxCommandEvent& event) override;
+    virtual void scriptSaveButtonOnButtonClick(wxCommandEvent& event) override;
+    virtual void scriptRunButtonOnButtonClick(wxCommandEvent& event) override;
+    virtual void scriptAbortButtonOnButtonClick(wxCommandEvent& event) override;
 };
 
 // Notebook pages are own panels, not assigned to notebooks by wxFormBuilder project

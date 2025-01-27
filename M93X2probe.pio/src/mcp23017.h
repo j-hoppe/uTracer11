@@ -56,7 +56,7 @@ class Mcp23017 {
     bool readCachedBit(Register reg, uint8_t bitno);
     void writeBit(Register reg, uint8_t bitno, bool bitval);
 
-	ResponseMcp23017Registers getRegistersAsResponse(char half) ;
+	ResponseMcp23017Registers getRegistersAsResponse(MsgTag _tag, char half) ;
 
     // short cuts
     uint8_t getPortA() {

@@ -78,14 +78,14 @@ ResponseUnibusCycle *Controller::unibusEventAsResponse() {
 
     bool requested = theUnibus.cycleRequestedPending;
     theUnibus.cycleRequestedPending = false;
-    return new ResponseUnibusCycle(c1c0, addr, data, nxm, requested);
+    return new ResponseUnibusCycle(requested? theUnibus.requestTag: 0, c1c0, addr, data, nxm, requested);
 
     // caller must delete!
 }
 
 // return Versionstring
-ResponseVersion Controller::versionAsResponse() {
-    return ResponseVersion(
+ResponseVersion Controller::versionAsResponse(MsgTag _tag) {
+    return ResponseVersion(_tag, 
         "M93X2probe compiled " __DATE__ " " __TIME__);
 }
 
@@ -117,10 +117,11 @@ void *RequestReset::process() {
     while (true)
         ;
     // OK response on reboot
+    return nullptr ; // never reacged
 }
 
 void *RequestUnibusSignalsRead::process() {
-    return theUnibus.getSignalsAsResponse().render();
+    return theUnibus.getSignalsAsResponse(tag).render();
     // response free'd, but render() to static buffer
 }
 
@@ -128,10 +129,10 @@ void *RequestUnibusSignalWrite::process() {
     // TODO: BG74, BR740>BG4,5,6,7; BR4,5,6,7: false name conversion, but BR*,BG* not settable on hardware
     Unibus::Signal signal = theUnibus.textToSignal(signalName);
     if (signal == Unibus::Signal::none)
-        return ResponseError("%s: \"%s\" not a UNIBUS signal", syntaxInfo, signalName).render();
+        return ResponseError(tag, "%s: \"%s\" not a UNIBUS signal", syntaxInfo, signalName).render();
     if (!theUnibus.writeSignal(signal, val))
-        return ResponseError("%s: \"%s\" not writeable", syntaxInfo, signalName).render();
-    return theUnibus.getSignalsAsResponse().render();
+        return ResponseError(tag, "%s: \"%s\" not writeable", syntaxInfo, signalName).render();
+    return theUnibus.getSignalsAsResponse(tag).render();
     // response free'd, but render() to static buffer
 }
 
@@ -141,7 +142,9 @@ void *RequestUnibusExam::process() {
     bool _nxm;
     uint16_t _data = theUnibus.datiHead(addr, &_nxm);
     theUnibus.cycleRequestedPending = true; // signal: is Response due to Request
+    theUnibus.requestTag = tag ;
     theUnibus.datxTail();
+    return nullptr;
     // uint8_t _c1c0 = 0; // response = DATI
     // uint32_t _addr = addr ;
     // uint16_t _data ;
@@ -153,6 +156,7 @@ void *RequestUnibusExam::process() {
 void *RequestUnibusDeposit::process() {
     bool _nxm;
     theUnibus.cycleRequestedPending = true; // signal: is Response due to Request
+    theUnibus.requestTag = tag ;
     theUnibus.datoHead(addr, data, &_nxm);
     theUnibus.datxTail();
     return nullptr;
@@ -169,9 +173,10 @@ void *RequestUnibusSize::process() {
     uint16_t _data = 0; // doesn't care
     bool _nxm = true;
     bool _requested = true;
+    theUnibus.requestTag = tag ;
     // a lot of UNIBUS cycles where generated an captured
-    theController.unibusEventAsResponse(); // query&clear
-    return ResponseUnibusCycle(_c1c0, _addr, _data, _nxm, _requested).render();
+    delete theController.unibusEventAsResponse(); // query&clear
+    return ResponseUnibusCycle(tag, _c1c0, _addr, _data, _nxm, _requested).render();
 }
 
 // do memory test, auto sizing, final a result text
@@ -180,9 +185,9 @@ void *RequestUnibusTest::process() {
     uint32_t endAddr = theUnibus.sizeMem();
 
     if (theUnibus.testMem(seed, endAddr, report, sizeof(report)))
-        return ResponseOK(report).render();
+        return ResponseOK(tag, report).render();
     else
-        return ResponseError(report).render();
+        return ResponseError(tag, report).render();
 }
 
 // stop PDP11 CPU, download code file <n>, set power-on vector 24/26, restart CPU via ACLO/DCLO
@@ -191,23 +196,23 @@ void *RequestBoot::process() {
 }
 
 void *RequestKY11LBSignalsRead::process() {
-    return theKY11LB.getSignalsAsResponse().render();
+    return theKY11LB.getSignalsAsResponse(tag).render();
 }
 
 // set micro clock or microclock enable
 void *RequestKY11LBSignalWrite::process() {
     KY11LB::Signal signal = theKY11LB.textToSignal(signalName);
     if (signal == KY11LB::Signal::none)
-        return ResponseError("%s: <signal> not a writeable KY11LB signal name", syntaxInfo).render();
+        return ResponseError(tag, "%s: <signal> not a writeable KY11LB signal name", syntaxInfo).render();
     if (signal == KY11LB::Signal::MAN_CLK && val == 2) {
         // "MC P"
         theKY11LB.writeSignal(signal, 1);
         theKY11LB.writeSignal(signal, 0);
     } else {
         if (!theKY11LB.writeSignal(signal, val))
-            return ResponseError("%s: <signal> <val> not a writeable", syntaxInfo).render();
+            return ResponseError(tag, "%s: <signal> <val> not a writeable", syntaxInfo).render();
     }
-    return theKY11LB.getSignalsAsResponse().render();
+    return theKY11LB.getSignalsAsResponse(tag).render();
     // return ResponseOK().render();
 }
 
@@ -226,7 +231,7 @@ void *RequestKM11SignalsRead::process() {
     uint8_t val0B = mcp0->getPortB();
     uint8_t val1A = mcp1->getPortA();
     uint8_t val1B = mcp1->getPortB();
-    return ResponseKM11Signals(channel, val0A, val0B, val1A, val1B).render();
+    return ResponseKM11Signals(tag, channel, val0A, val0B, val1A, val1B).render();
 }
 
 // write 4 outputs of KM11A as hex digit
@@ -249,15 +254,15 @@ void *RequestKM11SignalsWrite::process() {
     mcp1->writeBit(Mcp23017::Register::OLATA, 7, out10_l);
     mcp1->writeBit(Mcp23017::Register::OLATB, 7, out11_l);
     // suppress long answer?
-    return ResponseOK().render();
+    return ResponseOK(tag).render();
 }
 
 void *RequestMcp23017RegistersRead::process() {
     Mcp23017 *mcp = theHardware.getMcpByAddr(group, addr);
     if (mcp == nullptr)
-        return ResponseError("%s: <group><addr> not valid", syntaxInfo).render();
+        return ResponseError(tag, "%s: <group><addr> not valid", syntaxInfo).render();
     // let Mcp chip do the output
-    return mcp->getRegistersAsResponse(half).render();
+    return mcp->getRegistersAsResponse(tag, half).render();
 }
 
 void *RequestLedWrite::process() {
@@ -266,35 +271,35 @@ void *RequestLedWrite::process() {
     // update blink period values
     theHardware.leds[ledNr].on_period_millis = on_period_millis;
     theHardware.leds[ledNr].off_period_millis = off_period_millis;
-    return ResponseOK().render();
+    return ResponseOK(tag).render();
 }
 
 void *RequestSwitchesRead::process() {
     uint8_t val05 = theHardware.optionSwitch.getVal();
-    return ResponseSwitches(val05).render();
+    return ResponseSwitches(tag, val05).render();
 }
 
 // received via serial
 void *RequestVersionRead::process() {
-    return theController.versionAsResponse().render();
+    return theController.versionAsResponse(tag).render();
 }
 
 // eval line as command string, do and print results back to host
-// input like "D UA 1234 123456"
-// with opcode = D (deposit), bus = UA (Unibus address), address = 1234, value=123456
+// input like "123D UA 1234 123456"
+// with tag=123, opcode = D (deposit), bus = UA (Unibus address), address = 1234, value=123456
 char *Controller::doHostCommand(char *line) {
 	// line owned by console, available until console.loop()
     Message *request = Message::parse(line);
     char *responseText; // rendered by Message::render() to static buffer
     if (!request) {
         // parse error
-        ResponseError response(Message::errorBuffer);
+        ResponseError response(Message::errorTag, Message::errorBuffer);
         responseText = response.render();
     } else {
         responseText = (char *)request->process(); // may be nullptr
         delete request;                            // minmal heap operations
     }
-    return responseText;
+	return responseText ;
 }
 
 /* Boot PDP11 with embedded program

@@ -52,7 +52,7 @@ public:
         console->simulator = this ; // link to onConsoleInputLine()
     }
 
-	// main state: running, stopped	
+	// main state: running, stopped
     bool microClockEnabled = false; // true = micro machine running, start stopped
 
     // state of simulated UNIBUS
@@ -74,7 +74,6 @@ public:
         stateVar.endpoint = varPointer ;
         stateVar.endpointSizeof = varSize;
         stateVar.value = 0 ; // not used here
-        stateVar.prevValue = 0 ; // not used here
         stateVars.push_back(stateVar);
     }
 
@@ -119,7 +118,7 @@ public:
     virtual void onRequestKM11SignalsRead(RequestKM11SignalsRead* requestKM11SignalsRead); // abstract
     virtual void onRequestUnibusDeposit(RequestUnibusDeposit* requestUnibusDeposit); // abstract
     virtual void onRequestUnibusExam(RequestUnibusExam* requestUnibusExam); // abstract
-    virtual void onRequestUnibusSignalsRead(); // read in base class, not abstract
+    virtual void onRequestUnibusSignalsRead(RequestUnibusSignalsRead* requestUnibusSignalsRead); // read in base class, not abstract
     virtual void onRequestUnibusSignalWrite(RequestUnibusSignalWrite* requestUnibusSignalWrite); // abstract
 
     // called if simulator executes DATI or DATO

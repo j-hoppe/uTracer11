@@ -8,7 +8,6 @@
 
 // attach/arrange panels, set directories
 void Pdp11Adapter34Physical::setupGui(wxFileName _resourceDir) {
-    auto app = &wxGetApp();
     // generic panels before and optical left of specific ones
     Pdp11Adapter34::setupGui(_resourceDir);
     
@@ -32,7 +31,7 @@ void Pdp11Adapter34Physical::updateGui(State state) {
     case State::uMachineManualStepping:
         ky11StatusPanel->Enable() ;
         break ;
-    case State::uMachineAutoStepping:
+    case State::scriptRunning:
         ky11StatusPanel->Enable() ;
         break ;
     }

@@ -8,8 +8,6 @@
 
 
 void Pdp11Adapter40::setupGui(wxFileName _resourceDir) {
-    auto app = &wxGetApp();
-
     // generic panels before and optical left of specific ones
     _resourceDir.AppendDir("pdp1140");
     Pdp11Adapter::setupGui(_resourceDir);
@@ -36,7 +34,7 @@ void Pdp11Adapter40::updateGui(State state) {
     case State::uMachineManualStepping:
         uFlowPanel->Enable();
         break ;
-    case State::uMachineAutoStepping:
+    case State::scriptRunning:
         uFlowPanel->Enable() ;
         break ;
     }
@@ -80,9 +78,9 @@ void Pdp11Adapter40::onInit() {
 
     // generate messages to init gui, until first status updates comes in
     // clear CPU state
-    auto cpuSignalsA = ResponseKM11Signals('A', 0, 0, 0, 0);
+    auto cpuSignalsA = ResponseKM11Signals(AUTOTAG, 'A', 0, 0, 0, 0);
     cpuSignalsA.process(); // calls virtual onRcvMessageFromPdp11() and updates GUI
-    auto cpuSignalsB = ResponseKM11Signals('B', 0, 0, 0, 0);
+    auto cpuSignalsB = ResponseKM11Signals(AUTOTAG, 'B', 0, 0, 0, 0);
     cpuSignalsB.process(); // calls virtual onRcvMessageFromPdp11() and updates GUI
 
     uflowPageAnnotations.loadXml(resourceDir, "KD11-A_Processor_Flow_Diagrams", "KD11-A_Processor_Flow_Diagrams.xml");
@@ -112,7 +110,7 @@ void Pdp11Adapter40::onInit() {
 #endif
 
     // set manclock to initial state of "ManClock" ToggleButton. false  = not pressed
-    auto _manClkEnable = wxGetApp().mainFrame->manClockEnableButton->GetValue();
+    auto _manClkEnable = app->mainFrame->manClockEnableButton->GetValue();
     setManClkEnable(_manClkEnable); // state change
 }
 
@@ -133,12 +131,12 @@ void Pdp11Adapter40::onTimer(unsigned periodMs) {
     if (pollSlow) {
         // request KM11 & unibussignals
         // response from M93X2probe is ResponseKM11Signals,ResponseUnibusSignals
-        auto reqKm11A = new RequestKM11SignalsRead('A');
-        wxGetApp().messageInterface->xmtRequest(reqKm11A); // send+delete
-        auto reqKm11B = new RequestKM11SignalsRead('B');
-        wxGetApp().messageInterface->xmtRequest(reqKm11B); // send+delete
-        auto reqUnibus = new RequestUnibusSignalsRead();
-        wxGetApp().messageInterface->xmtRequest(reqUnibus); // send+delete
+        auto reqKm11A = new RequestKM11SignalsRead(AUTOTAG, 'A');
+        app->messageInterface->xmtRequest(reqKm11A); // send+delete
+        auto reqKm11B = new RequestKM11SignalsRead(AUTOTAG, 'B');
+        app->messageInterface->xmtRequest(reqKm11B); // send+delete
+        auto reqUnibus = new RequestUnibusSignalsRead(AUTOTAG);
+        app->messageInterface->xmtRequest(reqUnibus); // send+delete
     }
 }
 
@@ -172,30 +170,33 @@ void Pdp11Adapter40::setManClkEnable(bool _manClkEnable)
 {
     km11AState.mclk_enab = _manClkEnable;
 
-    auto msg = new RequestKM11SignalsWrite('A', 0); // empty template
+    auto msg = new RequestKM11SignalsWrite(AUTOTAG, 'A', 0); // empty template
     km11AState.outputsToKM11AWriteRequest(msg); // encode outputs to KM11 pins
-    wxGetApp().messageInterface->xmtRequest(msg); // send+delete
+    app->messageInterface->xmtRequest(msg); // send+delete
     // answer from M93X2probe is ResponseKM11Signals
     Pdp11Adapter::setManClkEnable(_manClkEnable); // actions same for all pdp11s
 }
 
-void Pdp11Adapter40::uStep()
+void Pdp11Adapter40::requestUStep()
 {
     // Momentary switch S4 on KM11 produces 1-0-1 on MCLK_L
     // -> 0-1-0 on positive km11State.mclk
     km11AState.mclk = 1; // assume 0 already set
-    auto msg = new RequestKM11SignalsWrite();
-    km11AState.outputsToKM11AWriteRequest(msg);  // encode
-    wxGetApp().messageInterface->xmtRequest(msg); // send+delete
+    auto msg1 = new RequestKM11SignalsWrite(AUTOTAG);
+    km11AState.outputsToKM11AWriteRequest(msg1);  // encode
+    app->messageInterface->xmtRequest(msg1); // send+delete
 
     // send falling edge
     km11AState.mclk = 0;
-    msg = new RequestKM11SignalsWrite();
-    km11AState.outputsToKM11AWriteRequest(msg);
-    wxGetApp().messageInterface->xmtRequest(msg); // send+delete
+    msg1 = new RequestKM11SignalsWrite(AUTOTAG);
+    km11AState.outputsToKM11AWriteRequest(msg1);
+    app->messageInterface->xmtRequest(msg1); // send+delete
 
     // answer from M93X2probe is ResponseKY11LBSignals
     Pdp11Adapter::uStepStart(); // actions same for all pdp11s
+
+    auto msg2 = new RequestRegVal(AUTOTAG);
+    app->messageInterface->xmtRequest(msg2); // send+delete
 }
 
 /*
@@ -253,7 +254,7 @@ void Pdp11Adapter40::onResponseKM11Signals(ResponseKM11Signals* km11Signals) {
         // process MPC events only for change
         if (microProgramCounter != km11AState.pupp) {
             // MPC changed => new value, => event + display update
-            doEvalMpc(km11AState.pupp) ;
+            onResponseMpc(km11AState.pupp) ;
         }
 
         if (km11StatusPanel) { // not for simulation ?
@@ -351,12 +352,12 @@ void Pdp11Adapter40::onResponseKM11Signals(ResponseKM11Signals* km11Signals) {
 
 #ifdef TODO
     // process MPC events only for change
-    auto eventPanel = wxGetApp().eventPanel; // obsolete, all pdp11s use same event log
+    auto eventPanel = app->eventPanel; // obsolete, all pdp11s use same event log
     ky11Signals->mpc &= 0x1ff; // strip off bit 10, to 0..511
     if (microProgramCounter != ky11Signals->mpc) {
         // MPC changed => new value, => event + display update
         microProgramCounter = ky11Signals->mpc;
-        doLogEvent(eventPanel, "mpc = %0.3o", microProgramCounter);
+        logEvent(eventPanel, "mpc = %0.3o", microProgramCounter);
         // repaint document pages only on change
         paintDocumentAnnotations();
 
@@ -374,14 +375,14 @@ void Pdp11Adapter40::onResponseKY11LBSignals(ResponseKY11LBSignals* ky11Signals)
 // Unibus-Signal panel same for all Pdp11s
 // route message to Pdp11-model specific panel
 void Pdp11Adapter40::onResponseUnibusSignals(ResponseUnibusSignals* unibusSignals) {
-    doEvalUnibusSignals(unibusSignals);
+    Pdp11Adapter::onResponseUnibusSignals(unibusSignals); // same for all pdp11's
 }
 
 // Unibus-Signal panel same for all Pdp11s
 // route message to Pdp11-model specific panel
-void Pdp11Adapter40::evalUnibusCycle(ResponseUnibusCycle* unibusCycle)
+void Pdp11Adapter40::onResponseUnibusCycle(ResponseUnibusCycle* unibusCycle)
 {
-    doEvalUnibusCycle(unibusCycle); // same for all pdp11's
+        Pdp11Adapter::onResponseUnibusCycle(unibusCycle); // same for all pdp11's
 }
 
 

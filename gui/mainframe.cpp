@@ -3,6 +3,7 @@
 
 #include "application.h"
 #include "mainframe.h"
+#include "wxutils.h"
 
 // the frame provides system with polling clock, defined by Start() in application
 void MainFrame::updateTimerOnTimer(wxTimerEvent& event) {
@@ -26,32 +27,59 @@ void MainFrame::manClockEnableButtonOnToggleButton(wxCommandEvent& event)
 void MainFrame::microStepButtonOnButtonClick(wxCommandEvent& event)
 {
     UNREFERENCED_PARAMETER(event);
-    wxGetApp().pdp11Adapter->uStep();
+    wxGetApp().pdp11Adapter->requestUStep();
 }
 
-void MainFrame::autoStepButtonOnButtonClick(wxCommandEvent& event)
+// load selectde file into textcontrol
+void MainFrame::scriptLoadButtonOnButtonClick(wxCommandEvent& event) 
 {
     UNREFERENCED_PARAMETER(event);
-    Pdp11Adapter* pdp11Adapter = wxGetApp().pdp11Adapter;
-    if (pdp11Adapter->state == Pdp11Adapter::State::uMachineAutoStepping) {
-        pdp11Adapter->stopAutoStepping = true; // atomic signal to execution loop
-    }
-    else {
-        // Not running? then start!
-        // gather stop upc, repeat, unibus cycle, unibus addr
-        int stopUpc;
-        if (!stopUpcTextCtrl->GetValue().ToInt(&stopUpc, 8))
-            stopUpc = Pdp11Adapter::InvalidMpc;
-        int stopUnibusCycle = stopUnibusCycleComboBox->GetSelection(); // 01=DATI,1=DATO, 2=any
-        int stopUnibusAddress;
-        if (!stopUnibusAddrTextCtrl->GetValue().ToInt(&stopUnibusAddress, 8))
-            stopUnibusAddress = Pdp11Adapter::InvalidUnibusAddress;
-        int stopRepeatCount;
-        stopRepeatCountTextCtrl->GetValue().ToInt(&stopRepeatCount, 10);
-        pdp11Adapter->doAutoStepping(stopUpc, stopUnibusCycle, stopUnibusAddress, stopRepeatCount);
-        // Start command loop ... optimal in parallel thread
-        // but we must update GUI controls .
-    }
+    wxFileName scriptFilePath = wxGetApp().pdp11Adapter->scriptFilePath; // load prev
+
+    wxFileDialog
+        openFileDialog(this, "Load JavaScript file", scriptFilePath.GetPath(), scriptFilePath.GetFullName(),
+            "JavaScript files (*.js)|*.js|All files (*.*)|*.*", wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+
+    if (openFileDialog.ShowModal() == wxID_CANCEL)
+        return;     // the user changed idea...
+    
+    wxGetApp().pdp11Adapter->scriptFilePath = openFileDialog.GetPath(); // save for next call
+
+	wxString lines = wxLoadTextFromFile(openFileDialog.GetPath()) ;
+	scriptTextCtrlFB->SetValue(lines) ;
+}
+
+// save text control to file
+void MainFrame::scriptSaveButtonOnButtonClick(wxCommandEvent& event)
+{
+    UNREFERENCED_PARAMETER(event);
+    wxFileName scriptFilePath = wxGetApp().pdp11Adapter->scriptFilePath; // load prev
+    wxFileDialog
+        saveFileDialog(this, "Save JavaScript file", scriptFilePath.GetPath(), scriptFilePath.GetFullName(),
+            "JavaScript files (*.js)|*.js|All files (*.*)|*.*", wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
+
+    if (saveFileDialog.ShowModal() == wxID_CANCEL)
+        return;     // the user changed idea...
+
+    wxGetApp().pdp11Adapter->scriptFilePath = saveFileDialog.GetPath(); // save for next call
+
+    // save the current contents in the file;
+    wxString lines = scriptTextCtrlFB->GetValue() ;
+	wxSaveTextToFile(saveFileDialog.GetPath(), lines) ;
+}
+
+void MainFrame::scriptRunButtonOnButtonClick(wxCommandEvent& event) 
+ {
+	 UNREFERENCED_PARAMETER(event);
+	 Pdp11Adapter* pdp11Adapter = wxGetApp().pdp11Adapter;
+	 pdp11Adapter->scriptStart() ;
+ }
+
+ void MainFrame::scriptAbortButtonOnButtonClick(wxCommandEvent& event) 
+{
+    UNREFERENCED_PARAMETER(event);
+	Pdp11Adapter* pdp11Adapter = wxGetApp().pdp11Adapter;
+	pdp11Adapter->scriptAbort() ;
 }
 
 

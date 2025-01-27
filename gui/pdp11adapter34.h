@@ -29,7 +29,7 @@ public:
     virtual void onTimer(unsigned periodMs) override;
 
     virtual void setManClkEnable(bool manClkEnable) override;
-    virtual void uStep() override;
+    virtual void requestUStep() override;
     //virtual void doAutoStepping(uint32_t stopUpc, int stopUnibusCycle, uint32_t stopUnibusAddress, int stopRepeatCount) override;
 
 	void paintMicroStoreDocumentAnnotations(std::string mpcAsKey) ;
@@ -40,7 +40,7 @@ public:
     virtual void onResponseKY11LBSignals(ResponseKY11LBSignals* ky11Signals) override;
     bool ignoreKY11 = false; // testmode
     virtual void onResponseUnibusSignals(ResponseUnibusSignals* unibusSignals) override;
-    virtual void evalUnibusCycle(ResponseUnibusCycle* unibusCycle) override;
+    virtual void onResponseUnibusCycle(ResponseUnibusCycle* unibusCycle) override;
 
     DocumentPageAnnotations uflowPageAnnotations;
 

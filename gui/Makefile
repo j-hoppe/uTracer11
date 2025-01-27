@@ -2,10 +2,14 @@
 SRC_DIRS := ../gui ../common ../CSerialPort/src ../Pdp11BusCycleDisas
 BIN_DIR := ./bin
 
-# Define the source files for ../CSerialPort/src directory
+# Define the *.cpp source files for ../CSerialPort/src directory
 CSerialPort_SRC := SerialPortInfo.cpp SerialPortInfoBase.cpp SerialPortInfoUnixBase.cpp \
                    SerialPort.cpp SerialPortBase.cpp SerialPortUnixBase.cpp
 CSerialPort_OBJS := $(addprefix $(BIN_DIR)/CSerialPort/,$(CSerialPort_SRC:.cpp=.o))
+
+# Define the *.c source files for ../duktape directory
+DUKTAPE_SRC := duktape.c
+DUKTAPE_OBJS := $(addprefix $(BIN_DIR)/duktape/,$(DUKTAPE_SRC:.c=.o))
 
 # Define the source files for other directories
 GUI_SRC := $(wildcard ../gui/*.cpp)
@@ -19,7 +23,7 @@ COMMON_OBJS := $(addprefix $(BIN_DIR)/common/,$(notdir $(COMMON_SRC:.cpp=.o)))
 PDP11_OBJS := $(addprefix $(BIN_DIR)/Pdp11BusCycleDisas/,$(notdir $(PDP11_SRC:.cpp=.o)))
 
 # Combine all object files
-OBJS := $(CSerialPort_OBJS) $(GUI_OBJS) $(COMMON_OBJS) $(PDP11_OBJS)
+OBJS := $(CSerialPort_OBJS) $(DUKTAPE_OBJS) $(GUI_OBJS) $(COMMON_OBJS) $(PDP11_OBJS)
 
 # Define the compiler
 CXX := g++
@@ -36,7 +40,12 @@ CXXFLAGS := -Wall -Wextra -g $(shell wx-config --cxxflags)
 # -I../common: Include headers from ../common directory
 # -I../CSerialPort/include: Include headers from ../CSerialPort/include directory
 # -I../Pdp11BusCycleDisas: Include headers from ../Pdp11BusCycleDisas directory
-INCLUDE_DIRS := -I. -I../common -I../CSerialPort/include -I../Pdp11BusCycleDisas -I../gui
+INCLUDE_DIRS := -I. \
+    -I../common \
+    -I../CSerialPort/include \
+    -I../duktape \
+    -I../Pdp11BusCycleDisas \
+    -I../gui
 
 # Define the linker flags
 # wx-config --libs: Get the linker flags for wxWidgets
@@ -57,6 +66,11 @@ $(BIN_DIR)/common/%.o: ../common/%.cpp
 
 # Pattern rule to compile .cpp to .o for the ../CSerialPort/src directory
 $(BIN_DIR)/CSerialPort/%.o: ../CSerialPort/src/%.cpp
+	@mkdir -p $(dir $@)
+	$(CXX) $(CXXFLAGS) $(INCLUDE_DIRS) -c $< -o $@
+
+# Pattern rule to compile .cpp to .o for the ../duktape directory
+$(BIN_DIR)/duktape/%.o: ../duktape/%.c
 	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) $(INCLUDE_DIRS) -c $< -o $@
 

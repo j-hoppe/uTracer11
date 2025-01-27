@@ -56,7 +56,7 @@ class Unibus {
     Signal textToSignal(char *signalText);
     const char *c1c0ToText(uint8_t c1c0);
 
-    ResponseUnibusSignals getSignalsAsResponse();
+    ResponseUnibusSignals getSignalsAsResponse(MsgTag tag);
 
   private:
     uint32_t readADDR(uint8_t gpio00a, uint8_t gpio00b, uint8_t gpio01a);
@@ -87,6 +87,7 @@ class Unibus {
     // next capture is feed back of selef-generated DATI/DATO
     // if false, next capture is asynchronuos UNIBUs activity
     bool cycleRequestedPending = false;
+    MsgTag requestTag ;// if requested: tag of requesting message 
 
     bool writeSignal(Signal signal, uint32_t val);
     uint16_t datiHead(uint32_t addr, bool *nxm);

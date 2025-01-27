@@ -5,6 +5,7 @@
 #include "mcp23017.h"
 #include "hardware.h"
 #include "utils.h"
+#include "console.h" // debug logging
 #include <Wire.h>
 
 void Mcp23017::setup(uint8_t _group, uint8_t _addr) {
@@ -30,6 +31,7 @@ uint8_t Mcp23017::read(Register reg) {
 // Needs 92 usec @ 400kHz SCL (scope measurement)
 // if optimize: suppress writes if no change of value
 void Mcp23017::write(Register reg, uint8_t val) {
+
     if (theHardware.mcpWriteOptimization && (regval[(uint8_t)reg] == val))
         return;
     theHardware.setMcpGroup(group);
@@ -66,7 +68,7 @@ void Mcp23017::writeBit(Register reg, uint8_t bitno, bool bitval) {
 
 // dump a register block, A or B
 // half: 'A', 'B' register block
-ResponseMcp23017Registers Mcp23017::getRegistersAsResponse(char half) {
+ResponseMcp23017Registers Mcp23017::getRegistersAsResponse(MsgTag _tag, char half) {
     // all 11 registers
     uint8_t iodir, ipol, gpinten, defval, intcon, iocon, gppu, intf, intcap, gpio, olat;
 
@@ -95,7 +97,7 @@ ResponseMcp23017Registers Mcp23017::getRegistersAsResponse(char half) {
         gpio = read(Mcp23017::Register::GPIOB);
         olat = read(Mcp23017::Register::OLATB);
     }
-    return ResponseMcp23017Registers(group, addr, half,
+    return ResponseMcp23017Registers(_tag, group, addr, half,
                                      iodir, ipol, gpinten, defval,
                                      intcon, iocon, gppu, intf,
                                      intcap, gpio, olat) ;

@@ -194,7 +194,7 @@ int Application::FilterEvent(wxEvent& event)
             pdp11Adapter->setManClkEnable(false);
             return Event_Processed;
         case WXK_F4: // single step
-            pdp11Adapter->uStep();
+            pdp11Adapter->requestUStep();
             return Event_Processed;
         case WXK_F10: // toggle full screen
         	if (mainFrame->IsFullScreen()) {
@@ -256,9 +256,6 @@ bool Application::OnInit()
 
         mainFrame->toolsNotebook->SetSelection(0);
 
-        script = new Script();
-        script->init(this);
-
         connectToMessageInterface();
 
         // instantiate a pdp11 and setup GUI
@@ -297,13 +294,13 @@ bool Application::OnInit()
 
 	
 	// query version from M93X2probe
-	messageInterface->xmtRequest(new RequestVersionRead());
+	messageInterface->xmtRequest(new RequestVersionRead(AUTOTAG));
 	// ResponseVersion via readevent, calls SetLabel()
 	mainFrame->SetLabel("uTracer11 - waiting for connection"); // default if ResponseVersion fails
 
 	// query internal state panel, if PDP11 exposes any	
 	// response adds vars to stateVars
-	messageInterface->xmtRequest(new RequestRegDef());
+	messageInterface->xmtRequest(new RequestRegDef(AUTOTAG));
 
     }
     catch (const std::exception& e) {

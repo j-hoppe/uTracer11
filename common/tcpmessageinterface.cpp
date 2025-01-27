@@ -111,7 +111,7 @@ void TcpMessageInterface::receiveRequests() {
                 Message* msg = Message::parse(line.c_str());
                 if (msg == nullptr) {
 					// parse error
-					msg = new ResponseError(Message::errorBuffer) ;
+					msg = new ResponseError(Message::errorTag, Message::errorBuffer) ;
 					fprintf(stderr, "Non-message text from client: \"%s\"\n", msg->render());
 					transmitQueue.push(msg) ; // direct response, only valid msg go to simulator
                 } else {

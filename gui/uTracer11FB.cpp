@@ -1040,105 +1040,31 @@ MainFrameFB::MainFrameFB( wxWindow* parent, wxWindowID id, const wxString& title
 
 	executePanelSizer->Add( microStepButton, 0, wxALL|wxEXPAND, 5 );
 
-	autoStepPanel = new wxPanel( runPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	scriptPanel = new wxPanel( runPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxStaticBoxSizer* sbSizer13;
-	sbSizer13 = new wxStaticBoxSizer( new wxStaticBox( autoStepPanel, wxID_ANY, wxT("Auto Stepping") ), wxVERTICAL );
+	sbSizer13 = new wxStaticBoxSizer( new wxStaticBox( scriptPanel, wxID_ANY, wxT("Script Auto Stepping") ), wxVERTICAL );
 
-	autoStepButton = new wxButton( sbSizer13->GetStaticBox(), wxID_ANY, wxT("Step until stop condition"), wxDefaultPosition, wxDefaultSize, 0 );
-	sbSizer13->Add( autoStepButton, 0, wxALL|wxEXPAND, 5 );
+	scriptLoadButton = new wxButton( sbSizer13->GetStaticBox(), wxID_ANY, wxT("Load"), wxDefaultPosition, wxDefaultSize, 0 );
+	sbSizer13->Add( scriptLoadButton, 0, wxALL|wxEXPAND, 5 );
 
-	m_panel19 = new wxPanel( sbSizer13->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	wxBoxSizer* bSizer11;
-	bSizer11 = new wxBoxSizer( wxHORIZONTAL );
+	scriptSaveButton = new wxButton( sbSizer13->GetStaticBox(), wxID_ANY, wxT("Save"), wxDefaultPosition, wxDefaultSize, 0 );
+	sbSizer13->Add( scriptSaveButton, 0, wxALL|wxEXPAND, 5 );
 
-	m_staticText2 = new wxStaticText( m_panel19, wxID_ANY, wxT("uPC ="), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText2->Wrap( -1 );
-	bSizer11->Add( m_staticText2, 0, wxALIGN_CENTER|wxALIGN_CENTER_HORIZONTAL|wxALL, 5 );
+	scriptRunButton = new wxButton( sbSizer13->GetStaticBox(), wxID_ANY, wxT("Run"), wxDefaultPosition, wxDefaultSize, 0 );
+	sbSizer13->Add( scriptRunButton, 0, wxALL|wxEXPAND, 5 );
 
-	stopUpcTextCtrl = new wxTextCtrl( m_panel19, wxID_ANY, wxT("000"), wxDefaultPosition, wxSize( -1,-1 ), 0 );
-	#ifdef __WXGTK__
-	if ( !stopUpcTextCtrl->HasFlag( wxTE_MULTILINE ) )
-	{
-	stopUpcTextCtrl->SetMaxLength( 4 );
-	}
-	#else
-	stopUpcTextCtrl->SetMaxLength( 4 );
-	#endif
-	stopUpcTextCtrl->SetMaxSize( wxSize( 50,-1 ) );
+	scriptAbortButton = new wxButton( sbSizer13->GetStaticBox(), wxID_ANY, wxT("Abort"), wxDefaultPosition, wxDefaultSize, 0 );
+	sbSizer13->Add( scriptAbortButton, 0, wxALL|wxEXPAND, 5 );
 
-	bSizer11->Add( stopUpcTextCtrl, 1, wxALIGN_CENTER|wxALIGN_CENTER_HORIZONTAL|wxALL, 5 );
+	scriptStatusText = new wxStaticText( sbSizer13->GetStaticBox(), wxID_ANY, wxT("Script Status Text"), wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER_HORIZONTAL );
+	scriptStatusText->Wrap( -1 );
+	sbSizer13->Add( scriptStatusText, 0, wxALL|wxEXPAND, 5 );
 
 
-	m_panel19->SetSizer( bSizer11 );
-	m_panel19->Layout();
-	bSizer11->Fit( m_panel19 );
-	sbSizer13->Add( m_panel19, 0, wxALL, 0 );
-
-	m_staticText106 = new wxStaticText( sbSizer13->GetStaticBox(), wxID_ANY, wxT("or UNIBUS opcode fetch from"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText106->Wrap( -1 );
-	sbSizer13->Add( m_staticText106, 0, wxALL, 5 );
-
-	m_panel20 = new wxPanel( sbSizer13->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	wxBoxSizer* bSizer13;
-	bSizer13 = new wxBoxSizer( wxHORIZONTAL );
-
-	m_staticText21 = new wxStaticText( m_panel20, wxID_ANY, wxT("addr ="), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText21->Wrap( -1 );
-	bSizer13->Add( m_staticText21, 0, wxALIGN_CENTER|wxALIGN_CENTER_HORIZONTAL|wxALL, 0 );
-
-	stopUnibusCycleComboBox = new wxComboBox( m_panel20, wxID_ANY, wxT("any"), wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_READONLY );
-	stopUnibusCycleComboBox->Append( wxT("DATI") );
-	stopUnibusCycleComboBox->Append( wxT("DATO") );
-	stopUnibusCycleComboBox->Append( wxT("any") );
-	bSizer13->Add( stopUnibusCycleComboBox, 0, wxALIGN_CENTER|wxALIGN_CENTER_HORIZONTAL|wxALL, 5 );
-
-	stopUnibusAddrTextCtrl = new wxTextCtrl( m_panel20, wxID_ANY, wxT("0123456"), wxDefaultPosition, wxSize( -1,-1 ), 0 );
-	#ifdef __WXGTK__
-	if ( !stopUnibusAddrTextCtrl->HasFlag( wxTE_MULTILINE ) )
-	{
-	stopUnibusAddrTextCtrl->SetMaxLength( 7 );
-	}
-	#else
-	stopUnibusAddrTextCtrl->SetMaxLength( 7 );
-	#endif
-	stopUnibusAddrTextCtrl->SetMaxSize( wxSize( 60,-1 ) );
-
-	bSizer13->Add( stopUnibusAddrTextCtrl, 0, wxALL, 5 );
-
-
-	m_panel20->SetSizer( bSizer13 );
-	m_panel20->Layout();
-	bSizer13->Fit( m_panel20 );
-	sbSizer13->Add( m_panel20, 0, wxALL, 5 );
-
-	m_panel21 = new wxPanel( sbSizer13->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	wxBoxSizer* bSizer14;
-	bSizer14 = new wxBoxSizer( wxHORIZONTAL );
-
-	m_staticText211 = new wxStaticText( m_panel21, wxID_ANY, wxT("repeat count ="), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText211->Wrap( -1 );
-	bSizer14->Add( m_staticText211, 0, wxALIGN_CENTER|wxALIGN_CENTER_HORIZONTAL|wxALL, 5 );
-
-	stopRepeatCountTextCtrl = new wxTextCtrl( m_panel21, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	stopRepeatCountTextCtrl->SetMaxSize( wxSize( 60,-1 ) );
-
-	bSizer14->Add( stopRepeatCountTextCtrl, 0, wxALIGN_CENTER|wxALIGN_CENTER_HORIZONTAL|wxALL, 5 );
-
-
-	m_panel21->SetSizer( bSizer14 );
-	m_panel21->Layout();
-	bSizer14->Fit( m_panel21 );
-	sbSizer13->Add( m_panel21, 0, wxALL, 0 );
-
-	autoStepStatusText = new wxStaticText( sbSizer13->GetStaticBox(), wxID_ANY, wxT("auto Step Status Text"), wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER_HORIZONTAL );
-	autoStepStatusText->Wrap( -1 );
-	sbSizer13->Add( autoStepStatusText, 0, wxALL|wxEXPAND, 5 );
-
-
-	autoStepPanel->SetSizer( sbSizer13 );
-	autoStepPanel->Layout();
-	sbSizer13->Fit( autoStepPanel );
-	executePanelSizer->Add( autoStepPanel, 0, wxEXPAND | wxALL, 0 );
+	scriptPanel->SetSizer( sbSizer13 );
+	scriptPanel->Layout();
+	sbSizer13->Fit( scriptPanel );
+	executePanelSizer->Add( scriptPanel, 0, wxEXPAND | wxALL, 0 );
 
 
 	runPanel->SetSizer( executePanelSizer );
@@ -1212,7 +1138,10 @@ MainFrameFB::MainFrameFB( wxWindow* parent, wxWindowID id, const wxString& title
 	powerCycleButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrameFB::powerCycleButtonOnButtonClick ), NULL, this );
 	manClockEnableButton->Connect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( MainFrameFB::manClockEnableButtonOnToggleButton ), NULL, this );
 	microStepButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrameFB::microStepButtonOnButtonClick ), NULL, this );
-	autoStepButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrameFB::autoStepButtonOnButtonClick ), NULL, this );
+	scriptLoadButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrameFB::scriptLoadButtonOnButtonClick ), NULL, this );
+	scriptSaveButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrameFB::scriptSaveButtonOnButtonClick ), NULL, this );
+	scriptRunButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrameFB::scriptRunButtonOnButtonClick ), NULL, this );
+	scriptAbortButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrameFB::scriptAbortButtonOnButtonClick ), NULL, this );
 	this->Connect( updateTimer.GetId(), wxEVT_TIMER, wxTimerEventHandler( MainFrameFB::updateTimerOnTimer ) );
 }
 
@@ -1223,7 +1152,10 @@ MainFrameFB::~MainFrameFB()
 	powerCycleButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrameFB::powerCycleButtonOnButtonClick ), NULL, this );
 	manClockEnableButton->Disconnect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( MainFrameFB::manClockEnableButtonOnToggleButton ), NULL, this );
 	microStepButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrameFB::microStepButtonOnButtonClick ), NULL, this );
-	autoStepButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrameFB::autoStepButtonOnButtonClick ), NULL, this );
+	scriptLoadButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrameFB::scriptLoadButtonOnButtonClick ), NULL, this );
+	scriptSaveButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrameFB::scriptSaveButtonOnButtonClick ), NULL, this );
+	scriptRunButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrameFB::scriptRunButtonOnButtonClick ), NULL, this );
+	scriptAbortButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrameFB::scriptAbortButtonOnButtonClick ), NULL, this );
 	this->Disconnect( updateTimer.GetId(), wxEVT_TIMER, wxTimerEventHandler( MainFrameFB::updateTimerOnTimer ) );
 
 }

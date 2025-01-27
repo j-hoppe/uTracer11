@@ -43,7 +43,7 @@ void Pdp11Adapter34::updateGui(State state) {
         controlwordPanel->Enable();
         dataPathPanel->Enable();
         break;
-    case State::uMachineAutoStepping:
+    case State::scriptRunning:
         uFlowPanel->Enable();
         controlwordPanel->Enable();
         dataPathPanel->Enable();
@@ -68,7 +68,7 @@ void Pdp11Adapter34::onInit() {
 	displayStateVarsDefinition() ;
 
     // generate messages to init gui, until first status updates comes in
-    auto cpuSignals = ResponseKY11LBSignals(0, 0, 0, 0, 0);
+    auto cpuSignals = ResponseKY11LBSignals(NOTAG, 0, 0, 0, 0, 0);
     cpuSignals.process(); // calls virtual onRcvMessageFromPdp11() and updates GUI
 
     // convert "LSB-first" binary string to value
@@ -126,7 +126,7 @@ void Pdp11Adapter34::onInit() {
     uflowPageAnnotations.dumpKeywordsForDatafields(uflowTodataPathKeyPatterns);
 
     // set manclock to initial state of "ManClock" ToggleButton. false  = not pressed
-    auto _manClkEnable = wxGetApp().mainFrame->manClockEnableButton->GetValue();
+    auto _manClkEnable = app->mainFrame->manClockEnableButton->GetValue();
     setManClkEnable(_manClkEnable); // state change
 
 }
@@ -137,6 +137,7 @@ void Pdp11Adapter34::onTimer(unsigned periodMs) {
     bool pollSlow = (timerUnprocessedMs > 500);
     if (pollSlow)
         timerUnprocessedMs -= 500;
+pollSlow = false;
 
     // do not pollSlow data when pdp11 is running at own speed
     if (state == State::init || state == State::uMachineRunning)
@@ -149,16 +150,16 @@ void Pdp11Adapter34::onTimer(unsigned periodMs) {
         // which do you want to see "dancing" while CPU is running in real time?
         // request KY11 & unibussignals
         // response from M93X2probe is ResponseKY11LBSignals,ResponseUnibusSingals
-        auto reqKy11 = new RequestKY11LBSignalsRead();
-        wxGetApp().messageInterface->xmtRequest(reqKy11); // send+delete
-        auto reqUnibus = new RequestUnibusSignalsRead();
-        wxGetApp().messageInterface->xmtRequest(reqUnibus); // send+delete
+        auto reqKy11 = new RequestKY11LBSignalsRead(NOTAG);
+        app->messageInterface->xmtRequest(reqKy11); // send+delete
+        auto reqUnibus = new RequestUnibusSignalsRead(NOTAG);
+        app->messageInterface->xmtRequest(reqUnibus); // send+delete
 
-        bool updateStateVars = (state == State::uMachineManualStepping) || (state == State::uMachineAutoStepping);
+        bool updateStateVars = (state == State::uMachineManualStepping);
         if (updateStateVars && stateVars.size() > 0) {
             // singlestepping: the pdp11 publishes its internal state, update it
-            auto reqRegVal = new RequestRegVal();
-            wxGetApp().messageInterface->xmtRequest(reqRegVal); // send+delete
+            auto reqRegVal = new RequestRegVal(NOTAG);
+            app->messageInterface->xmtRequest(reqRegVal); // send+delete
         }
     }
 }
@@ -297,18 +298,22 @@ void Pdp11Adapter34::paintDocumentAnnotations() {
 
 void Pdp11Adapter34::setManClkEnable(bool _manClkEnable)
 {
-    auto msg = new RequestKY11LBSignalWrite("MCE", _manClkEnable);
-    wxGetApp().messageInterface->xmtRequest(msg); // send+delete
+    auto msg = new RequestKY11LBSignalWrite(AUTOTAG, "MCE", _manClkEnable);
+    app->messageInterface->xmtRequest(msg); // send+delete
     // answer from M93X2probe is ResponseKY11LBSignals
     Pdp11Adapter::setManClkEnable(_manClkEnable); // actions same for all pdp11s
 }
 
-void Pdp11Adapter34::uStep()
+// step and query new state
+void Pdp11Adapter34::requestUStep()
 {
-    auto msg = new RequestKY11LBSignalWrite("MC", 2/*Pulse*/);
-    wxGetApp().messageInterface->xmtRequest(msg); // send+delete
+    auto msg1 = new RequestKY11LBSignalWrite(AUTOTAG, "MC", 2/*Pulse*/);
+    app->messageInterface->xmtRequest(msg1); // send+delete
     // answer from M93X2probe is ResponseKY11LBSignals
     Pdp11Adapter::uStepStart(); // actions same for all pdp11s
+
+    auto msg2 = new RequestRegVal(AUTOTAG);
+    app->messageInterface->xmtRequest(msg2); // send+delete
 }
 
 /*
@@ -367,20 +372,20 @@ void Pdp11Adapter34::onResponseKY11LBSignals(ResponseKY11LBSignals* ky11Signals)
     // process MPC events only for change
     if (microProgramCounter != ky11Signals->mpc) {
         // MPC changed => new value, => event + display update
-        doEvalMpc(ky11Signals->mpc);
+        onResponseMpc(ky11Signals->mpc);
     }
 }
 
 // Unibus-Signal panel same for all Pdp11s
 // route message to Pdp11-model specific panel
 void Pdp11Adapter34::onResponseUnibusSignals(ResponseUnibusSignals* unibusSignals) {
-    doEvalUnibusSignals(unibusSignals); // same for all pdp11's
+    Pdp11Adapter::onResponseUnibusSignals(unibusSignals); // same for all pdp11's
 }
 
 // Unibus-Signal panel same for all Pdp11s
 // route message to Pdp11-model specific panel
-void Pdp11Adapter34::evalUnibusCycle(ResponseUnibusCycle* unibusCycle)
+void Pdp11Adapter34::onResponseUnibusCycle(ResponseUnibusCycle* unibusCycle)
 {
-    doEvalUnibusCycle(unibusCycle); // same for all pdp11's
+    Pdp11Adapter::onResponseUnibusCycle(unibusCycle); // same for all pdp11's
 }
 

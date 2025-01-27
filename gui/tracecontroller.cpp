@@ -1,12 +1,12 @@
-/* tracecontroller - manages the upstep/UNIBUS /disasassembly form and disassembly
+/* tracecontroller - manages the ustep / UNIBUS / disasassembly form
 
 Display in grid like:
   col 0     1       2       3       4       5         6                 7       8           9
  #    MPC   Cntrl   Addr    Data    Label   Opcode    Operands          Addr    data hex    Comment
  1    016
  2          DATI    003740  022767          cmp       #------,------    007E0   25F7        fetch opcode
- 3    015
- 4    123
+ 3    015   pupp=123,c=1
+ 4    123   c:1->0
  5          DATI    003742  104777          cmp       #104777,------    007E2   89FF        read data, address = pc
  6    234
  7    235
@@ -89,8 +89,10 @@ void TraceController::init(wxGrid* _grid, Pdp11Adapter* _pdp11Adapter, wxFileNam
 void TraceController::clear() {
     // delete all grid rows
     grid->DeleteRows(0, grid->GetNumberRows());
-    stateVarDisplayGridCoords.Set(9999999,999999);// invalid
+    stateVarsActiveCellCoords.Set(9999999,999999);// invalid
     singleStepCount = 0 ;
+    stateVarsGridVisibleVals.clear();
+    stateVarsActiveCellVals.clear();
 }
 
 
@@ -242,7 +244,14 @@ void TraceController::evalUStep(unsigned mpc) {
     grid->SetCellSize(row, 1, 1, colsToMerge) ;
     grid->SetCellValue(row, 0, wxString::Format("%03o", mpc));
     grid->SetCellValue(row, 1, "(updated on response)");
-    stateVarDisplayGridCoords.Set(row,1); // "statevar=value" pairs in same row as MPC
+    stateVarsActiveCellCoords.Set(row,1); // "statevar=value" pairs in same row as MPC
+
+    // last active statevar row is now not worked on any more
+    // copy stuff visibile in last row to global visible state
+    for (auto varval = stateVarsActiveCellVals.begin() ; varval != stateVarsActiveCellVals.end() ; ++varval)
+        stateVarsGridVisibleVals[varval->first] = varval->second;
+    stateVarsActiveCellVals.clear(); // all moved to grid
+
     singleStepCount++ ;
 
     //grid->MakeCellVisible(row, 0);
@@ -250,59 +259,58 @@ void TraceController::evalUStep(unsigned mpc) {
 }
 
 
+// display full or changed stateVars in the row of last MPC
+// 3 cases for each statevar:
+// 1. stateVar not yet shown -> visibileStateVarVals[] not present -> display "varname=val"
+// 2. stateVar shown earlier, but changed -> visibileStateVarVals[] != var.val -> "varname: old->new"
+// 3. stateVar not changed -> visibileStateVarVals[] == var.val -> supress display
 
 
-// return comma-separated of stateVars : "name=value,..."
-std::string TraceController::stateVarsFullAsText() {
-    std::string result = "";
-    std::string sep = "" ;
-    for (unsigned i=0; i < pdp11Adapter->stateVars.size() ; i++) {
-        Variable *stateVar = pdp11Adapter->stateVars.get(i) ;
-        if (stateVar->isType(VariableType::trace)) {
-            result += sep ;
-            result += format_string("%s=%s", stateVar->name.c_str(), stateVar->valueText().c_str()) ;
-            sep = "," ;
-        }
-    }
-    return result ;
-}
-
-// print lsit of changed vars: "var:old->new, ..."
-std::string TraceController::stateVarsChangedAsText() {
-    std::string result = "";
-    std::string sep = "" ;
-    for (unsigned i=0; i < pdp11Adapter->stateVars.size() ; i++) {
-        Variable *stateVar = pdp11Adapter->stateVars.get(i) ;
-        if (stateVar->isType(VariableType::trace)
-        		&& stateVar->prevValue != stateVar->value ) {
-            result += sep ;
-            result += format_string("%s:%s->%s", 
-					stateVar->name.c_str(),
-					stateVar->valueText(stateVar->prevValue).c_str(),
-					stateVar->valueText().c_str()) ;
-            sep = "," ;
-        }
-    }
-    return result ;
-}
+// 1. stateVar not yet shown in grid
+// //       -> visibleGridStateVarVals[] not present -> display "varname=val"
+// 2. stateVar shown earlier, but changed -> visibileStateVarVals[] != var.val -> "varname: old->new"
+// 3. stateVar not changed -> visbileStateVarVals[] == var.val -> supress display
 
 
-// display full or changed stateVars in the row of
-// last MPC
+// can be called multiple times for the same row, as responses from multiple sources
+// update the global statevar list.
+// as current row is overwritten then,
 void TraceController::displayStateVars() {
-    if (stateVarDisplayGridCoords.GetRow() >= grid->GetNumberRows())
+    if (stateVarsActiveCellCoords.GetRow() >= grid->GetNumberRows())
         return ; // grid in ill state
-    if (singleStepCount < 2)
-        grid->SetCellValue(stateVarDisplayGridCoords, stateVarsFullAsText());
-    else {
-		// change detection: state is permanently updated,
-		// changes are accumulated and reset only at uStepStart()
-		// PATCH: changelogic maybe reset too early,
-		// do not overwrite previos MPC lines with now "empty" result
-		std::string text = stateVarsChangedAsText() ;
-		if (!text.empty())
-	        grid->SetCellValue(stateVarDisplayGridCoords, stateVarsChangedAsText());
-	}
+    std::string displayLine;
+    std::string sep = "";
+    if (singleStepCount == 0) // (re)start of singlestepping: force full display
+        stateVarsGridVisibleVals.clear();
+    for (unsigned i = 0; i < pdp11Adapter->stateVars.size(); i++) {
+        Variable* stateVar = pdp11Adapter->stateVars.get(i);
+        if (stateVar->isType(VariableType::trace)) {
+            auto visibleStateVar = stateVarsGridVisibleVals.find(stateVar->name);
+            // entry->first = name, entry->second = value
+            if (visibleStateVar == stateVarsGridVisibleVals.end()) {
+                // case 1
+                displayLine += sep;
+                displayLine += format_string("%s=%s", stateVar->name.c_str(), stateVar->valueText().c_str());
+                sep = ",";
+                // save result for grid update after MPC change
+                stateVarsActiveCellVals[stateVar->name] = stateVar->value; // add new
+            } else if (visibleStateVar->second != stateVar->value) {
+                // case 2
+                displayLine += sep;
+                displayLine += format_string("%s:%s->%s",
+                                             stateVar->name.c_str(),
+                                             stateVar->valueText(visibleStateVar->second).c_str(),
+                                             stateVar->valueText().c_str());
+                sep = ",";
+                // update current cell for grid update after MPC change
+                stateVarsActiveCellVals[stateVar->name]= stateVar->value;
+            }
+            else
+                // case 3
+                ;
+        }
+    }
+    grid->SetCellValue(stateVarsActiveCellCoords, displayLine);
 }
 
 
@@ -310,7 +318,7 @@ void TraceController::displayStateVars() {
 // feed-in only cycles generated by CPU
 // gather in disasBusCycles, also disassemble
 // only called if "manClkEnable".
-void TraceController::evalUnibusCycle(ResponseUnibusCycle* unibusCycle) {
+void TraceController::onResponseUnibusCycle(ResponseUnibusCycle* unibusCycle) {
     // Ignore UNIBUS cycles until "StartOfMacroInstruction()" is called, to sync with code fetch.
     if (!syncronizedWithMicroMachine)
         return;
@@ -342,7 +350,7 @@ void TraceController::evalUnibusCycle(ResponseUnibusCycle* unibusCycle) {
         cycleText = "DATOB";
         break;
     default:
-        wxLogFatalError("TraceController::evalUnibusCycle() invalid bus cycle");
+        wxLogFatalError("TraceController::evalResponseUnibusCycle() invalid bus cycle");
     }
     disasBusCyclesCount++;
 
@@ -473,4 +481,3 @@ void TraceController::disasReadSymbolFile(wxFileName fullpath)
     strcpy(sym.info, "operand incomplete");
     disasSymbols.push_back(sym);
 }
-

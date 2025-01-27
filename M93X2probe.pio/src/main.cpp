@@ -38,16 +38,20 @@ void setup() {
     LOG("\n\M93X2probe compiled %s %s\n", __DATE__, __TIME__);
 
     theConsole.setup(&Serial1, 115200);
+    //theConsole.printStrF("\nHello world!\n");
+    //while(1) ;
 
     theBootLogic.setup();
 
     // output response to "VERSION" command, is also answer to RESET
-    theConsole.printStrF("\n%s\n", theController.versionAsResponse().render());
+    theConsole.printStrF("\n%s\n", theController.versionAsResponse(0).render());
 
+	/*
     // test print out, via controller callback
     thePdp11Data.setIterationCallback(&theController, &Pdp11DataUser::onPdp11DataIteration);
     auto recList = thePdp11Data.getRecordListByNumber(1);
     thePdp11Data.iterate(recList, 1);
+    */
 }
 
 void loop() {

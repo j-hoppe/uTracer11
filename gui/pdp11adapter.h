@@ -26,7 +26,7 @@ Abstract base class
 #include "memoryimage.h" // UNIBUS memory, clone from QUniBone
 #include "memorygridcontroller.h"
 #include "tracecontroller.h"
-#include "autostepcontroller.h"
+#include "script.h"
 #include "mainframe.h"
 
 
@@ -61,14 +61,19 @@ public:
     }
 };
 
+
+class Application ;
+
 class Pdp11Adapter {
 public:
+  Application *app =nullptr; // give pdp11adapter access to wxWidgets Elements
+
     // State controls function of GUI elements
     enum class State {
         init, // while starting
         uMachineRunning, // PDP11 executing under own control
         uMachineManualStepping, // micro steps by manual button press
-        uMachineAutoStepping // multiple steps until breakpoint
+        scriptRunning // multiple steps until breakpoint
     };
     State state;
 
@@ -188,16 +193,20 @@ public:
     virtual void setManClkEnable(bool _manClkEnable);
 
     // execute a single µstep
-    virtual void uStep() {
-        wxLogFatalError("Abstract Pdp11Adapter::uStep() called");
+    virtual void requestUStep() {
+        wxLogFatalError("Abstract Pdp11Adapter::requestUStep() called");
     }
 
     void uStepStart();
 
     void uStepComplete(unsigned mpc);
 
-    volatile bool stopAutoStepping;
-    void doAutoStepping(uint32_t stopUpc, int stopUnibusCycle, uint32_t stopUnibusAddress, int stopRepeatCount);
+	Script script ;
+	wxFileName scriptFilePath ;
+	void scriptStart() ;
+	void scriptAbort() ;
+	void onScriptComplete(Script::RunState completeReason) ;
+	
 
     virtual void onResponseKM11Signals(ResponseKM11Signals* km11Signals) {
         UNREFERENCED_PARAMETER(km11Signals);
@@ -208,24 +217,14 @@ public:
         wxLogFatalError("Abstract Pdp11::onResponseKY11LBSignals() called");
     }
 
-    void doEvalMpc(uint16_t newMpc);
+    void onResponseMpc(uint16_t newMpc);
 
     // all UNIBUS update send to same base Form
-    void doEvalUnibusSignals(ResponseUnibusSignals* unibusSignals);
+    virtual void onResponseUnibusSignals(ResponseUnibusSignals* unibusSignals);
 
-    virtual void onResponseUnibusSignals(ResponseUnibusSignals* unibusSignals) {
-        UNREFERENCED_PARAMETER(unibusSignals);
-        wxLogFatalError("Abstract Pdp11::evalUnibusSignals() called");
-    }
-
-    void doLogEvent(const char* format, ...);
-    ResponseUnibusCycle lastUnibusCycle;
-    void doEvalUnibusCycle(ResponseUnibusCycle* unibusCycle);
-
-    virtual void evalUnibusCycle(ResponseUnibusCycle* unibusCycle) {
-        UNREFERENCED_PARAMETER(unibusCycle);
-        wxLogFatalError("Abstract Pdp11::evalUnibusCycle() called");
-    }
+    void logEvent(const char* format, ...);
+    ResponseUnibusCycle lastUnibusCycle = ResponseUnibusCycle(NOTAG);
+    virtual void onResponseUnibusCycle(ResponseUnibusCycle* unibusCycle);
 
     void displayStateVarsDefinition() ;
     void displayStateVarsValues() ;
@@ -237,8 +236,6 @@ public:
 
 
     TraceController traceController;
-
-    AutoStepController autoStepController;
 
     void loadControlStore(wxFileName resourcePath, std::string subDir, std::string xmlFileName);
 

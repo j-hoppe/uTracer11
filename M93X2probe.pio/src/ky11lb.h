@@ -30,7 +30,7 @@ class KY11LB {
     void writeMCE(bool val);
     void writeMC(bool val);
     bool writeSignal(Signal signal, bool val);
-    ResponseKY11LBSignals getSignalsAsResponse();
+    ResponseKY11LBSignals getSignalsAsResponse(MsgTag _tag);
 };
 
 // Singleton

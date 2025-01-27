@@ -60,7 +60,7 @@ Pdp11Adapter::Pdp11Adapter()
 
 void Pdp11Adapter::setupGui(wxFileName _resourceDir)
 {
-    Application* app = &wxGetApp();
+    app = &wxGetApp();
     // generic panels before and optical left of specific ones
     resourceDir = _resourceDir;
 
@@ -92,9 +92,8 @@ void Pdp11Adapter::setupGui(wxFileName _resourceDir)
 
 // Set State of common controls, visibility and functions
 void Pdp11Adapter::updateGui(State newState) {
-    doLogEvent("State change from %d to %d", state, newState); // same for all pdp11's
+    logEvent("State change from %d to %d", state, newState); // same for all pdp11's
     state = newState;
-    Application* app = &wxGetApp();
     auto infoLabel = app->mainFrame->uMachineStateText; // fat state
     auto infoLabel2 = app->mainFrame->uMachineStateText2; //additional info
     switch (state) {
@@ -112,35 +111,35 @@ void Pdp11Adapter::updateGui(State newState) {
         infoLabel2->SetLabel("No MPC/signal update");
         app->mainFrame->manClockEnableButton->Enable();
         app->mainFrame->microStepButton->Disable();
-        app->mainFrame->autoStepPanel->Disable();
-        app->mainFrame->autoStepButton->SetLabel("Start Auto Stepping");
-        app->mainFrame->autoStepStatusText->SetLabel("");
+        app->mainFrame->scriptRunButton->Disable();
+        app->mainFrame->scriptAbortButton->Disable();
+        app->mainFrame->scriptStatusText->SetLabel("");
         memoryPanel->Disable();
         unibusSignalsPanel->Disable();
         internalStatePanel->Disable();
         break;
     case State::uMachineManualStepping:
         infoLabel->SetLabel("uMachine MAN CLOCK");
-        infoLabel2->SetLabel("Single step via button");
+        infoLabel2->SetLabel("Single step by button");
         app->mainFrame->manClockEnableButton->Enable();
         app->mainFrame->microStepButton->Enable();
-        app->mainFrame->autoStepPanel->Enable();
-        app->mainFrame->autoStepButton->SetLabel("Start Auto Stepping");
-        //app->mainFrame->autoStepStatusText->SetLabel(""); // result of last auto step run
+        app->mainFrame->scriptRunButton->Enable();
+        app->mainFrame->scriptAbortButton->Disable();
+        //app->mainFrame->scriptStatusText->SetLabel(""); // result of last auto step run
         tracePanel->Enable();
         memoryPanel->Enable();
         unibusSignalsPanel->Enable();
         internalStatePanel->Enable();
         break;
-    case State::uMachineAutoStepping:
-        infoLabel->SetLabel("uMachine AUTO CLOCK");
-        infoLabel2->SetLabel("Steps until condition");
+    case State::scriptRunning:
+        infoLabel->SetLabel("uMachine SCRIPTED");
+        infoLabel2->SetLabel("uSteps by JavaScript");
         app->mainFrame->manClockEnableButton->Disable();
         app->mainFrame->microStepButton->Disable();
         // when auto stepping, the "Auto Step" button is used to stop
-        app->mainFrame->autoStepPanel->Enable();
-        app->mainFrame->autoStepButton->SetLabel("Stop Auto Stepping");
-        app->mainFrame->autoStepStatusText->SetLabel(".... stepping ...");
+        app->mainFrame->scriptRunButton->Disable();
+        app->mainFrame->scriptAbortButton->Enable();
+        //app->mainFrame->scriptStatusText->SetLabel(".... stepping ...");
         tracePanel->Enable();
         memoryPanel->Enable();
         unibusSignalsPanel->Enable();
@@ -164,6 +163,7 @@ void Pdp11Adapter::updateGui(State newState) {
 
 // all Pdp11 models must init their GUI
 void Pdp11Adapter::onInit() {
+
     stateVars.clear() ;
     stateVarIndexOfRegister.clear() ;
 
@@ -181,7 +181,7 @@ void Pdp11Adapter::onInit() {
 
     timerUnprocessedMs = 99999; // force immediate call to onTimer()
     // generate messages to init gui, until first status updates comes in
-    auto unibusSignals = ResponseUnibusSignals();
+    auto unibusSignals = ResponseUnibusSignals(NOTAG);
     unibusSignals.process(); // calls virtual onRcvMessageFromPdp11() and updates GUI
 
     receivedUnibusCycleAfterUstep = false; // wait for UNIBUS capture after ustep
@@ -192,6 +192,9 @@ void Pdp11Adapter::onInit() {
     memoryGridController.rebuild();
     ioPageGridController.rebuild();
 
+    script.init(this);
+    // fill code window with help
+    app->mainFrame->scriptTextCtrlFB->SetValue(script.helpText()) ;
 }
 
 // display version of conncted PDP11
@@ -199,8 +202,8 @@ void Pdp11Adapter::onResponseVersion(ResponseVersion* responseVersion) {
     //wxString title = wxString::Format("uTracer11 - %s, connected to %s", pdp11Adapter->getTypeLabel(), messageInterface->name);
     wxString title = wxString::Format("uTracer11 - %s, connected to \"%s\" via %s", getTypeLabel(),
                                       responseVersion->version,
-                                      wxGetApp().messageInterface->name);
-    wxGetApp().mainFrame->SetLabel(title);
+                                      app->messageInterface->name);
+    app->mainFrame->SetLabel(title);
 }
 
 
@@ -211,7 +214,7 @@ void Pdp11Adapter::onResponseVersion(ResponseVersion* responseVersion) {
 // registers[].object is the text control displaying the value
 // !! Expected to be called only ONCE in lifetime !!
 void Pdp11Adapter::evalResponseRegisterDefinition(ResponseRegDef* responseRegDef) {
-    //    wxGetApp().pdp11Adapter->evalResponseStateDefinition(this);
+    //    app->pdp11Adapter->evalResponseStateDefinition(this);
     if (responseRegDef->registers.size() == 0)
         return; // empty answer?
 
@@ -229,7 +232,7 @@ void Pdp11Adapter::evalResponseRegisterDefinition(ResponseRegDef* responseRegDef
             stateVarIndexOfRegister[regIndex] = stateVar->index ;
         }
     }
-	displayStateVarsDefinition() ;
+    displayStateVarsDefinition() ;
 }
 
 
@@ -272,7 +275,7 @@ void Pdp11Adapter::displayStateVarsDefinition() {
 
     // make visible
     internalStatePanel->Show(true);
-    wxGetApp().mainFrame->pdp11StatusSizerFB->Layout();
+    app->mainFrame->pdp11StatusSizerFB->Layout();
 }
 
 
@@ -288,7 +291,7 @@ void Pdp11Adapter::displayStateVarsValues() {
             tmpVarValStaticText->SetLabel(stateVar->valueText());
         }
     }
-	traceController.displayStateVars() ;
+    traceController.displayStateVars() ;
 }
 
 // update and display list of values
@@ -327,21 +330,21 @@ DCLO  0  0                   0   ...
 */
 
 void Pdp11Adapter::powerUp() {
-    auto msg1 = new RequestUnibusSignalWrite("ACLO", 0);
-    wxGetApp().messageInterface->xmtRequest(msg1); // send+delete
-    auto msg2 = new RequestUnibusSignalWrite("DCLO", 0);
-    wxGetApp().messageInterface->xmtRequest(msg2); // send+delete
+    auto msg1 = new RequestUnibusSignalWrite(AUTOTAG, "ACLO", 0);
+    app->messageInterface->xmtRequest(msg1); // send+delete
+    auto msg2 = new RequestUnibusSignalWrite(AUTOTAG, "DCLO", 0);
+    app->messageInterface->xmtRequest(msg2); // send+delete
 
     uStepStart();
 }
 
 void Pdp11Adapter::powerDown() { // actions same for all pdp11s
-    auto msg1 = new RequestUnibusSignalWrite("ACLO", 1);
-    wxGetApp().messageInterface->xmtRequest(msg1); // send+delete
+    auto msg1 = new RequestUnibusSignalWrite(AUTOTAG, "ACLO", 1);
+    app->messageInterface->xmtRequest(msg1); // send+delete
     // UNIBUS specs 2-3,s delay -> approx 1000 CPU instructions delay here.
     // impossible do achive  as CPU is under manual ustep constrol
-    auto msg2 = new RequestUnibusSignalWrite("DCLO", 1);
-    wxGetApp().messageInterface->xmtRequest(msg2); // send+delete
+    auto msg2 = new RequestUnibusSignalWrite(AUTOTAG, "DCLO", 1);
+    app->messageInterface->xmtRequest(msg2); // send+delete
 }
 
 
@@ -349,13 +352,13 @@ void Pdp11Adapter::powerDown() { // actions same for all pdp11s
 void Pdp11Adapter::setManClkEnable(bool _manClkEnable) {
     manClkEnable = _manClkEnable;
     if (_manClkEnable) {
-		traceController.evalUClockSingle() ;
-        doLogEvent("Manual Micro Clock enabled"); // same for all pdp11's
+        traceController.evalUClockSingle() ;
+        logEvent("Manual Micro Clock enabled"); // same for all pdp11's
         updateGui(State::uMachineManualStepping);
     }
     else {
-		traceController.evalUClockRun() ;
-        doLogEvent("Manual Micro Clock disabled");
+        traceController.evalUClockRun() ;
+        logEvent("Manual Micro Clock disabled");
         updateGui(State::uMachineRunning);
     }
 }
@@ -364,65 +367,74 @@ void Pdp11Adapter::setManClkEnable(bool _manClkEnable) {
 // operation after initation of single ustep, same for all PDP11's
 // called before respones for signals and registers are received
 void Pdp11Adapter::uStepStart() {
-	stateVars.resetChange();
     receivedUnibusCycleAfterUstep = false;
 }
 
 // CPU completed a ustep, feed to sub modules
 void Pdp11Adapter::uStepComplete(unsigned mpc) {
     traceController.evalUStep(mpc);
-    if (state == State::uMachineAutoStepping)
-        autoStepController.evalUStep(mpc);
 }
 
 
-// this a blocking loop, which keeps the Gui alive
-// take care of reentrancy for message events!
-void Pdp11Adapter::doAutoStepping(uint32_t stopUpc, int stopUnibusCycle, uint32_t stopUnibusAddress, int stopRepeatCount) {
-    UNREFERENCED_PARAMETER(stopUpc);
-    UNREFERENCED_PARAMETER(stopUnibusCycle);
-    UNREFERENCED_PARAMETER(stopUnibusAddress);
-    UNREFERENCED_PARAMETER(stopRepeatCount);
-    wxStaticText* statusText = wxGetApp().mainFrame->autoStepStatusText;
-    //	wxLogFatalError("Abstract Pdp11Adapter::doAutoStepping() called");
-    stopAutoStepping = false; // user button signal
 
-    // stopUnibusAddress is opcode fetch address
-    autoStepController.init(this, stopUpc, stopUnibusAddress);
-    // todo: repeat count?
+// interface from GUI to Script
+void Pdp11Adapter::scriptStart() {
+    wxStaticText* statusText = app->mainFrame->scriptStatusText;
+    updateGui(State::scriptRunning);
+    statusText->SetLabel("Script running ...");
+    // blocking, but gui kept alive by script.yield()
+    std::string  jsCode = app->mainFrame->scriptTextCtrlFB->GetValue().ToStdString();
+    script.execute(jsCode) ;
+}
 
-    updateGui(State::uMachineAutoStepping);
-    statusText->SetLabel("Stepping ...");
 
-    // check for "ABORT" button press
-    while (!stopAutoStepping && !autoStepController.hasStopped()) {
-        //wxMilliSleep(100);  // Simulate some work
-        wxYield(); // process pending GUI messages
-        // or wxApp::ProcessPendingEvents() ?
-        // also calls onTimer()
+void Pdp11Adapter::scriptAbort() {
+    wxStaticText* statusText = app->mainFrame->scriptStatusText;
+    statusText->SetLabel("Script aborting ...");
+    script.abort() ;
+    // send async abort signal to script
+}
 
-        autoStepController.service();
-    }
+// called by Script
+// complete, aborted, semanticError, javascriptError
+void Pdp11Adapter::onScriptComplete(Script::RunState completeReason) {
+    wxStaticText* statusText = app->mainFrame->scriptStatusText;
+
+
     updateGui(State::uMachineManualStepping);
-    if (stopAutoStepping)
-        statusText->SetLabel("Manually stopped");
-    else
-        statusText->SetLabel(autoStepController.stopConditionText);
+    switch(completeReason) {
+    case Script::RunState::executing:
+    case Script::RunState::userAbortPending:
+            wxLogFatalError("program logic: onScriptComplete while executing");
+    	break ;
+    case Script::RunState::complete:
+        statusText->SetLabel("Script complete");
+        break ;
+    case Script::RunState::userAbort:
+        statusText->SetLabel("Script aborted by user");
+        break ;
+    case Script::RunState::javaScriptError:
+        statusText->SetLabel("JavaScript error");
+        break ;
+    case Script::RunState::semanticError:
+        statusText->SetLabel("Script usage error");
+        break ;
+    }
 
     // refresh displays which may have been disabled in autostepMode)
-    doEvalMpc(microProgramCounter);
-    if (lastUnibusCycle.isValid())
-        doEvalUnibusCycle(&lastUnibusCycle);
+//    onResponseMpc(microProgramCounter);
+
+    // refresh display
+//    if (lastUnibusCycle.isValid())
+//       onResponseUnibusCycle(&lastUnibusCycle);
 }
-
-
 
 
 // called when a new Mpc is received from pdp11
 // MPC changed => new value, => event + display update
-void Pdp11Adapter::doEvalMpc(uint16_t newMpc) {
+void Pdp11Adapter::onResponseMpc(uint16_t newMpc) {
     microProgramCounter = newMpc;
-    doLogEvent("mpc = %0.3o", microProgramCounter);
+    logEvent("mpc = %0.3o", microProgramCounter);
 
     stateVars.get("MPC")->setValue(newMpc) ;
     displayStateVarsValues() ;
@@ -435,7 +447,7 @@ void Pdp11Adapter::doEvalMpc(uint16_t newMpc) {
 
 // Fill in fields on the Unibus Signal form, which is identical for all PDP-11 models.
 // msg deleted by framework
-void Pdp11Adapter::doEvalUnibusSignals(ResponseUnibusSignals* unibusSignals)
+void Pdp11Adapter::onResponseUnibusSignals(ResponseUnibusSignals* unibusSignals)
 {
     auto panel = unibusSignalsPanel;
     auto s = wxString::Format("%06o", unibusSignals->signals.addr);
@@ -478,7 +490,7 @@ void Pdp11Adapter::doEvalUnibusSignals(ResponseUnibusSignals* unibusSignals)
 }
 
 // log text to global event panel
-void Pdp11Adapter::doLogEvent(const char* format, ...) {
+void Pdp11Adapter::logEvent(const char* format, ...) {
     const int bufferLen = 80;
     char buffer[bufferLen + 1];
     va_list argptr;
@@ -486,7 +498,6 @@ void Pdp11Adapter::doLogEvent(const char* format, ...) {
     vsnprintf(buffer, bufferLen, format, argptr);
     buffer[bufferLen - 1] = 0; // terminate on trunc
 
-    auto app = &wxGetApp();
     app->mainFrame->eventsTextCtrl->AppendText(buffer);
     app->mainFrame->eventsTextCtrl->AppendText("\n");
 }
@@ -496,7 +507,7 @@ void Pdp11Adapter::doLogEvent(const char* format, ...) {
 // -  memory image and memory display grids
 // - ustep activity trace
 // msg deleted by framework
-void Pdp11Adapter::doEvalUnibusCycle(ResponseUnibusCycle* unibusCycle)
+void Pdp11Adapter::onResponseUnibusCycle(ResponseUnibusCycle* unibusCycle)
 {
     if (unibusCycle == nullptr || !unibusCycle->isValid()) // refresh call  in pure
         return; // doEvalUnibusCycle(lastUnibusCycle) on start
@@ -514,7 +525,7 @@ void Pdp11Adapter::doEvalUnibusCycle(ResponseUnibusCycle* unibusCycle)
         s = wxString::Format("%s addr=%0.6o NXM", ResponseUnibusCycle::cycleText[unibusCycle->c1c0], unibusCycle->addr);
     else
         s = wxString::Format("%s addr=%0.6o data=%0.6o", ResponseUnibusCycle::cycleText[unibusCycle->c1c0], unibusCycle->addr, unibusCycle->data);
-    doLogEvent(s.ToStdString().c_str());
+    logEvent(s.ToStdString().c_str());
 
     // to state vars
     stateVars.get("UBADDR")->setValue( unibusCycle->addr) ;
@@ -558,9 +569,7 @@ void Pdp11Adapter::doEvalUnibusCycle(ResponseUnibusCycle* unibusCycle)
             wxLogError("First UNIBUS cycle in ustep marked 'requested' by M93X2 probe, should be asynchronical");
         }
         unibusCycle->requested = true; // anyhow
-        traceController.evalUnibusCycle(unibusCycle);
-        if (state == State::uMachineAutoStepping)
-            autoStepController.evalUnibusCycle(unibusCycle);
+        traceController.onResponseUnibusCycle(unibusCycle);
         receivedUnibusCycleAfterUstep = true;  // ignore following user EXAM/DEPOSITs
     }
 }
@@ -699,36 +708,36 @@ void Pdp11Adapter::clearMemoryImage(MemoryGridController* gridController)
 // issue serialPortRcvPoll() to process the responses,
 //  else serial buffer overflow
 void Pdp11Adapter::depositMemoryImage() {
-    auto mi = wxGetApp().messageInterface;
+    auto mi = app->messageInterface;
 
     mi->receiveAndProcessResponses(); // process pending
 
     // activate SACK. remember: serialPortXmtMessage() deletes its argument
-    mi->xmtRequest(new RequestUnibusSignalWrite("SACK", 1));
+    mi->xmtRequest(new RequestUnibusSignalWrite(AUTOTAG, "SACK", 1));
 
     for (unsigned i = 0; i < MEMORY_WORD_COUNT; i++) {
         uint32_t addr = 2 * i;
         auto cell = memoryimage.get_cell(addr);
         if (cell->valid) {
             // put nxm?
-            auto msg = new RequestUnibusDeposit(addr, cell->data);
+            auto msg = new RequestUnibusDeposit(AUTOTAG, addr, cell->data);
             mi->xmtRequest(msg);
             wxMilliSleep(1); // do not overload M93X2 probe
             mi->receiveAndProcessResponses(); // process pending
         }
     }
     // deactivate SACK
-    mi->xmtRequest(new RequestUnibusSignalWrite("SACK", 0));
+    mi->xmtRequest(new RequestUnibusSignalWrite(AUTOTAG, "SACK", 0));
 }
 
 
 void Pdp11Adapter::singleExam(uint32_t addr) {
-    auto msg = new RequestUnibusExam(addr);
-    wxGetApp().messageInterface->xmtRequest(msg);
+    auto msg = new RequestUnibusExam(AUTOTAG, addr);
+    app->messageInterface->xmtRequest(msg);
 }
 
 void Pdp11Adapter::singleDeposit(uint32_t addr, uint16_t data) {
-    auto msg = new RequestUnibusDeposit(addr, data);
-    wxGetApp().messageInterface->xmtRequest(msg);
+    auto msg = new RequestUnibusDeposit(AUTOTAG, addr, data);
+    app->messageInterface->xmtRequest(msg);
 }
 

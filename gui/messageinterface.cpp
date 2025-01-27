@@ -35,7 +35,7 @@ void MessageInterface::appendDataAndProcessResponses(std::string buffer) {
             // process in pdp11adapter, delete there
             Message* msg = Message::parse(line.c_str());
             if (msg != nullptr) {
-                //			 wxLogInfo("RxD \"%s\"", msg->render());
+/**/  wxLogInfo("RxD \"%s\"", msg->render()); /**/
                 rcvMessageCount++;
                 msg->process();
                 delete msg; // is consumed now
@@ -49,9 +49,21 @@ void MessageInterface::receiveAndProcessResponses()
     wxLogFatalError("Abstract MessageInterface::receiveAndProcessResponses() called");
 }
 
-void MessageInterface::xmtRequest(Message* msg) {
+// produce new tag from cyclic sequence, for the next request
+// tags should long enough to identify messages uniquely with in one 
+// transmission block, but should not waste bandwidth.
+// we use 1..99
+MsgTag MessageInterface::nextTag() {
+    do {
+        currentTag = (currentTag+1) % 100; // 0..99
+    } while(currentTag == NOTAG || currentTag == AUTOTAG);
+    return currentTag;
+}
+
+MsgTag MessageInterface::xmtRequest(Message* msg) {
     UNREFERENCED_PARAMETER(msg);
     wxLogFatalError("Abstract MessageInterface::xmtRequest() called");
+    return NOTAG; // not reached
 }
 
 
@@ -89,7 +101,7 @@ void* ResponseKM11Signals::process() {
 
 void* ResponseUnibusCycle::process() {
     // forward to pdp11adapter for display
-    wxGetApp().pdp11Adapter->evalUnibusCycle(this);
+    wxGetApp().pdp11Adapter->onResponseUnibusCycle(this);
     return nullptr;
 }
 

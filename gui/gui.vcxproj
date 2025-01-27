@@ -151,7 +151,6 @@
     <ClInclude Include="..\common\variables.h" />
     <ClInclude Include="..\duktape\duktape.h" />
     <ClInclude Include="..\duktape\duk_config.h" />
-    <ClInclude Include="autostepcontroller.h" />
     <ClInclude Include="documentpageannotations.h" />
     <ClInclude Include="application.h" />
     <ClInclude Include="keywords.h" />
@@ -171,10 +170,12 @@
     <ClInclude Include="script.h" />
     <ClInclude Include="tracecontroller.h" />
     <ClInclude Include="uTracer11FB.h" />
+    <ClInclude Include="wxutils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\common\binary.cpp" />
     <ClCompile Include="..\common\csvreader.cpp" />
+    <ClCompile Include="wxutils.cpp" />
     <ClInclude Include="..\common\csvreader.h" />
     <ClCompile Include="..\common\memoryimage.cpp" />
     <ClCompile Include="..\common\messages.cpp" />
@@ -189,7 +190,6 @@
     <ClCompile Include="..\CSerialPort\src\SerialPortWinBase.cpp" />
     <ClCompile Include="..\duktape\duktape.c" />
     <ClCompile Include="application.cpp" />
-    <ClCompile Include="autostepcontroller.cpp" />
     <ClCompile Include="documentpageannotations.cpp" />
     <ClCompile Include="keywords.cpp" />
     <ClCompile Include="mainframe.cpp" />

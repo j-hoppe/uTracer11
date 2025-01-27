@@ -26,23 +26,23 @@ int Pdp11Simulator::Console::printf(const char *format, ...)
     va_start(args, format);
     // Pass the format and va_list to vprintf
     int result = vprintf(format, args);
-	fflush(stdout) ;
+    fflush(stdout) ;
     // Clean up the va_list when done
     va_end(args);
-	return result ;
+    return result ;
 }
 
 
 // thread for non-blocking readline()
 void Pdp11Simulator::Console::processInput() {
-   std::string input;
+    std::string input;
     while (true) {
         std::getline(std::cin, input);
         // std::cout << "Received input: " << input << std::endl;
-		if (simulator != nullptr) {
-			simulator->onConsoleInputline(input);
-		} else
-			fprintf(stderr, "Console: no simulator connected\n") ;
+        if (simulator != nullptr) {
+            simulator->onConsoleInputline(input);
+        } else
+            fprintf(stderr, "Console: no simulator connected\n") ;
     }
 }
 
@@ -124,7 +124,7 @@ void* RequestSwitchesRead::process() {
 }
 
 void* RequestVersionRead::process() {
-    Pdp11Simulator::instance->respond(new ResponseVersion(Pdp11Simulator::instance->getVersionText()));
+    Pdp11Simulator::instance->respond(new ResponseVersion(tag, Pdp11Simulator::instance->getVersionText()));
     return nullptr;
 }
 
@@ -159,7 +159,7 @@ void *RequestUnibusExam::process() {
 }
 
 void* RequestUnibusSignalsRead::process() {
-    Pdp11Simulator::instance->onRequestUnibusSignalsRead();
+    Pdp11Simulator::instance->onRequestUnibusSignalsRead(this);
     return nullptr;
 }
 
@@ -170,8 +170,8 @@ void *RequestUnibusSignalWrite::process() {
 
 // return the definition list for internal state variables
 void *RequestRegDef::process() {
-	ResponseRegDef *response = new ResponseRegDef() ;
-	response->registers = Pdp11Simulator::instance->stateVars ; //
+    ResponseRegDef *response = new ResponseRegDef(tag) ;
+    response->registers = Pdp11Simulator::instance->stateVars ; //
     Pdp11Simulator::instance->respond(response);
 //	fprintf(stderr, "RequestRegDef::process()\n") ;
     // will render and delete
@@ -180,28 +180,28 @@ void *RequestRegDef::process() {
 
 // return the internal state variables, with values updated
 void *RequestRegVal::process() {
-	auto stateVars = &Pdp11Simulator::instance->stateVars ; // alias to emulator state
-	// for all variables: eval registered pointer
-	for (auto it = stateVars->begin() ; it != stateVars->end() ; it++) {
-		switch(it->endpointSizeof) {
-		case 1: // pointer to byte var
-			it->setValue(* ( (uint8_t *)it->endpoint )) ;
-			break ;
-		case 2: // pointer to word var
-			it->setValue(* ( (uint16_t *)it->endpoint )) ;
-			break ;
-		case 4: // pointer to long var
-			it->setValue (* ( (uint32_t *)it->endpoint)) ;
-			break ;
-		default:
-			fprintf(stderr, "RequestRegVal::process(): var %s ill endpointsize %d",
-					it->name.c_str(), it->endpointSizeof) ;
-			assert(false); // definition error
-		}
-	}
+    auto stateVars = &Pdp11Simulator::instance->stateVars ; // alias to emulator state
+    // for all variables: eval registered pointer
+    for (auto it = stateVars->begin() ; it != stateVars->end() ; it++) {
+        switch(it->endpointSizeof) {
+        case 1: // pointer to byte var
+            it->setValue(* ( (uint8_t *)it->endpoint )) ;
+            break ;
+        case 2: // pointer to word var
+            it->setValue(* ( (uint16_t *)it->endpoint )) ;
+            break ;
+        case 4: // pointer to long var
+            it->setValue (* ( (uint32_t *)it->endpoint)) ;
+            break ;
+        default:
+            fprintf(stderr, "RequestRegVal::process(): var %s ill endpointsize %d",
+                    it->name.c_str(), it->endpointSizeof) ;
+            assert(false); // definition error
+        }
+    }
 
-	ResponseRegVals *response = new ResponseRegVals() ;
-	response->registers = *stateVars ;
+    ResponseRegVals *response = new ResponseRegVals(tag) ;
+    response->registers = *stateVars ;
     Pdp11Simulator::instance->respond(response);
     // will render and delete
     return nullptr;
@@ -253,8 +253,8 @@ void  Pdp11Simulator::onRequestUnibusExam(RequestUnibusExam* requestUnibusExam) 
     fprintf(stderr, "abstract Pdp11Simulator::onRequestUnibusExam() called\n");
 }
 
-void  Pdp11Simulator::onRequestUnibusSignalsRead() {
-    auto response = new ResponseUnibusSignals(unibusSignals);
+void  Pdp11Simulator::onRequestUnibusSignalsRead(RequestUnibusSignalsRead* requestUnibusSignalsRead) {
+    auto response = new ResponseUnibusSignals(requestUnibusSignalsRead->tag, unibusSignals);
     respond(response);
 }
 
@@ -273,13 +273,13 @@ void Pdp11Simulator::service() {
 
 
 // CPU executed a memory access by micro code, respond this to GUI.
-// Always asynchronical, never a response to a previous request
+// Always asynchronical, never a response to a previous request and no tag
 void Pdp11Simulator::onCpuUnibusCycle(uint8_t c1c0, uint32_t addr, uint16_t data, bool nxm) {
-	// When micro machine is running at own speed,
-	// do not flood socket with Gigabytes of messages, which are disposed in the GUI anyhow.
-	if (!microClockEnabled) {
-	    respond(new ResponseUnibusCycle(c1c0, addr, data, nxm, /*expected*/false));
-		}
+    // When micro machine is running at own speed,
+    // do not flood socket with Gigabytes of messages, which are disposed in the GUI anyhow.
+    if (!microClockEnabled) {
+        respond(new ResponseUnibusCycle(0, c1c0, addr, data, nxm, /*expected*/false));
+    }
 }
 
 void Pdp11Simulator::setMicroClockEnable(bool state) {

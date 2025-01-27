@@ -84,9 +84,6 @@
     <ClInclude Include="..\common\pdp1140km11state.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="autostepcontroller.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\common\binary.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -100,6 +97,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="script.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="wxutils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -191,9 +191,6 @@
     <ClCompile Include="..\common\pdp1140km11state.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="autostepcontroller.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\common\binary.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -201,6 +198,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\duktape\duktape.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="wxutils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
