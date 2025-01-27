@@ -320,8 +320,11 @@ void TraceController::displayStateVars() {
 // only called if "manClkEnable".
 void TraceController::onResponseUnibusCycle(ResponseUnibusCycle* unibusCycle) {
     // Ignore UNIBUS cycles until "StartOfMacroInstruction()" is called, to sync with code fetch.
-    if (!syncronizedWithMicroMachine)
+    wxString cycleText = unibusCycle->cycleText[unibusCycle->c1c0] ;
+    if (!syncronizedWithMicroMachine) {
+		wxLogWarning("Ignoring ResponseUnibusCycle %s addr=%06o", cycleText.mb_str(), unibusCycle->addr );
         return;
+	}
     assert(disasBusCyclesCount < disasBusCyclesBufferSize);
     // 1. update cycle in disassembler list
     assert(disasBusCycles.capacity() > 0); // ???
@@ -331,23 +334,18 @@ void TraceController::onResponseUnibusCycle(ResponseUnibusCycle* unibusCycle) {
     disasCycle->bus_address.iopage = unibusCycle->addr >= 0760000; // last 8k page?
     disasCycle->bus_timeout = unibusCycle->nxm ? 1 : 0;
     disasCycle->bus_data = unibusCycle->data;
-    wxString cycleText = "";
     switch (unibusCycle->c1c0) {
     case 0:
         disasCycle->bus_cycle = BUSCYCLE_DATI;
-        cycleText = "DATI";
         break;
     case 1:
         disasCycle->bus_cycle = BUSCYCLE_DATIP;
-        cycleText = "DATIP";
         break;
     case 2:
         disasCycle->bus_cycle = BUSCYCLE_DATO;
-        cycleText = "DATO";
         break;
     case 3:
         disasCycle->bus_cycle = BUSCYCLE_DATOB;
-        cycleText = "DATOB";
         break;
     default:
         wxLogFatalError("TraceController::evalResponseUnibusCycle() invalid bus cycle");

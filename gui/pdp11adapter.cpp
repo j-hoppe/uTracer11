@@ -367,7 +367,6 @@ void Pdp11Adapter::setManClkEnable(bool _manClkEnable) {
 // operation after initation of single ustep, same for all PDP11's
 // called before respones for signals and registers are received
 void Pdp11Adapter::uStepStart() {
-    receivedUnibusCycleAfterUstep = false;
 }
 
 // CPU completed a ustep, feed to sub modules
@@ -434,6 +433,8 @@ void Pdp11Adapter::onScriptComplete(Script::RunState completeReason) {
 // MPC changed => new value, => event + display update
 void Pdp11Adapter::onResponseMpc(uint16_t newMpc) {
     microProgramCounter = newMpc;
+    receivedUnibusCycleAfterUstep = false;
+	
     logEvent("mpc = %0.3o", microProgramCounter);
 
     stateVars.get("MPC")->setValue(newMpc) ;
