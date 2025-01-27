@@ -65,7 +65,7 @@ public:
     void evalUClockRun() ;
     void evalUClockSingle() ;
 
-    void evalUStep(unsigned mpc);
+    void onResponseMpc(unsigned mpc);
     void displayStateVars() ;
     void onResponseUnibusCycle(ResponseUnibusCycle* unibusCycle);
 

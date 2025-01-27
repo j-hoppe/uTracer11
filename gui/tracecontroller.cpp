@@ -232,7 +232,7 @@ void TraceController::evalUClockSingle() {
 
 
 // display a micro step
-void TraceController::evalUStep(unsigned mpc) {
+void TraceController::onResponseMpc(unsigned mpc) {
     if (mpc == pdp11Adapter->getMpcFetch()) {
         // resync disassembly, new opcode
         startOfMacroInstruction();

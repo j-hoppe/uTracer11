@@ -310,7 +310,6 @@ void Pdp11Adapter34::requestUStep()
     auto msg1 = new RequestKY11LBSignalWrite(AUTOTAG, "MC", 2/*Pulse*/);
     app->messageInterface->xmtRequest(msg1); // send+delete
     // answer from M93X2probe is ResponseKY11LBSignals
-    Pdp11Adapter::uStepStart(); // actions same for all pdp11s
 
     auto msg2 = new RequestRegVal(AUTOTAG);
     app->messageInterface->xmtRequest(msg2); // send+delete

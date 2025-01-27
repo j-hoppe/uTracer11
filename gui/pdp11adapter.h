@@ -197,10 +197,6 @@ public:
         wxLogFatalError("Abstract Pdp11Adapter::requestUStep() called");
     }
 
-    void uStepStart();
-
-    void uStepComplete(unsigned mpc);
-
 	Script script ;
 	wxFileName scriptFilePath ;
 	void scriptStart() ;

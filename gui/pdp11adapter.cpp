@@ -334,8 +334,6 @@ void Pdp11Adapter::powerUp() {
     app->messageInterface->xmtRequest(msg1); // send+delete
     auto msg2 = new RequestUnibusSignalWrite(AUTOTAG, "DCLO", 0);
     app->messageInterface->xmtRequest(msg2); // send+delete
-
-    uStepStart();
 }
 
 void Pdp11Adapter::powerDown() { // actions same for all pdp11s
@@ -362,18 +360,6 @@ void Pdp11Adapter::setManClkEnable(bool _manClkEnable) {
         updateGui(State::uMachineRunning);
     }
 }
-
-
-// operation after initation of single ustep, same for all PDP11's
-// called before respones for signals and registers are received
-void Pdp11Adapter::uStepStart() {
-}
-
-// CPU completed a ustep, feed to sub modules
-void Pdp11Adapter::uStepComplete(unsigned mpc) {
-    traceController.evalUStep(mpc);
-}
-
 
 
 // interface from GUI to Script
@@ -429,7 +415,7 @@ void Pdp11Adapter::onScriptComplete(Script::RunState completeReason) {
 }
 
 
-// called when a new Mpc is received from pdp11
+// called when a new Mpc is received from pdp11 model
 // MPC changed => new value, => event + display update
 void Pdp11Adapter::onResponseMpc(uint16_t newMpc) {
     microProgramCounter = newMpc;
@@ -442,7 +428,8 @@ void Pdp11Adapter::onResponseMpc(uint16_t newMpc) {
 
     // repaint document pages only on change
     paintDocumentAnnotations();
-    uStepComplete(microProgramCounter);
+	
+    traceController.onResponseMpc(microProgramCounter);
 }
 
 
