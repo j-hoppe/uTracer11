@@ -34,7 +34,7 @@ void TokenList::tokenize(const char* line) {
 
     // token prefix?
     char *textStart ; // position of text after tag
-    tag  = strtol(txtBuffer, &textStart, 10);
+    tag  = static_cast<MsgTag>(strtol(txtBuffer, &textStart, 10));
 
     // build vector of arguments
     char* curToken;
@@ -175,13 +175,13 @@ const char* const ResponseUnibusCycle::cycleText[4] = { "DATI", "DATIP", "DATO",
 char *Message::renderFormat(const char* _fmt, ...) {
     char *textStart ; // position of text after tag
     int maxTextLen ;
-    if (tag == NOTAG|| tag > MAXTAG) {
+    if (tag == MsgTag::none|| tag > MsgTag::max) {
         // no tag prefix
         textStart = renderTxtBuffer ;
         maxTextLen = txtBufferSize ; // no chars used for tag
     } else {
         // prefix renderTxtBuffer with numeric tag, max 5 digits
-        sprintf(renderTxtBuffer, "%u", tag) ;
+        sprintf(renderTxtBuffer, "%u", static_cast<uint16_t>(tag)) ;
         int tagLen = strlen(renderTxtBuffer) ;
         // point to next char after written tag
         textStart = renderTxtBuffer + tagLen ;
@@ -234,7 +234,7 @@ Message* Message::parse(const char* line) {
 #endif
     const char* curSyntaxInfo = "";
     const char* errormsg = "";
-    errorTag = 0;
+    errorTag = MsgTag::none;
 
     Message* result = nullptr;
     uint8_t _c1c0;

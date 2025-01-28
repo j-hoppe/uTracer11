@@ -37,7 +37,7 @@ void MessageInterface::appendRcvDataAndProcessResponses(std::string buffer) {
             if (msg != nullptr) {
 /*  wxLogInfo("RxD \"%s\"", msg->render()); /**/
                 rcvMessageCount++;
-				if (msg->tag != NOTAG)
+				if (msg->tag != MsgTag::none)
 					latestResponseTag = msg->tag ;
                 msg->process();
                 delete msg; // is consumed now
@@ -57,15 +57,16 @@ void MessageInterface::receiveAndProcessResponses()
 // we use 1..99
 MsgTag MessageInterface::getNextRequestTag() {
     do {
-        latestRequestTag = (latestRequestTag+1) % 100; // 0..99
-    } while(latestRequestTag == NOTAG || latestRequestTag == AUTOTAG);
+        uint16_t nextTag = (static_cast<uint16_t>(latestRequestTag) + 1) % 100; // 0..99
+        latestRequestTag = static_cast<MsgTag>(nextTag) ;
+    } while(latestRequestTag == MsgTag::none || latestRequestTag == MsgTag::next);
     return latestRequestTag;
 }
 
 MsgTag MessageInterface::xmtRequest(Message* msg) {
     UNREFERENCED_PARAMETER(msg);
     wxLogFatalError("Abstract MessageInterface::xmtRequest() called");
-    return NOTAG; // not reached
+    return MsgTag::none; // not reached
 }
 
 

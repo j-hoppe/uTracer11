@@ -68,7 +68,7 @@ void Pdp11Adapter34::onInit() {
 	displayStateVarsDefinition() ;
 
     // generate messages to init gui, until first status updates comes in
-    auto cpuSignals = ResponseKY11LBSignals(NOTAG, 0, 0, 0, 0, 0);
+    auto cpuSignals = ResponseKY11LBSignals(MsgTag::none, 0, 0, 0, 0, 0);
     cpuSignals.process(); // calls virtual onRcvMessageFromPdp11() and updates GUI
 
     // convert "LSB-first" binary string to value
@@ -150,15 +150,15 @@ pollSlow = false;
         // which do you want to see "dancing" while CPU is running in real time?
         // request KY11 & unibussignals
         // response from M93X2probe is ResponseKY11LBSignals,ResponseUnibusSingals
-        auto reqKy11 = new RequestKY11LBSignalsRead(NOTAG);
+        auto reqKy11 = new RequestKY11LBSignalsRead(MsgTag::none);
         app->messageInterface->xmtRequest(reqKy11); // send+delete
-        auto reqUnibus = new RequestUnibusSignalsRead(NOTAG);
+        auto reqUnibus = new RequestUnibusSignalsRead(MsgTag::none);
         app->messageInterface->xmtRequest(reqUnibus); // send+delete
 
         bool updateStateVars = (state == State::uMachineManualStepping);
         if (updateStateVars && stateVars.size() > 0) {
             // singlestepping: the pdp11 publishes its internal state, update it
-            auto reqRegVal = new RequestRegVal(NOTAG);
+            auto reqRegVal = new RequestRegVal(MsgTag::none);
             app->messageInterface->xmtRequest(reqRegVal); // send+delete
         }
     }
@@ -298,7 +298,7 @@ void Pdp11Adapter34::paintDocumentAnnotations() {
 
 void Pdp11Adapter34::setManClkEnable(bool _manClkEnable)
 {
-    auto msg = new RequestKY11LBSignalWrite(AUTOTAG, "MCE", _manClkEnable);
+    auto msg = new RequestKY11LBSignalWrite(MsgTag::next, "MCE", _manClkEnable);
     app->messageInterface->xmtRequest(msg); // send+delete
     // answer from M93X2probe is ResponseKY11LBSignals
     Pdp11Adapter::setManClkEnable(_manClkEnable); // actions same for all pdp11s
@@ -307,11 +307,11 @@ void Pdp11Adapter34::setManClkEnable(bool _manClkEnable)
 // step and query new state
 void Pdp11Adapter34::requestUStep()
 {
-    auto msg1 = new RequestKY11LBSignalWrite(AUTOTAG, "MC", 2/*Pulse*/);
+    auto msg1 = new RequestKY11LBSignalWrite(MsgTag::next, "MC", 2/*Pulse*/);
     app->messageInterface->xmtRequest(msg1); // send+delete
     // answer from M93X2probe is ResponseKY11LBSignals
 
-    auto msg2 = new RequestRegVal(AUTOTAG);
+    auto msg2 = new RequestRegVal(MsgTag::next);
     app->messageInterface->xmtRequest(msg2); // send+delete
 }
 

@@ -294,13 +294,13 @@ bool Application::OnInit()
 
 	
 	// query version from M93X2probe
-	messageInterface->xmtRequest(new RequestVersionRead(AUTOTAG));
+	messageInterface->xmtRequest(new RequestVersionRead(MsgTag::next));
 	// ResponseVersion via readevent, calls SetLabel()
 	mainFrame->SetLabel("uTracer11 - waiting for connection"); // default if ResponseVersion fails
 
 	// query internal state panel, if PDP11 exposes any	
 	// response adds vars to stateVars
-	messageInterface->xmtRequest(new RequestRegDef(AUTOTAG));
+	messageInterface->xmtRequest(new RequestRegDef(MsgTag::next));
 
     }
     catch (const std::exception& e) {

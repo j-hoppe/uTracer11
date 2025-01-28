@@ -271,7 +271,7 @@ void Unibus::writeADDR(uint32_t val) {
     theHardware.mcp[0][1].writeBit(Mcp23017::Register::OLATB, 7, regBit);
 }
 
-void Unibus::writeDATA(MsgTag val) {
+void Unibus::writeDATA(uint16_t val) {
     uint8_t regVal;
     regVal = (val & 0xff); // mcp12.GPA = D00..07
     theHardware.mcp[1][2].write(Mcp23017::Register::OLATA, regVal);

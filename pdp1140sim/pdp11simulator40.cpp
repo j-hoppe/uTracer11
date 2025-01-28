@@ -116,7 +116,7 @@ void Pdp11Simulator40::onRequestKM11SignalsWrite(RequestKM11SignalsWrite* reques
 }
 
 // convert CPU state to KM11A/B state, send send that state encoded as message
-void Pdp11Simulator40::respondKm11ASignals(uint16_t tag) {
+void Pdp11Simulator40::respondKm11ASignals(MsgTag tag) {
     // 1. set state
     Pdp1140KM11AState km11AState ;
     // PUPP is the "Previous Microprogram Pointer, address of current uword

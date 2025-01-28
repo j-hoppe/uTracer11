@@ -219,7 +219,7 @@ public:
     virtual void onResponseUnibusSignals(ResponseUnibusSignals* unibusSignals);
 
     void logEvent(const char* format, ...);
-    ResponseUnibusCycle lastUnibusCycle = ResponseUnibusCycle(NOTAG);
+    ResponseUnibusCycle lastUnibusCycle = ResponseUnibusCycle(MsgTag::none);
     virtual void onResponseUnibusCycle(ResponseUnibusCycle* unibusCycle);
 
     void displayStateVarsDefinition() ;

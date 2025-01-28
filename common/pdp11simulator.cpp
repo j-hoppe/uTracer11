@@ -278,7 +278,7 @@ void Pdp11Simulator::onCpuUnibusCycle(uint8_t c1c0, uint32_t addr, uint16_t data
     // When micro machine is running at own speed,
     // do not flood socket with Gigabytes of messages, which are disposed in the GUI anyhow.
     if (!microClockEnabled) {
-        respond(new ResponseUnibusCycle(0, c1c0, addr, data, nxm, /*expected*/false));
+        respond(new ResponseUnibusCycle(MsgTag::none, c1c0, addr, data, nxm, /*expected*/false));
     }
 }
 

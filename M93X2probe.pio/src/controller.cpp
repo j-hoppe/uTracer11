@@ -78,7 +78,7 @@ ResponseUnibusCycle *Controller::unibusEventAsResponse() {
 
     bool requested = theUnibus.cycleRequestedPending;
     theUnibus.cycleRequestedPending = false;
-    return new ResponseUnibusCycle(requested? theUnibus.requestTag: 0, c1c0, addr, data, nxm, requested);
+    return new ResponseUnibusCycle(requested? theUnibus.requestTag: MsgTag::none, c1c0, addr, data, nxm, requested);
 
     // caller must delete!
 }

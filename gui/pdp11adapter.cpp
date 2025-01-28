@@ -181,7 +181,7 @@ void Pdp11Adapter::onInit() {
 
     timerUnprocessedMs = 99999; // force immediate call to onTimer()
     // generate messages to init gui, until first status updates comes in
-    auto unibusSignals = ResponseUnibusSignals(NOTAG);
+    auto unibusSignals = ResponseUnibusSignals(MsgTag::none);
     unibusSignals.process(); // calls virtual onRcvMessageFromPdp11() and updates GUI
 
     receivedUnibusCycleAfterUstep = false; // wait for UNIBUS capture after ustep
@@ -330,18 +330,18 @@ DCLO  0  0                   0   ...
 */
 
 void Pdp11Adapter::powerUp() {
-    auto msg1 = new RequestUnibusSignalWrite(AUTOTAG, "ACLO", 0);
+    auto msg1 = new RequestUnibusSignalWrite(MsgTag::next, "ACLO", 0);
     app->messageInterface->xmtRequest(msg1); // send+delete
-    auto msg2 = new RequestUnibusSignalWrite(AUTOTAG, "DCLO", 0);
+    auto msg2 = new RequestUnibusSignalWrite(MsgTag::next, "DCLO", 0);
     app->messageInterface->xmtRequest(msg2); // send+delete
 }
 
 void Pdp11Adapter::powerDown() { // actions same for all pdp11s
-    auto msg1 = new RequestUnibusSignalWrite(AUTOTAG, "ACLO", 1);
+    auto msg1 = new RequestUnibusSignalWrite(MsgTag::next, "ACLO", 1);
     app->messageInterface->xmtRequest(msg1); // send+delete
     // UNIBUS specs 2-3,s delay -> approx 1000 CPU instructions delay here.
     // impossible do achive  as CPU is under manual ustep constrol
-    auto msg2 = new RequestUnibusSignalWrite(AUTOTAG, "DCLO", 1);
+    auto msg2 = new RequestUnibusSignalWrite(MsgTag::next, "DCLO", 1);
     app->messageInterface->xmtRequest(msg2); // send+delete
 }
 
@@ -701,31 +701,31 @@ void Pdp11Adapter::depositMemoryImage() {
     mi->receiveAndProcessResponses(); // process pending
 
     // activate SACK. remember: serialPortXmtMessage() deletes its argument
-    mi->xmtRequest(new RequestUnibusSignalWrite(AUTOTAG, "SACK", 1));
+    mi->xmtRequest(new RequestUnibusSignalWrite(MsgTag::next, "SACK", 1));
 
     for (unsigned i = 0; i < MEMORY_WORD_COUNT; i++) {
         uint32_t addr = 2 * i;
         auto cell = memoryimage.get_cell(addr);
         if (cell->valid) {
             // put nxm?
-            auto msg = new RequestUnibusDeposit(AUTOTAG, addr, cell->data);
+            auto msg = new RequestUnibusDeposit(MsgTag::next, addr, cell->data);
             mi->xmtRequest(msg);
             wxMilliSleep(1); // do not overload M93X2 probe
             mi->receiveAndProcessResponses(); // process pending
         }
     }
     // deactivate SACK
-    mi->xmtRequest(new RequestUnibusSignalWrite(AUTOTAG, "SACK", 0));
+    mi->xmtRequest(new RequestUnibusSignalWrite(MsgTag::next, "SACK", 0));
 }
 
 
 void Pdp11Adapter::singleExam(uint32_t addr) {
-    auto msg = new RequestUnibusExam(AUTOTAG, addr);
+    auto msg = new RequestUnibusExam(MsgTag::next, addr);
     app->messageInterface->xmtRequest(msg);
 }
 
 void Pdp11Adapter::singleDeposit(uint32_t addr, uint16_t data) {
-    auto msg = new RequestUnibusDeposit(AUTOTAG, addr, data);
+    auto msg = new RequestUnibusDeposit(MsgTag::next, addr, data);
     app->messageInterface->xmtRequest(msg);
 }
 

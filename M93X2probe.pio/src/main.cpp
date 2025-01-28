@@ -44,7 +44,7 @@ void setup() {
     theBootLogic.setup();
 
     // output response to "VERSION" command, is also answer to RESET
-    theConsole.printStrF("\n%s\n", theController.versionAsResponse(0).render());
+    theConsole.printStrF("\n%s\n", theController.versionAsResponse(MsgTag::none).render());
 
 	/*
     // test print out, via controller callback

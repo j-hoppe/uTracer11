@@ -22,10 +22,10 @@ public:
     unsigned long xmtMessageCount = 0;
 
     // produce cyclic sequence for send request message tags
-    MsgTag latestRequestTag = NOTAG;
+    MsgTag latestRequestTag = MsgTag::none;
     MsgTag getNextRequestTag();
     // hold tag of latest received response message
-    MsgTag latestResponseTag = NOTAG;
+    MsgTag latestResponseTag = MsgTag::none;
 
     // endpoint = abstract endpoint address to probe or simualtor
     // like  "COM1", "/dev/ttyS0" or "localhost:49152"

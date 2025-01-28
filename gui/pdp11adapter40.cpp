@@ -78,9 +78,9 @@ void Pdp11Adapter40::onInit() {
 
     // generate messages to init gui, until first status updates comes in
     // clear CPU state
-    auto cpuSignalsA = ResponseKM11Signals(AUTOTAG, 'A', 0, 0, 0, 0);
+    auto cpuSignalsA = ResponseKM11Signals(MsgTag::next, 'A', 0, 0, 0, 0);
     cpuSignalsA.process(); // calls virtual onRcvMessageFromPdp11() and updates GUI
-    auto cpuSignalsB = ResponseKM11Signals(AUTOTAG, 'B', 0, 0, 0, 0);
+    auto cpuSignalsB = ResponseKM11Signals(MsgTag::next, 'B', 0, 0, 0, 0);
     cpuSignalsB.process(); // calls virtual onRcvMessageFromPdp11() and updates GUI
 
     uflowPageAnnotations.loadXml(resourceDir, "KD11-A_Processor_Flow_Diagrams", "KD11-A_Processor_Flow_Diagrams.xml");
@@ -131,11 +131,11 @@ void Pdp11Adapter40::onTimer(unsigned periodMs) {
     if (pollSlow) {
         // request KM11 & unibussignals
         // response from M93X2probe is ResponseKM11Signals,ResponseUnibusSignals
-        auto reqKm11A = new RequestKM11SignalsRead(AUTOTAG, 'A');
+        auto reqKm11A = new RequestKM11SignalsRead(MsgTag::next, 'A');
         app->messageInterface->xmtRequest(reqKm11A); // send+delete
-        auto reqKm11B = new RequestKM11SignalsRead(AUTOTAG, 'B');
+        auto reqKm11B = new RequestKM11SignalsRead(MsgTag::next, 'B');
         app->messageInterface->xmtRequest(reqKm11B); // send+delete
-        auto reqUnibus = new RequestUnibusSignalsRead(AUTOTAG);
+        auto reqUnibus = new RequestUnibusSignalsRead(MsgTag::next);
         app->messageInterface->xmtRequest(reqUnibus); // send+delete
     }
 }
@@ -170,7 +170,7 @@ void Pdp11Adapter40::setManClkEnable(bool _manClkEnable)
 {
     km11AState.mclk_enab = _manClkEnable;
 
-    auto msg = new RequestKM11SignalsWrite(AUTOTAG, 'A', 0); // empty template
+    auto msg = new RequestKM11SignalsWrite(MsgTag::next, 'A', 0); // empty template
     km11AState.outputsToKM11AWriteRequest(msg); // encode outputs to KM11 pins
     app->messageInterface->xmtRequest(msg); // send+delete
     // answer from M93X2probe is ResponseKM11Signals
@@ -182,19 +182,19 @@ void Pdp11Adapter40::requestUStep()
     // Momentary switch S4 on KM11 produces 1-0-1 on MCLK_L
     // -> 0-1-0 on positive km11State.mclk
     km11AState.mclk = 1; // assume 0 already set
-    auto msg1 = new RequestKM11SignalsWrite(AUTOTAG);
+    auto msg1 = new RequestKM11SignalsWrite(MsgTag::next);
     km11AState.outputsToKM11AWriteRequest(msg1);  // encode
     app->messageInterface->xmtRequest(msg1); // send+delete
 
     // send falling edge
     km11AState.mclk = 0;
-    msg1 = new RequestKM11SignalsWrite(AUTOTAG);
+    msg1 = new RequestKM11SignalsWrite(MsgTag::next);
     km11AState.outputsToKM11AWriteRequest(msg1);
     app->messageInterface->xmtRequest(msg1); // send+delete
 
     // answer from M93X2probe is ResponseKY11LBSignals
 
-    auto msg2 = new RequestRegVal(AUTOTAG);
+    auto msg2 = new RequestRegVal(MsgTag::next);
     app->messageInterface->xmtRequest(msg2); // send+delete
 }
 
