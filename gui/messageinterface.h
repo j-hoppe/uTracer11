@@ -13,7 +13,7 @@ class MessageInterface {
 private:
     std::string receiveRingBuffer;
 protected:
-    void appendDataAndProcessResponses(std::string buffer);
+    void appendRcvDataAndProcessResponses(std::string buffer);
 public:
     virtual ~MessageInterface() = default;
     std::string name; // for serial: COM3, ttyUSB0
@@ -21,9 +21,11 @@ public:
     unsigned long rcvMessageCount = 0;
     unsigned long xmtMessageCount = 0;
 
-    // produce cyclic sequence of message tags
-    MsgTag currentTag = 0;
-    MsgTag nextTag();
+    // produce cyclic sequence for send request message tags
+    MsgTag latestRequestTag = NOTAG;
+    MsgTag getNextRequestTag();
+    // hold tag of latest received response message
+    MsgTag latestResponseTag = NOTAG;
 
     // endpoint = abstract endpoint address to probe or simualtor
     // like  "COM1", "/dev/ttyS0" or "localhost:49152"

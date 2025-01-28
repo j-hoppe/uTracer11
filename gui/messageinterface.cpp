@@ -20,7 +20,7 @@ void MessageInterface::disconnect() {
 }
 
 // add chunk of text to ringBuffer and process completed Messages
-void MessageInterface::appendDataAndProcessResponses(std::string buffer) {
+void MessageInterface::appendRcvDataAndProcessResponses(std::string buffer) {
     // wxLogDebug("RxD #%d	\"%s\"", byteCount, buffer);
     // add chunk to ring buffer
     receiveRingBuffer.append(buffer);
@@ -35,8 +35,10 @@ void MessageInterface::appendDataAndProcessResponses(std::string buffer) {
             // process in pdp11adapter, delete there
             Message* msg = Message::parse(line.c_str());
             if (msg != nullptr) {
-/**/  wxLogInfo("RxD \"%s\"", msg->render()); /**/
+/*  wxLogInfo("RxD \"%s\"", msg->render()); /**/
                 rcvMessageCount++;
+				if (msg->tag != NOTAG)
+					latestResponseTag = msg->tag ;
                 msg->process();
                 delete msg; // is consumed now
             }
@@ -53,11 +55,11 @@ void MessageInterface::receiveAndProcessResponses()
 // tags should long enough to identify messages uniquely with in one 
 // transmission block, but should not waste bandwidth.
 // we use 1..99
-MsgTag MessageInterface::nextTag() {
+MsgTag MessageInterface::getNextRequestTag() {
     do {
-        currentTag = (currentTag+1) % 100; // 0..99
-    } while(currentTag == NOTAG || currentTag == AUTOTAG);
-    return currentTag;
+        latestRequestTag = (latestRequestTag+1) % 100; // 0..99
+    } while(latestRequestTag == NOTAG || latestRequestTag == AUTOTAG);
+    return latestRequestTag;
 }
 
 MsgTag MessageInterface::xmtRequest(Message* msg) {
