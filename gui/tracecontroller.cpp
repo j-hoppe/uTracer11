@@ -291,7 +291,7 @@ void TraceController::displayStateVars() {
                 // case 1
                 displayLine += sep;
                 displayLine += format_string("%s=%s", stateVar->name.c_str(), stateVar->valueText().c_str());
-                sep = ",";
+                sep = ", ";
                 // save result for grid update after MPC change
                 stateVarsActiveCellVals[stateVar->name] = stateVar->value; // add new
             } else if (visibleStateVar->second != stateVar->value) {
@@ -301,7 +301,7 @@ void TraceController::displayStateVars() {
                                              stateVar->name.c_str(),
                                              stateVar->valueText(visibleStateVar->second).c_str(),
                                              stateVar->valueText().c_str());
-                sep = ",";
+                sep = ", ";
                 // update current cell for grid update after MPC change
                 stateVarsActiveCellVals[stateVar->name]= stateVar->value;
             }

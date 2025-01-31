@@ -12,8 +12,8 @@
 #include <wx/log.h>
 #include <wx/utils.h> // wxMilliSleep
 #include "script.h"
+#include "application.h"
 #include "pdp11adapter.h"
-
 
 /* Functions registered for and callable from "duktape" ECMA script interpreter
   Functions are standalone "C", and work on
@@ -28,8 +28,13 @@ volatile Script::RunState Script::runState ;
 // check for abort. In that case, it does interrupt JavaScript execution
 // and does not return
 void script__service(duk_context* ctx) {
-    wxYield(); // process pending GUI messages
-    // possible callback to abort(), terminate JavaScript?
+    // process new responses, may update GUI
+    Script::pdp11Adapter->app->messageInterface->receiveAndProcessResponses() ;
+
+    // process pending GUI messages.
+    // hit on abort button evaluated, allows termination of JavaScript
+    wxYield();
+
 
     if (Script::runState == Script::RunState::userAbortPending) {
         // send JavaScript break
@@ -39,7 +44,7 @@ void script__service(duk_context* ctx) {
         duk_push_string(ctx, "Terminated the program by user abort.");
         // Throw the error
         duk_throw(ctx);
-        // dows not return, execution thread stopped
+        // does not return, execution thread stopped
     }
 
 
@@ -65,6 +70,79 @@ static duk_ret_t script__log(duk_context* ctx) {
 }
 
 
+static duk_ret_t script__get(duk_context* ctx) {
+    MessageInterface* messageInterface = Script::pdp11Adapter->app->messageInterface;
+
+    // requests and resposnes are independent streams,
+    // wait until all responses stimulated by last ustep() are processed.
+    do {
+        script__service(ctx); // abort, GUI, recive responses
+    } while (messageInterface->latestResponseTag != messageInterface->latestRequestTag);
+    // now StateVars are updated
+
+    const char* arg = duk_to_string(ctx, 0);
+    std::string varname(arg);
+    if (!Script::pdp11Adapter->stateVars.exists(varname)) {
+        // Push an error object or string message onto the stack
+        duk_push_sprintf(ctx, "get('%s') variable does not exist!", arg);
+        // Throw the error
+        duk_throw(ctx);
+    }
+
+    Variable* var = Script::pdp11Adapter->stateVars.get(varname);
+    duk_push_uint(ctx, var->value);  // Return value
+    return 1;  // Number of return values
+}
+
+// convert a integer to an octal string with prefix "0o"
+// call o(number) or o(number,digits)
+static duk_ret_t script__octalString(duk_context* ctx) {
+    duk_idx_t nargs;
+    nargs = duk_get_top(ctx);
+    if (nargs < 1 || nargs > 2) {
+        duk_push_string(ctx, "o(number[,digits]) needs 1 or 2 arguments.");
+        // Throw the error
+        duk_throw(ctx);
+    }
+    // param 0: a unsigned number
+    uint32_t arg = duk_to_uint32(ctx, 0);
+    if (nargs == 1) {
+        duk_push_sprintf(ctx, "0o%o", arg) ;
+    } else if (nargs == 2) {
+        int ndigits = duk_to_int(ctx, 1);
+        duk_push_sprintf(ctx, "0o%0*o", ndigits, arg) ;
+    }
+    return 1;  // Number of return values
+}
+
+#ifdef OGET
+
+// oget - like "get", but return as octal string with prefix "0o".
+// short for    o(get(<varname>) [,digits] )
+static duk_ret_t script__getOctal(duk_context* ctx) {
+    duk_idx_t nargs;
+    nargs = duk_get_top(ctx);
+    if (nargs < 1 || nargs > 2) {
+        duk_push_string(ctx, "oget(varname[,digits]) needs 1 or 2 arguments.");
+        // Throw the error
+        duk_throw(ctx);
+    }
+
+    // Index 0 -> First argument (varname)
+    // Index 1 -> optional ndigits
+    script__get(ctx);
+    // Stack Layout before returning:
+    // Index 0 -> First argument (varname)
+    // Index 1 -> Return value (8) (Top of stack)
+    //
+    duk_remove(ctx, 0);
+    // now only numer on stack
+    return script__octalString(ctx);
+    return 1;  // Number of return values
+}
+#endif
+
+
 // issues a single micro step
 // waits for repsonse
 // M93X2/simulator must send captured UNIBUS
@@ -87,24 +165,6 @@ static duk_ret_t script__ustep(duk_context* ctx) {
     	Script->responseReceivedpsonse(tag)
 
     */
-}
-
-static duk_ret_t script__get(duk_context* ctx) {
-    script__service(ctx) ; // abort? GUI?
-
-    const char* arg = duk_to_string(ctx, 0);
-    std::string varname(arg) ;
-    if (!Script::pdp11Adapter->stateVars.exists(varname)) {
-        // Push an error object or string message onto the stack
-        duk_push_sprintf(ctx, "get('%s') variable does not exist!", arg);
-        // Throw the error
-        duk_throw(ctx);
-    }
-
-    Variable *var = Script::pdp11Adapter->stateVars.get(varname);
-    duk_push_uint(ctx, var->value);  // Return value
-    // dows not return, execution thread stopped
-    return 1;  // Number of return values
 }
 
 // wait some milliseconds, while being abortable
@@ -143,10 +203,19 @@ void Script::init(Pdp11Adapter *_pdp11Adapter) {
     // Register the C functions in the Duktape context
     duk_push_c_function(ctx, script__log, 1 /*nargs*/);
     duk_put_global_string(ctx, "log");
+
     duk_push_c_function(ctx, script__ustep, 0 /*nargs*/);
     duk_put_global_string(ctx, "ustep");
+
+    duk_push_c_function(ctx, script__octalString, DUK_VARARGS);
+    duk_put_global_string(ctx, "o");
+
     duk_push_c_function(ctx, script__get, 1 /*nargs*/);
     duk_put_global_string(ctx, "get");
+#ifdef OGET
+    duk_push_c_function(ctx, script__getOctal, DUK_VARARGS);
+    duk_put_global_string(ctx, "oget");
+#endif
     duk_push_c_function(ctx, script__wait, 1 /*nargs*/);
     duk_put_global_string(ctx, "wait");
 
@@ -195,32 +264,32 @@ void Script::abort() {
 
 std::string Script::helpText() {
     return
-        "ustep() ;\n"
-        "ustep() ;\n"
-        "ustep() ;\n"
-        "ustep() ;\n"
-        "ustep() ;\n"
-        ;
-#if XXX
-    return
         "/*\n"
-        "Scripts use standard JavaScript syntax. \n"
+        "Use standard JavaScript syntax.\n"
         "Quick ref: http://cheat-sheets.org/saved-copy/jsquick.pdf\n"
         "Special functions to access PDP11 and GUI environment:\n"
-        "log(string)     - print text into event log.\n"
-        "wait(millisecs) - wait while beeing abortable.\n"
-        "ustep()         - generate micro step.\n"
-        "get(varname)    - get value of a KY11/KM11/simulator signal.\n"
+        "log(string)            - print text into event log.\n"
+        "wait(millisecs)        - wait while beeing abortable.\n"
+        "o(number[,digits])     - number to octal string\n"
+        "ustep()                - generate micro step.\n"
+        "get(varname)           - get value of a KY11/KM11/simulator signal.\n"
+//        "oget(varname[,digits]) - short for o(get()) .\n"
         "Example:\n"
         "*/\n"
-        "log(\"now stepping to error point\") ;\n"
-        "while ( get(\"UBADDR\") != 0765524 && get(\"UBCYCLE\") != 0 /*DATI*/ )\n"
-        "  ustep() ;\n"
-        "log(\"defective opcode fetched, step to defective uword\");\n"
-        "while (get(\"MPC\") != 0311 )\n"
-        "  ustep() ;\n"
-        "log(\"reached \"tstb @#dl11.rcsr\" failure point\") ;\n"
+        "function isDATI(addr) {\n"
+        "if (get(\"UBADDR\") == addr && get(\"UBCYCLE\") == 0 /*DATI*/)\n"
+        "    return true; else return false; \n"
+        "}\n"
+        "function test1() {\n"
+        "    log(\"now stepping to error position in XXDP diag\");\n"
+        "    while (!isDATI(0o765524))\n"
+        "        ustep();\n"
+        "    log(\"defective opcode fetched, step to defective uword\");\n"
+        "    while (get(\"MPC\") != 0o311)\n"
+        "        ustep();\n"
+        "    log(\"reached 'tstb @#dl11.rcsr' failure point\"); \n"
+        " } \n"
+        "test1() ; // start a prepared test run\n"
         ;
-#endif
 }
 
