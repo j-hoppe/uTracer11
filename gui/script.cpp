@@ -288,7 +288,7 @@ std::string Script::helpText() {
         "    while (get(\"MPC\") != 0o311)\n"
         "        ustep();\n"
         "    log(\"reached 'tstb @#dl11.rcsr' failure point\"); \n"
-        " } \n"
+        "} \n"
         "test1() ; // start a prepared test run\n"
         ;
 }

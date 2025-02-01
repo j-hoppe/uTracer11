@@ -91,6 +91,7 @@ void TraceController::clear() {
     grid->DeleteRows(0, grid->GetNumberRows());
     stateVarsActiveCellCoords.Set(9999999,999999);// invalid
     singleStepCount = 0 ;
+    opcodeDisplayGridRow = -1; // invalid until opcode fetched
     stateVarsGridVisibleVals.clear();
     stateVarsActiveCellVals.clear();
 }
@@ -322,9 +323,9 @@ void TraceController::onResponseUnibusCycle(ResponseUnibusCycle* unibusCycle) {
     // Ignore UNIBUS cycles until "StartOfMacroInstruction()" is called, to sync with code fetch.
     wxString cycleText = unibusCycle->cycleText[unibusCycle->c1c0] ;
     if (!syncronizedWithMicroMachine) {
-		wxLogWarning("Ignoring ResponseUnibusCycle %s addr=%06o", cycleText.mb_str(), unibusCycle->addr );
+        wxLogWarning("Ignoring ResponseUnibusCycle %s addr=%06o", cycleText.mb_str(), unibusCycle->addr );
         return;
-	}
+    }
     assert(disasBusCyclesCount < disasBusCyclesBufferSize);
     // 1. update cycle in disassembler list
     assert(disasBusCycles.capacity() > 0); // ???
@@ -399,10 +400,12 @@ void TraceController::onResponseUnibusCycle(ResponseUnibusCycle* unibusCycle) {
 
     // 2) update the "living" full instruction in display row of first fetch
     // example: "mov @#777733,@#777733" -> "mov @#001234,@#777733" -> "mov @#001234,@#3456"
-    assert(opcodeDisplayGridRow >= 0); // set on opcode fetch
-    auto opcodeDisasCycle = &disasBusCycles[0];
-    grid->SetCellValue(opcodeDisplayGridRow, 6, opcodeDisasCycle->disas_operands);
-    grid->SetCellValue(opcodeDisplayGridRow, 9, opcodeDisasCycle->disas_comment);
+    if (opcodeDisplayGridRow >= 0) {
+        // set on opcode fetch, invalid by async clear()
+        auto opcodeDisasCycle = &disasBusCycles[0];
+        grid->SetCellValue(opcodeDisplayGridRow, 6, opcodeDisasCycle->disas_operands);
+        grid->SetCellValue(opcodeDisplayGridRow, 9, opcodeDisasCycle->disas_comment);
+    }
 
     //grid->MakeCellVisible(row, 0);
     grid->ScrollLines(9999);
