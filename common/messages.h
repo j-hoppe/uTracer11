@@ -96,17 +96,17 @@ public:
     // virtual const char* initFromArgToken(TokenList *tokenList, int startTokenIdx) {return nullptr;}
 
 #if defined(PLATFORM_ARDUINO)
-    // Arduino has almost no RAM: global short buffer for rende()&parse()
-    // Not thread save!
-    // fix class buffer len for all purposes, higly insecure!
-    // caller must allocate via Messages::bufferINit()
-    static const int txtBufferSize = 128;
+    // Arduino has almost no RAM: global short buffer for render() & parse()
+    // Not thread save.
+    // fix class buffer len for all purposes, highly insecure!
+    // longest message text representation is EEPROM WRITE
+    static const int txtBufferSize = 160; // see also serial console
     static char sharedTxtBuffer[txtBufferSize];
     static char *renderTxtBuffer ; // = sharedTxtBuffer ;
 #else
     // thread save: multiple messages can render() in parallel
     static const int txtBufferSize = 1050; // 1k payload plus some header space
-    char renderTxtBuffer[txtBufferSize] ;
+    char renderTxtBuffer[txtBufferSize] ; 
 #endif
     // fix class error buffer
     static const int errorBufferSize = 128;
@@ -634,7 +634,58 @@ public:
     void* process() override; // to be defined differently in M93X2 PCB and PC host
 };
 
+
+// eeprom read and write have a lot in common, so use a common service class
+class EepromMessage: public Message {
+public:
+		static const int blockSize = 64 ; // can keep this much bytes in one message
+		EepromMessage(MsgTag _tag): Message(_tag) {}
+
+		char *renderData(char *text, uint8_t *data, int dataSize) ;
+		char *parseData(uint8_t *data, int dataSize, char *text) ;
+} ;
+
+// R EEWRITE <startaddr:6> <data00>...<data63>
+class RequestEepromWrite: public EepromMessage {
+public:
+	uint32_t	startaddr ;
+	uint8_t	data[blockSize] ;
+    RequestEepromWrite(MsgTag _tag): EepromMessage(_tag) {}
+//    RequestEepromWrite(MsgTag _tag, uint32_t startaddr, uint8_t data): Message(_tag) {}
+    const char *initFromArgToken(const TokenList *tokenList, int startTokenIdx) override ;
+    const char* render() override ;
+    void* process() override; // to be defined differently in M93X2 PCB and PC host
+};
+
+// R EEREAD <startaddr:6>
+class RequestEepromRead: public EepromMessage {
+public:	
+    uint32_t	startaddr ;
+    RequestEepromRead(MsgTag _tag): EepromMessage(_tag) {}
+    const char *initFromArgToken(const TokenList *tokenList, int startTokenIdx) override ;
+    const char* render() override {
+		return renderFormat("R EEREAD %lx", startaddr);
+	}
+    void* process() override; // to be defined differently in M93X2 PCB and PC host
+};
+
+
+// EEDATA <startaddr:6> <data00>...<data63>
+class ResponseEepromData: public EepromMessage {
+public:    
+	uint32_t	startaddr ;
+	uint8_t	data[blockSize] ;
+    ResponseEepromData(MsgTag _tag): EepromMessage(_tag) {}
+    const char *initFromArgToken(const TokenList *tokenList, int startTokenIdx) override ;
+    const char* render() override ;
+    void* process() override; // to be defined differently in M93X2 PCB and PC host
+} ;
+
+
 #if !defined(PLATFORM_ARDUINO)
+// data of internal registers
+// data delivered in registers vector, only "value" field filled
+// list of hex values
 // only to be implemented on host PC and remote emulator
 // M93x2 probe
 

@@ -85,8 +85,8 @@ ResponseUnibusCycle *Controller::unibusEventAsResponse() {
 
 // return Versionstring
 ResponseVersion Controller::versionAsResponse(MsgTag _tag) {
-    return ResponseVersion(_tag, 
-        "M93X2probe compiled " __DATE__ " " __TIME__);
+    return ResponseVersion(_tag,
+                           "M93X2probe compiled " __DATE__ " " __TIME__);
 }
 
 // background operation
@@ -101,15 +101,36 @@ void Controller::loop() {
 
 // define process() for ALL message classes, even unused.
 // else strange errors like "<artificial>:(.text+0x1970): undefined reference to `vtable for ResponseError'"
-void *ResponseOK::process() { return nullptr; }
-void *ResponseError::process() { return nullptr; }
-void *ResponseUnibusSignals::process() { return nullptr; }
-void *ResponseKY11LBSignals::process() { return nullptr; }
-void *ResponseKM11Signals::process() { return nullptr; }
-void *ResponseSwitches::process() { return nullptr; }
-void *ResponseVersion::process() { return nullptr; }
-void *ResponseUnibusCycle::process() { return nullptr; }
-void *ResponseMcp23017Registers::process() { return nullptr; }
+void *ResponseOK::process() {
+    return nullptr;
+}
+void *ResponseError::process() {
+    return nullptr;
+}
+void *ResponseUnibusSignals::process() {
+    return nullptr;
+}
+void *ResponseKY11LBSignals::process() {
+    return nullptr;
+}
+void *ResponseKM11Signals::process() {
+    return nullptr;
+}
+void *ResponseSwitches::process() {
+    return nullptr;
+}
+void *ResponseVersion::process() {
+    return nullptr;
+}
+void *ResponseUnibusCycle::process() {
+    return nullptr;
+}
+void *ResponseMcp23017Registers::process() {
+    return nullptr;
+}
+void *ResponseEepromData::process() {
+    return nullptr;
+}
 
 // hardware reset, via watchdog
 void *RequestReset::process() {
@@ -284,22 +305,44 @@ void *RequestVersionRead::process() {
     return theController.versionAsResponse(tag).render();
 }
 
+// response with long data message text
+void *RequestEepromRead::process() {
+    if ((startaddr % EepromMessage::blockSize) != 0)
+        return ResponseError(tag, "EEPROM startaddr 0x%x not at %d byte block boundary",
+                             startaddr, EepromMessage::blockSize).render() ;
+    // allocate response and fill with data
+    ResponseEepromData responseEepromData(tag) ;
+    responseEepromData.startaddr = startaddr ;
+    theHardware.eeprom.read(startaddr, responseEepromData.data, blockSize) ;
+    return responseEepromData.render() ; // EEPROMDATA or error
+}
+
+// request long data message text, response "OK"
+void *RequestEepromWrite::process() {
+    if ((startaddr % EepromMessage::blockSize) != 0)
+        return ResponseError(tag, "EEPROM startaddr 0x%x not at %d byte block boundary",
+                             startaddr, EepromMessage::blockSize).render() ;
+    theHardware.eeprom.write(startaddr, data, blockSize) ;
+    return ResponseOK(tag).render();
+}
+
+
 // eval line as command string, do and print results back to host
 // input like "123D UA 1234 123456"
 // with tag=123, opcode = D (deposit), bus = UA (Unibus address), address = 1234, value=123456
 char *Controller::doHostCommand(char *line) {
-	// line owned by console, available until console.loop()
+    // line owned by console, available until console.loop()
     Message *request = Message::parse(line);
     char *responseText; // rendered by Message::render() to static buffer
-    if (!request) {
+    if (request == nullptr) {
         // parse error
         ResponseError response(Message::errorTag, Message::errorBuffer);
         responseText = response.render();
     } else {
         responseText = (char *)request->process(); // may be nullptr
-        delete request;                            // minmal heap operations
+        delete request;                            // minimal heap operations
     }
-	return responseText ;
+    return responseText ;
 }
 
 /* Boot PDP11 with embedded program
@@ -352,7 +395,7 @@ void Controller::bootProgram(uint16_t fileNr) {
     // simulate "Power-OFF"
     theUnibus.writeACLO(true);
     delayMicroseconds(5000); // ACLO->DCLO specified as min. 5 milli sconds
-                             // CPU now toggles DCLO and tries to come up
+    // CPU now toggles DCLO and tries to come up
     theUnibus.writeDCLO(true);
     // BBSY,SACK back to normal
     theUnibus.writeBBSY(false);
@@ -366,3 +409,4 @@ void Controller::bootProgram(uint16_t fileNr) {
     theBootLogic.acloDetected = false; //
     delayMicroseconds(70000);          // CPU running 70 ms after DCLO 1->0
 }
+

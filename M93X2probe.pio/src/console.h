@@ -5,6 +5,7 @@
 #if !defined(__CONSOLE_H__)
 #define __CONSOLE_H__
 #include <UART.h>
+#include "messages.h"
 
 // function to be called on idle input loop
 typedef void (*ConsoleIdleFunc)(void);
@@ -25,11 +26,12 @@ class Console {
     void getStr(char *buffer, int bufferSize, ConsoleIdleFunc consoleIdleFunc);
 
   private:
-    static const int rcvBufferLen = 128;
+    // buffer sizes: longest message + reserve
+    static const int rcvBufferLen = Message::txtBufferSize +10 ;// 128;
     int rcvCharIndex;
     char rcvBuffer[rcvBufferLen];
 
-    static const int xmtBufferLen = 128;
+    static const int xmtBufferLen = Message::txtBufferSize +10 ;// 128;
     char xmtBuffer[xmtBufferLen];
     // int 	xmtCharIndex ;
 

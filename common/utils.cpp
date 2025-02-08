@@ -70,4 +70,3 @@ std::string format_string(const char* fmt, ...) {
      s[i] = '\0';
      reverse(s);
 }  
-

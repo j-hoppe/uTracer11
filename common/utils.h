@@ -14,7 +14,7 @@ typedef byte uint8_t;
 
 #else
 // Linux or Visual Studio. All C++ features and lots of memory avialbale.
-// 
+//
 #include <algorithm>
 #include <string>
 #include <vector>
@@ -53,14 +53,14 @@ std::string stringVectorAsCommaList(std::vector<std::string>& stringList, std::s
 inline void ltrim(std::string& s) {
     s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) {
         return !std::isspace(ch);
-        }));
+    }));
 }
 
 // trim from end (in place)
 inline void rtrim(std::string& s) {
     s.erase(std::find_if(s.rbegin(), s.rend(), [](unsigned char ch) {
         return !std::isspace(ch);
-        }).base(), s.end());
+    }).base(), s.end());
 }
 
 // trim from both ends (in place)
@@ -73,14 +73,10 @@ inline void trim(std::string& s) {
 std::string format_string(const char* fmt, ...) ;
 
 inline std::string uppercase(std::string &s) {
-	std::string result = s ;
-	transform(result.begin(), result.end(), result.begin(), ::toupper) ;
-	return result ;
+    std::string result = s ;
+    transform(result.begin(), result.end(), result.begin(), ::toupper) ;
+    return result ;
 }
-
-// make integer to decimal string, historic K&R
- void itoa10(int n, char s[]) ;
-
 
 #endif // PLATFORM_ARDUINO
 
@@ -93,6 +89,21 @@ inline std::string uppercase(std::string &s) {
 #define GETBIT(val,shift) (!!( (val) & (1 << (shift) ) ) )  // extract a bit as bool
 #define SETBIT(bitmask,shift) ( (bitmask) ? 1 << (shift):0 )
 
+
+// make integer to decimal string, historic K&R
+void itoa10(int n, char s[]) ;
+
+// convert '0'..'9', 'A'..'F' to numerical value. -1 on error
+inline int hexchar2val(char c) {
+    if ((c >= '0') && (c <= '9'))
+        return (c - '0');
+    else if ((c >= 'A') && (c <= 'F'))
+        return (c - 'A' + 10);
+    else if ((c >= 'a') && (c <= 'f'))
+        return (c - 'a' + 10);
+    else 
+		return -1 ;
+}
 
 
 #endif // __UTILS_H__

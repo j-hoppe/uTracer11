@@ -293,6 +293,8 @@ void Hardware::setup() {
     setupMcpKY11LBRegisters();
     setupMcpKM11Registers();
     setupMcpUnibusRegisters();
+
+	eeprom.setup(Eeprom::defaultDeviceAddress) ;
 }
 
 // background operation

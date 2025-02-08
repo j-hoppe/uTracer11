@@ -384,6 +384,22 @@ Message* Message::parse(const char* line) {
         result = new RequestBoot(tokenList.tag);
         errormsg = result->initFromArgToken(&tokenList, 1) ;
     }
+    else if (tokenList.is(0, "R") && tokenList.is(1, "EEWRITE")) {
+        curSyntaxInfo = "R EEWRITE <startaddr> <data00>...<data63>";
+        result = new RequestEepromWrite(tokenList.tag);
+        errormsg = result->initFromArgToken(&tokenList, 2) ;
+    }
+    else if (tokenList.is(0, "R") && tokenList.is(1, "EEREAD")) {
+        curSyntaxInfo = "R EEREAD <startaddr>";
+        result = new RequestEepromRead(tokenList.tag);
+        errormsg = result->initFromArgToken(&tokenList, 2) ;
+    }
+    else if (tokenList.is(0, "EEDATA")) {
+        curSyntaxInfo = "EEDATA <startaddr> <data00>...<data63>";
+        result = new ResponseEepromData(tokenList.tag);
+        errormsg = result->initFromArgToken(&tokenList, 1) ;
+    }
+
 #if !defined(PLATFORM_ARDUINO)
     else if (tokenList.is(0, "R") && tokenList.is(1, "REGDEF")) {
         curSyntaxInfo = "R REGDEF";
@@ -796,6 +812,88 @@ const char *RequestBoot::initFromArgToken(const TokenList *tokenList, int startT
     fileNr = (uint16_t)strtol(tokenList->token[startTokenIdx], nullptr, 16);
     return nullptr ; // ok
 }
+
+
+// convert a byte array "data" into a long string of hexchars
+// "buffer" muste be "2*dataCount+1" in size
+// result: errrocode, nullptr when ok
+char *EepromMessage::renderData(char *text, uint8_t *data, int dataSize) {
+    return nullptr ; // ok
+}
+
+// parse a long string of hexchrs in toi a narray of bytes
+// text="deadcode" -> data= { 0xde, 0xad, 0xc0, 0xde }
+// result: errrocode, nullptr when ok
+char *EepromMessage::parseData(uint8_t *data, int dataSize, char *text) {
+    char *rp = text ; // read pointer in text string
+    int wi = 0 ; // write index for byte
+    uint8_t b ; // mounting byte
+    while (*rp && wi < dataSize) {
+        int v = hexchar2val(*rp++) ; // 1st digit
+        if (v < 0)
+            return "hex string contains non-hex char" ;
+        if (*rp == 0)
+            return "hex string has odd number of digits" ;
+
+        v = hexchar2val(*rp++) ; // 2nd digit
+        if (v < 0)
+            return "hex string contains non-hex char" ;
+        data[wi++] = (uint8_t)(v & 0xff) ;
+    }
+    return nullptr ; // ok
+}
+
+
+const char *RequestEepromWrite::initFromArgToken(const TokenList *tokenList, int startTokenIdx) {
+    int argTokenCount = tokenList->count - startTokenIdx ; // argument tokens
+    if (argTokenCount != 2)
+        return "argC != 2";
+    // <startaddr> <64 hex bytes = 128 chars>
+    startaddr = (uint32_t)strtol(tokenList->token[startTokenIdx+0], nullptr, 16);
+    char *token1 = tokenList->token[startTokenIdx+1] ; // read pointer in arg 1
+    return parseData(data, blockSize, token1) ;
+}
+
+const char* RequestEepromWrite::render() {
+    // compose "R EEWRITE <startaddr:6> <data00>...<data63>"
+    // renderTxtBuffer is txtBufferSize big, must hold the string!
+    renderFormat("R EEWRITE %lx ", startaddr);
+    char *wp = renderTxtBuffer + strlen(renderTxtBuffer) ;
+    renderData(wp, data, blockSize) ;
+    return renderTxtBuffer;
+}
+
+const char *RequestEepromRead::initFromArgToken(const TokenList *tokenList, int startTokenIdx)
+{
+    int argTokenCount = tokenList->count - startTokenIdx ; // argument tokens
+    if (argTokenCount != 1)
+        return "argC != 1";
+    startaddr = (uint32_t)strtol(tokenList->token[startTokenIdx+0], nullptr, 16);
+	return nullptr ; // ok
+}
+
+// EEDATA <startaddr:6> <data00>...<data63>
+const char *ResponseEepromData::initFromArgToken(const TokenList *tokenList, int startTokenIdx)
+{
+    int argTokenCount = tokenList->count - startTokenIdx ; // argument tokens
+    if (argTokenCount != 2)
+        return "argC != 2";
+    // <startaddr> <64 hex bytes = 128 chars>
+    startaddr = (uint32_t)strtol(tokenList->token[startTokenIdx+0], nullptr, 16);
+    char *token1 = tokenList->token[startTokenIdx+1] ; // read pointer in arg 1
+    return parseData(data, blockSize, token1) ;
+}
+
+const char* ResponseEepromData::render() {
+    // compose "EEDATA <startaddr:6> <data00>...<data63>"
+    // renderTxtBuffer is txtBufferSize big, must hold the string!
+    renderFormat("EEDATA %lx ", startaddr);
+    char *wp = renderTxtBuffer + strlen(renderTxtBuffer) ;
+    renderData(wp, data, blockSize) ;
+    return renderTxtBuffer;
+}
+
+
 
 #if !defined(PLATFORM_ARDUINO)
 const char *RequestRegDef::initFromArgToken(const TokenList *tokenList, int startTokenIdx) {

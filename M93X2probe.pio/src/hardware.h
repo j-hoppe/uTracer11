@@ -7,6 +7,7 @@
 #define __HARDWARE_H__
 
 #include "mcp23017.h"
+#include "eeprom.h"
 #include <Arduino.h>
 
 
@@ -64,6 +65,8 @@ class Hardware {
     uint8_t activeMcpGroup; // current selectect group
     void pulseMcpReset();
     void setMcpGroup(uint8_t group);
+
+	Eeprom eeprom ;
 
   private:
     void setupMcpKY11LBRegisters();

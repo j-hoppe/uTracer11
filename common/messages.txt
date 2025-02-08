@@ -166,6 +166,20 @@ R MCP <group> <addr> <half>
         response: MCP<group><addr><half> "IODIR=.. IPOL= .... OLAT=.."
         (long string!)
 
+R EEWRITE <startaddr:6> <data00>...<data63>
+        write 64 bytes to 24LC1025-I/P EEPROM
+        starttaddr: hex address in eeprom, max. 16M, limited by ROM size
+        data: 64 hex bytes = 128 chars
+        total text len: 1+1+8+1+6+1+128 = 146
+
+        response: OK, or error, after EEPROM completed operation
+
+R EEREAD <startaddr:6>
+        read 64 bytes from 24LC1025-I/P EEPROM
+        starttaddr: hex address in eeprom, max. 16M, limited by ROM size
+        response: EEDATA <startaddr:6> <data00>...<data63>
+
+
 R REGDEF
 		request definitions of internal registers, used for emulators which deliver more data
 		than visibile over KM11/KY11-LB/UNIBUS.
@@ -186,4 +200,5 @@ R REGVAL
 REGVAL
 		list of current values for internal registers, ordered as in REGDEF
         Example: "0 732a 0 0 0 0 affe cafe dead 2ffff 1"
+
 
