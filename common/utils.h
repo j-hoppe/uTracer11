@@ -105,6 +105,17 @@ inline int hexchar2val(char c) {
 		return -1 ;
 }
 
+// confert a byte value into two hex digits
+// b..0 -> 0..9,"A..F"
+inline char hexdigit2char(uint8_t digit) {
+	if (digit <= 9)
+		return '0' + digit ;
+	else if (digit <= 0x0f)
+		return 'A' + digit - 10 ;
+	else return '?' ;
+}
+
+
 
 #endif // __UTILS_H__
 

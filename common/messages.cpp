@@ -8,6 +8,7 @@
 #include <ctype.h>
 #include "utils.h" // UNREFERENCED_PARAMETER
 #include "messages.h" // own stuff
+//#include "console.h" // arduino debugging
 #ifdef USED
 
 // convert octal/hex/decimal string to long val.
@@ -385,7 +386,7 @@ Message* Message::parse(const char* line) {
         errormsg = result->initFromArgToken(&tokenList, 1) ;
     }
     else if (tokenList.is(0, "R") && tokenList.is(1, "EEWRITE")) {
-        curSyntaxInfo = "R EEWRITE <startaddr> <data00>...<data63>";
+        curSyntaxInfo = "R EEWRITE <startaddr> <data00..63>";
         result = new RequestEepromWrite(tokenList.tag);
         errormsg = result->initFromArgToken(&tokenList, 2) ;
     }
@@ -395,7 +396,7 @@ Message* Message::parse(const char* line) {
         errormsg = result->initFromArgToken(&tokenList, 2) ;
     }
     else if (tokenList.is(0, "EEDATA")) {
-        curSyntaxInfo = "EEDATA <startaddr> <data00>...<data63>";
+        curSyntaxInfo = "EEDATA <startaddr> <data00..63>";
         result = new ResponseEepromData(tokenList.tag);
         errormsg = result->initFromArgToken(&tokenList, 1) ;
     }
@@ -815,9 +816,18 @@ const char *RequestBoot::initFromArgToken(const TokenList *tokenList, int startT
 
 
 // convert a byte array "data" into a long string of hexchars
+// data= { 0xde, 0xad, 0xc0, 0xde } -> text="deadcode\0"
 // "buffer" muste be "2*dataCount+1" in size
 // result: errrocode, nullptr when ok
 char *EepromMessage::renderData(char *text, uint8_t *data, int dataSize) {
+    char *wp = text ; // write pointer in result
+    for (int i=0 ; i < dataSize ; i++) {
+        uint8_t b = data[i] ; // current byte
+        // 8 bit byte -> 2-char hex value
+        *wp++ = hexdigit2char((b >> 4) & 0x0f) ; // output upper digit
+        *wp++ = hexdigit2char(b & 0x0f) ; // output lower digit
+    }
+    *wp = 0 ; // terminate string
     return nullptr ; // ok
 }
 
@@ -828,17 +838,21 @@ char *EepromMessage::parseData(uint8_t *data, int dataSize, char *text) {
     char *rp = text ; // read pointer in text string
     int wi = 0 ; // write index for byte
     uint8_t b ; // mounting byte
-    while (*rp && wi < dataSize) {
-        int v = hexchar2val(*rp++) ; // 1st digit
-        if (v < 0)
-            return "hex string contains non-hex char" ;
-        if (*rp == 0)
-            return "hex string has odd number of digits" ;
 
-        v = hexchar2val(*rp++) ; // 2nd digit
-        if (v < 0)
-            return "hex string contains non-hex char" ;
-        data[wi++] = (uint8_t)(v & 0xff) ;
+	// LOG("parseData: text=%s\n", text);
+    while (*rp && wi < dataSize) {
+        int digit0 = hexchar2val(*rp++) ; // 1st digit
+        if (digit0 < 0)
+            return "non-hex char" ;
+        if (*rp == 0)
+            return "odd number of digits" ;
+
+        int digit1 = hexchar2val(*rp++) ; // 2nd digit
+        if (digit1 < 0)
+            return "non-hex char" ;
+        data[wi] = (uint8_t)(digit0 << 4 | digit1) ;
+//    LOG("data[%d]=%02x\n", wi, (int)data[wi]);
+	wi++ ;
     }
     return nullptr ; // ok
 }
@@ -869,7 +883,7 @@ const char *RequestEepromRead::initFromArgToken(const TokenList *tokenList, int 
     if (argTokenCount != 1)
         return "argC != 1";
     startaddr = (uint32_t)strtol(tokenList->token[startTokenIdx+0], nullptr, 16);
-	return nullptr ; // ok
+    return nullptr ; // ok
 }
 
 // EEDATA <startaddr:6> <data00>...<data63>

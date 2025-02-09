@@ -36,7 +36,9 @@ class Console {
     // int 	xmtCharIndex ;
 
   public:
-    void loop(); // background line string buffering
+    void loopRcv(); // background line string receive buffering
+    void loopXmt(); // background line sending
+    
     bool stringReceived;
 
     char *getAndClearRcvString();

@@ -153,25 +153,34 @@ bool Console::kbhit() {
     return serial->available();
 }
 
-///// Buffered Background Operation
-// send a char, if possible and something in xmtBuffer
+// Buffered Background Operation
 // check for receive, add to receive buffer
-void Console::loop() {
+void Console::loopRcv() {
     int c;
-    // put next received char into receive buffer
-    // stop polling on first line end \n
-    c = getChar();
-    if (c != EOF)
-        LOG("%c", (int)c);
+    // put next received chars into receive buffer
 
-    if (!stringReceived && c != EOF) {
-        if (c == '\n' || c == '\r')
-            stringReceived = true; // must be emptied by caller
-        else if (rcvCharIndex < rcvBufferLen)
-            rcvBuffer[rcvCharIndex++] = (char)c;
-        rcvBuffer[rcvCharIndex] = 0; // trunc long receive data?!
-    }
+    // lock: rcv string must be processed and emptied by caller first
+    if (stringReceived)
+        return ;
 
+    // poll until interrupt buffer emptied or CR/LF
+    do {
+        c = getChar();
+        if (c != EOF) {
+			//	  LOG("%c", (int)c);
+            // still data there
+            if (c == '\n' || c == '\r')
+                stringReceived = true; // must be emptied by caller
+            else if (rcvCharIndex < rcvBufferLen)
+                rcvBuffer[rcvCharIndex++] = (char)c;
+            rcvBuffer[rcvCharIndex] = 0; // trunc long receive data?!
+        }
+    } while(!stringReceived && c != EOF) ;
+}
+
+// Buffered Background Operation
+// send a char, if possible and something in xmtBuffer
+void Console::loopXmt() {
     // check if all chars have been transmitted
     if (serial->availableForWrite() >= (SERIAL_TX_BUFFER_SIZE - 1)) {
         stringTransmitted = true;
@@ -195,6 +204,6 @@ void Console::xmtLine(const char *message) {
     xmtBuffer[xmtBufferLen - 2] = 0; // terminate if trunced
     strcat(xmtBuffer, "\n\r");
     serial->write(xmtBuffer); // non blocking if len < SERIAL_TX_BUFFER_SIZE
-    LOG("%s", xmtBuffer) ;
+    // LOG("%s", xmtBuffer) ;
     stringTransmitted = false;
 }

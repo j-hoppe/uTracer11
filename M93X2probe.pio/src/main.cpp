@@ -59,7 +59,8 @@ void loop() {
 
     // put your main code here, to run repeatedly:
     theHardware.loop(cur_millis);
-    theConsole.loop();
+    theConsole.loopRcv();
+    theConsole.loopXmt();
 
     theBootLogic.loop(cur_millis);
     // BOOT on ACLO or boot switch
