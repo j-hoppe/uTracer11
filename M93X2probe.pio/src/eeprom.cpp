@@ -1,7 +1,7 @@
 /* eeprom.cpp - low level access to I2C eeprom 24LC1025-I/P"
  */
-#define LOGGING
 
+//#define LOGGING
 
 #include <Wire.h>
 #include "eeprom.h"
