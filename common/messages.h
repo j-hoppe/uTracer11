@@ -106,7 +106,7 @@ public:
 #else
     // thread save: multiple messages can render() in parallel
     static const int txtBufferSize = 1050; // 1k payload plus some header space
-    char renderTxtBuffer[txtBufferSize] ; 
+    char renderTxtBuffer[txtBufferSize] ;
 #endif
     // fix class error buffer
     static const int errorBufferSize = 128;
@@ -638,18 +638,19 @@ public:
 // eeprom read and write have a lot in common, so use a common service class
 class EepromMessage: public Message {
 public:
-		static const int blockSize = 64 ; // can keep this much bytes in one message
-		EepromMessage(MsgTag _tag): Message(_tag) {}
+    static const uint8_t maxDataSize = 64 ; // can keep this much bytes in one message
+    EepromMessage(MsgTag _tag): Message(_tag) {}
 
-		char *renderData(char *text, uint8_t *data, int dataSize) ;
-		char *parseData(uint8_t *data, int dataSize, char *text) ;
+    char *renderData(char *text, uint8_t *data, uint8_t dataSize) ;
+    char *parseData(uint8_t *data, uint8_t maxDataSize, uint8_t *dataSize, char *text) ;
 } ;
 
 // R EEWRITE <startaddr:6> <data00>...<data63>
 class RequestEepromWrite: public EepromMessage {
 public:
-	uint32_t	startaddr ;
-	uint8_t	data[blockSize] ;
+    uint32_t	startaddr ;
+    uint8_t		dataSize ; // number of valid data[]
+    uint8_t	data[maxDataSize] ;
     RequestEepromWrite(MsgTag _tag): EepromMessage(_tag) {}
 //    RequestEepromWrite(MsgTag _tag, uint32_t startaddr, uint8_t data): Message(_tag) {}
     const char *initFromArgToken(const TokenList *tokenList, int startTokenIdx) override ;
@@ -659,22 +660,24 @@ public:
 
 // R EEREAD <startaddr:6>
 class RequestEepromRead: public EepromMessage {
-public:	
+public:
     uint32_t	startaddr ;
+    uint8_t		dataSize ;
     RequestEepromRead(MsgTag _tag): EepromMessage(_tag) {}
     const char *initFromArgToken(const TokenList *tokenList, int startTokenIdx) override ;
     const char* render() override {
-		return renderFormat("R EEREAD %lx", startaddr);
-	}
+        return renderFormat("R EEREAD %lx %x", startaddr, (unsigned)dataSize);
+    }
     void* process() override; // to be defined differently in M93X2 PCB and PC host
 };
 
 
 // EEDATA <startaddr:6> <data00>...<data63>
 class ResponseEepromData: public EepromMessage {
-public:    
-	uint32_t	startaddr ;
-	uint8_t	data[blockSize] ;
+public:
+    uint32_t	startaddr ;
+    uint8_t		dataSize ; // number of valid data[]
+    uint8_t	data[maxDataSize] ;
     ResponseEepromData(MsgTag _tag): EepromMessage(_tag) {}
     const char *initFromArgToken(const TokenList *tokenList, int startTokenIdx) override ;
     const char* render() override ;

@@ -393,7 +393,7 @@ Message* Message::parse(const char* line) {
     else if (tokenList.is(0, "R") && tokenList.is(1, "EEREAD")) {
         curSyntaxInfo = "R EEREAD <startaddr>";
         result = new RequestEepromRead(tokenList.tag);
-        errormsg = result->initFromArgToken(&tokenList, 2) ;
+        errormsg = result->initFromArgToken(&tokenList, 2);
     }
     else if (tokenList.is(0, "EEDATA")) {
         curSyntaxInfo = "EEDATA <startaddr> <data00..63>";
@@ -819,9 +819,9 @@ const char *RequestBoot::initFromArgToken(const TokenList *tokenList, int startT
 // data= { 0xde, 0xad, 0xc0, 0xde } -> text="deadcode\0"
 // "buffer" muste be "2*dataCount+1" in size
 // result: errrocode, nullptr when ok
-char *EepromMessage::renderData(char *text, uint8_t *data, int dataSize) {
+char *EepromMessage::renderData(char *text, uint8_t *data, uint8_t dataSize) {
     char *wp = text ; // write pointer in result
-    for (int i=0 ; i < dataSize ; i++) {
+    for (uint8_t i=0 ; i < dataSize ; i++) {
         uint8_t b = data[i] ; // current byte
         // 8 bit byte -> 2-char hex value
         *wp++ = hexdigit2char((b >> 4) & 0x0f) ; // output upper digit
@@ -831,16 +831,17 @@ char *EepromMessage::renderData(char *text, uint8_t *data, int dataSize) {
     return nullptr ; // ok
 }
 
-// parse a long string of hexchrs in toi a narray of bytes
-// text="deadcode" -> data= { 0xde, 0xad, 0xc0, 0xde }
-// result: errrocode, nullptr when ok
-char *EepromMessage::parseData(uint8_t *data, int dataSize, char *text) {
+// parse a long string of hexchars into an array of bytes
+// text="deadcode" -> data[] = { 0xde, 0xad, 0xc0, 0xde }, *dataSize = 4
+// result: errorcode, nullptr when ok. else data[] invalid
+char *EepromMessage::parseData(uint8_t *data, uint8_t maxDataSize, uint8_t *dataSize, char *text) {
     char *rp = text ; // read pointer in text string
-    int wi = 0 ; // write index for byte
+    uint8_t wi = 0 ; // write index for byte
     uint8_t b ; // mounting byte
+    *dataSize = 0 ; // no data in case of error
 
-	// LOG("parseData: text=%s\n", text);
-    while (*rp && wi < dataSize) {
+    // LOG("parseData: text=%s\n", text);
+    while (*rp && wi < maxDataSize) {
         int digit0 = hexchar2val(*rp++) ; // 1st digit
         if (digit0 < 0)
             return "non-hex char" ;
@@ -852,8 +853,9 @@ char *EepromMessage::parseData(uint8_t *data, int dataSize, char *text) {
             return "non-hex char" ;
         data[wi] = (uint8_t)(digit0 << 4 | digit1) ;
 //    LOG("data[%d]=%02x\n", wi, (int)data[wi]);
-	wi++ ;
+        wi++ ;
     }
+    *dataSize = wi ; // return number of bytes parsed
     return nullptr ; // ok
 }
 
@@ -865,7 +867,7 @@ const char *RequestEepromWrite::initFromArgToken(const TokenList *tokenList, int
     // <startaddr> <64 hex bytes = 128 chars>
     startaddr = (uint32_t)strtol(tokenList->token[startTokenIdx+0], nullptr, 16);
     char *token1 = tokenList->token[startTokenIdx+1] ; // read pointer in arg 1
-    return parseData(data, blockSize, token1) ;
+    return parseData(data, maxDataSize, &dataSize, token1) ;
 }
 
 const char* RequestEepromWrite::render() {
@@ -873,16 +875,17 @@ const char* RequestEepromWrite::render() {
     // renderTxtBuffer is txtBufferSize big, must hold the string!
     renderFormat("R EEWRITE %lx ", startaddr);
     char *wp = renderTxtBuffer + strlen(renderTxtBuffer) ;
-    renderData(wp, data, blockSize) ;
+    renderData(wp, data, dataSize) ;
     return renderTxtBuffer;
 }
 
 const char *RequestEepromRead::initFromArgToken(const TokenList *tokenList, int startTokenIdx)
 {
     int argTokenCount = tokenList->count - startTokenIdx ; // argument tokens
-    if (argTokenCount != 1)
-        return "argC != 1";
+    if (argTokenCount != 2)
+        return "argC != 2";
     startaddr = (uint32_t)strtol(tokenList->token[startTokenIdx+0], nullptr, 16);
+    dataSize = (uint8_t)strtol(tokenList->token[startTokenIdx+1], nullptr, 16);
     return nullptr ; // ok
 }
 
@@ -895,7 +898,7 @@ const char *ResponseEepromData::initFromArgToken(const TokenList *tokenList, int
     // <startaddr> <64 hex bytes = 128 chars>
     startaddr = (uint32_t)strtol(tokenList->token[startTokenIdx+0], nullptr, 16);
     char *token1 = tokenList->token[startTokenIdx+1] ; // read pointer in arg 1
-    return parseData(data, blockSize, token1) ;
+    return parseData(data, maxDataSize, &dataSize, token1) ;
 }
 
 const char* ResponseEepromData::render() {
@@ -903,7 +906,7 @@ const char* ResponseEepromData::render() {
     // renderTxtBuffer is txtBufferSize big, must hold the string!
     renderFormat("EEDATA %lx ", startaddr);
     char *wp = renderTxtBuffer + strlen(renderTxtBuffer) ;
-    renderData(wp, data, blockSize) ;
+    renderData(wp, data, dataSize) ;
     return renderTxtBuffer;
 }
 

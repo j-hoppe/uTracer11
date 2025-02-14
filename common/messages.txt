@@ -166,18 +166,20 @@ R MCP <group> <addr> <half>
         response: MCP<group><addr><half> "IODIR=.. IPOL= .... OLAT=.."
         (long string!)
 
-R EEWRITE <startaddr:6> <data00>...<data63>
-        write 64 bytes to 24LC1025-I/P EEPROM
+R EEWRITE <startaddr:6> <data00>[...<data63>]
+        write max 64 bytes to 24LC1025-I/P EEPROM
         starttaddr: hex address in eeprom, max. 16M, limited by ROM size
-        data: 64 hex bytes = 128 chars
-        total text len: 1+1+8+1+6+1+128 = 146
+        data: max 64 hex bytes = 128 chars
+        	actual data block size given by string len
+        total max text len: 1+1+8+1+6+1+128 = 146
 
         response: OK, or error, after EEPROM completed operation
 
-R EEREAD <startaddr:6>
-        read 64 bytes from 24LC1025-I/P EEPROM
+R EEREAD <startaddr:6> <datasize>
+        read a number of bytes from 24LC1025-I/P EEPROM
         starttaddr: hex address in eeprom, max. 16M, limited by ROM size
-        response: EEDATA <startaddr:6> <data00>...<data63>
+        datasize: number of bytes to read, max 64
+        response: EEDATA <startaddr:6> <data00>[...<data63>]
 
 
 R REGDEF

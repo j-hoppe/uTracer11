@@ -305,29 +305,22 @@ void *RequestVersionRead::process() {
     return theController.versionAsResponse(tag).render();
 }
 
-//uint8_t eetest[64] ;
 
 // request long data message text, response "OK"
 void *RequestEepromWrite::process() {
-    if ((startaddr % EepromMessage::blockSize) != 0)
-        return ResponseError(tag, "EEPROM startaddr 0x%x not at %d byte block boundary",
-                             startaddr, EepromMessage::blockSize).render() ;
-//memcpy(eetest, data, 64) ;
-	theHardware.eeprom.write(startaddr, data, blockSize) ;
+	theHardware.eeprom.write(startaddr, data, dataSize) ;
     return ResponseOK(tag).render();
 }
 
 
 // response with long data message text
 void *RequestEepromRead::process() {
-    if ((startaddr % EepromMessage::blockSize) != 0)
-        return ResponseError(tag, "EEPROM startaddr 0x%x not at %d byte block boundary",
-                             startaddr, EepromMessage::blockSize).render() ;
     // allocate response and fill with data
     ResponseEepromData responseEepromData(tag) ;
     responseEepromData.startaddr = startaddr ;
-	// memcpy(responseEepromData.data, eetest, 64) ;
-    theHardware.eeprom.read(startaddr, responseEepromData.data, blockSize) ;
+    responseEepromData.dataSize = dataSize ;
+	//LOG("RequestEepromRead::process(): startaddr=0x%lx, dataSize=0x%x\n", startaddr, (unsigned)dataSize);
+    theHardware.eeprom.read(startaddr, responseEepromData.data, (unsigned)dataSize) ;
     return responseEepromData.render() ; // EEPROMDATA or error
 }
 

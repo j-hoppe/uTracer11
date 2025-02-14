@@ -1,0 +1,46 @@
+M93X2 EEPROM tests,
+use terminal (putty) connected to Arduino console @ 115200
+JH, Feb 2025
+
+// write max 64
+r eewrite 100 000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f
+// read all 40
+r eeread 100 40
+// read only parts
+r eeread 100 10
+r eeread 110 10
+r eeread 120 20
+
+// write partial, onyl 0x10
+// r eewrite 1000 0001020304deadc0de090a0b0c0d0e0f
+r eewrite 1009 090a0b0c0d0e0f
+r eewrite 1005 deadc0de
+r eewrite 1000 0001020304
+
+r eeread 1000 1
+r eeread 1000 4
+r eeread 1000 8
+r eeread 1000 c
+r eeread 1000 10
+
+// write to upper 64k page
+r eewrite 1ffc0 404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f
+r eeread 1ffd0 30
+
+// read and write across eeprom page boundary:
+// read page boundary at 10000, write boundary at every 128 byte
+// write accross other 128 byte boudaries test then as well
+
+// set fff8..10008 to a0..bf
+// 16 bytes into 2nd area
+r eewrite 10008 b0b1b2b3b4b5b6b7b8b9babbbcbdbebf
+r eeread 10008 10
+
+// 16 bytes accross boundary
+r eewrite fff8 a0a1a2a3a4a5a6a7a8a9aaabacadaeaf
+r eeread fff8 10
+
+// max data again
+r eewrite ffe0 404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f
+r eeread ffe0 40
+
